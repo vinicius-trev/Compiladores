@@ -1,0 +1,108 @@
+@font-face {
+  font-family: "roboto_monoregular";
+  src: url("./assets/robotomono-regular-webfont.woff2") format("woff2"),
+    url("./assets/robotomono-regular-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+*:focus {
+  outline: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+  background-color: #cccccc;
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 10%;
+  grid-template-areas:
+    "code debugger"
+    "io debugger";
+}
+.code-window {
+  max-height: 100%;
+  padding: 10px;
+  margin: 10px;
+  background: rgb(255, 255, 255);
+  border: 2px solid rgb(0, 0, 0);
+  grid-area: code;
+  overflow-x: scroll;
+}
+.code-window ol {
+  margin-left: 30px;
+  list-style: none;
+}
+
+.code-window ol li {
+  display: flex;
+  justify-content: left;
+}
+.code-window ol li .number-div{
+  text-align: end;
+  width: 35px;
+  margin-right: 5px;
+  background: rgba(187, 187, 187, 0.867);
+}
+
+.code-window ol li .line-div{
+  text-align: start;
+}
+
+.io-window {
+  grid-area: io;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  justify-content: space-around;
+}
+.io-window  div{
+  width: 100%;
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+}
+.io-window div input {
+  height: 30px;
+  width: 70%;
+}
+.debugger-window {
+  grid-area: debugger;
+  display: flex;
+  flex-direction: column;
+}
+.debugger-window .stacks-container {
+  height: 100%;
+}
+.debugger-window .button-container {
+  display:flex;
+  justify-content: space-between;
+  height: 20%;
+  padding: 10px;
+}
+
+.debugger-button {
+	background-color:#7892c2;
+  display:inline-block;
+  height: 50px;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Courier New;
+	font-size:14px;
+	padding:10px 11px;
+	border: none;
+}
+.debugger-button:hover {
+	background-color:#476e9e;
+}
+.debugger-button:active {
+	position:relative;
+	top:1px;
+}
