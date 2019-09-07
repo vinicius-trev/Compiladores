@@ -11,7 +11,7 @@
  * e o valor do STACKPOINTER (HIGHLIGHTED).
  */
 
-let instrucoes = {
+export let instrucoes = {
   "LDC": (k) => {   /* Load Constant */
     stackPointer = stackPointer + 1                                        /* Incrementa o ponteiro de pilha (proxima posição de memoria) */
     memoria[stackPointer] = k                                                     /* Insere a constante na pilha recebida como parametro (k) */
@@ -255,7 +255,3 @@ let instrucoes = {
   },
 
 };
-
-module.exports = () => {
-  return instrucoes
-}

@@ -4,6 +4,10 @@
 <head>
   <title>Virtual Machine</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="mainWindow.js"></script>
+  <script src="https://kit.fontawesome.com/0a1afe8067.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="openFile.js"></script>
 </head>
 
 <body>
@@ -15,10 +19,11 @@
 
     </div>
     <div class="button-container">
-      <button class="debugger-button" id="play-normal"><i class="fas fa-play"></i> Run</button>
+      <button class="debugger-button" id="play-normal" onclick="rodarCodigo()"><i class="fas fa-play"></i> Run</button>
       <button class="debugger-button" id="play-debbug"><i class="fas fa-bug"></i> Debug</button>
       <button class="debugger-button" id="step-line"><i class="fas fa-step-forward"></i> Step</button>
       <button class="debugger-button" id="continue"><i class="fas fa-arrow-down"></i> Continue</button>
+      <button id="button" onclick="openFile()">Open File</button>
     </div>
   </div>
   <div class="io-window">
@@ -27,9 +32,6 @@
       <input type="text" name="output" id="output" disabled="true" class="output-fild">
     </div>
   </div>
-
-  <script src="mainWindow.js"></script>
-  <script src="https://kit.fontawesome.com/0a1afe8067.js"></script>
 </body>
 
 </html>
