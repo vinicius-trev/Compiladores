@@ -25,7 +25,7 @@ function rodarCodigo()
     let funcao = elementos.shift()                      /* Recupera e remove o primeiro elemento da linha (instrução ou label) */
     console.log(line)                                   /* ***DEBUG*** */
 
-    let linha = document.getElementById("line-"+count)
+    let linha = document.getElementById("line-"+pc)
     linha.classList.add("highlight");
 
     elementos.forEach((e, index, arr) =>                /* Para cada elemento restante, ou seja, argumentos ou a instrução NULL */
@@ -48,7 +48,7 @@ function rodarCodigo()
         /* Garante que o popup só pegara numeros inteiros */
         do
         {
-          var answer = parseInt(prompt("Valor: "))                 /* Abre um pop up para inserir o dado */
+          var answer = parseInt(prompt("Digite o valor de INPUT: "))                 /* Abre um pop up para inserir o dado */
         }while(isNaN(answer));
 
         if(answer != "")                                /* Se o dado inserido não for vazio (ou seja, inseriu algo valido *****TRATAR NUMEROS*****) */

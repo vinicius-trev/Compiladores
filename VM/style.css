@@ -56,6 +56,26 @@ body {
   text-align: start;
 }
 
+.output-window{
+  max-height: 100%;
+  padding: 10px;
+  margin: 10px;
+  background: rgb(255, 255, 255);
+  border: 2px solid rgb(0, 0, 0);
+  grid-area: code;
+  overflow-x: scroll;
+  margin-left: 30px;
+  list-style: none;
+  display: flex;
+  justify-content: left;
+}
+
+.output-label{
+  position: relative;
+  top: 40%;
+  height: 10px;
+}
+
 .io-window {
   grid-area: io;
   display: flex;
@@ -70,8 +90,8 @@ body {
   justify-content: space-between;
 }
 .io-window div input {
-  height: 30px;
-  width: 70%;
+  height: 60px;
+  width: 90%;
 }
 .debugger-window {
   grid-area: debugger;

@@ -215,6 +215,7 @@
   "PRN": () => {  /* Operação PRINT */
     let out = document.getElementById("output");                                 /* Recupera o elemeto que recebra o valor */
     out.innerHTML = memoria[stackPointer];                                       /* Escreve o valor no elemento HTML */
+    console.log("OUTPUT: "+out)
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
     console.log("Memoria: " + memoria)
     console.log("SP: " + stackPointer)
