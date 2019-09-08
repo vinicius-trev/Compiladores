@@ -230,7 +230,8 @@
     console.log("PC: " + pc)
   },
   "DALLOC": (m, n) => { /* Desalocar Memória de tamanho 'n' */
-    for (let k = n - 1; k >= 0; k++) {                                           /* Realiza o processo de DESALOCAR "n" VEZES */
+    for (let k = n - 1; k >= 0; k--) {                                           /* Realiza o processo de DESALOCAR "n" VEZES */
+      console.log(k)
       memoria[m + k] = memoria[stackPointer]
       stackPointer = stackPointer - 1                                            /* Decrementa o stackPointer */
     }
