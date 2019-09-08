@@ -51,6 +51,9 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
     li.setAttribute("id", "line-"+index);
 
     /* Cria uma div para cada linha (cada uma dessas divs é composta por uma região cinza - esquerda - e uma região branca - direita) */
+    const divBreak = document.createElement("div")  /* Cria a barra lateral esquerda para o botão de breakpoint*/
+    divBreak.classList.add("break-div")             /* Adiciona uma classe ao CSS para modificar o style do breakpoint */
+
     const divNumber = document.createElement("div") /* Cria a barra lateral esquerda para exibir o número da linha */
     divNumber.classList.add("number-div")           /* Adiciona uma classe ao CSS para modificar o style da barra criada acima */
 
@@ -60,8 +63,13 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
     /*
      * Escrevedo o número da linha e o conteudo de cada uma delas (codigo)
     **/
+    const breakButton = document.createElement("BUTTON")
+    breakButton.onclick = apertouBreakpoint(breakButton);
+    breakButton.onfocus = cimaBreakpoint(breakButton);
+
     const numText = document.createTextNode(numLinha) /* Cria um const (variavel) para armazenar o numero da linha */
     divNumber.appendChild(numText)                    /* Escreve na divNumber o numero da linha */
+
     const lineText = document.createTextNode(line)    /* Cria um const (variavel) para armazenar o código (linha a linha) */
     divLine.appendChild(lineText)                     /* Escreve na divLine o código */
 
@@ -76,3 +84,15 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
   });
 }
 /* Aqui finaliza o import do código texto */
+
+function apertouBreakpoint(breakButton)
+{
+  breakButton.innerHTML = "<i class='fas fa-circle break-div'></i>"
+  console.log("clickou")
+}
+
+function cimaBreakpoint(breakButton)
+{
+  breakButton.innerHTML = "<i class='fas fa-circle select'></i>"
+  console.log("mouse cima")
+}

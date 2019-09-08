@@ -52,6 +52,14 @@ body {
   background: rgba(187, 187, 187, 0.867);
 }
 
+.break-div{
+  color: red;
+}
+
+.select{
+  color: rgba(206, 111, 111, 0.867);
+}
+
 .code-window ol li .line-div{
   text-align: start;
 }
