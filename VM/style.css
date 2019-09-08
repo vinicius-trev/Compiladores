@@ -119,7 +119,7 @@ textarea {
   flex-direction: column;
   margin: 5%;
   position: relative;
-  top: 2%;
+  /* top: 1%; */
 }
 .debugger-window .stacks-container {
   height: 100%;
@@ -164,4 +164,12 @@ textarea {
 
 .highlight{
   background-color: rgba(255, 255, 0, 0.466);
+}
+
+.stacks-container{
+  border: 2px solid rgb(0, 0, 0);
+  margin: 30px;
+  padding: 10px;
+  background: #ffffff;
+  overflow-x: scroll;
 }
