@@ -56,11 +56,51 @@ body {
   text-align: start;
 }
 
+.output-window{
+  max-height: 100%;
+  padding: 10px;
+  margin: 10px;
+  background: rgb(255, 255, 255);
+  border: 2px solid rgb(0, 0, 0);
+  grid-area: code;
+  overflow: auto;
+  list-style: none;
+  display: flex;
+  justify-content: left;
+  text-align: start;
+  width: 100%;
+  height: 80%;
+  position: relative;
+}
+
+textarea {
+  resize: none;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.2em;
+}
+
+.output-container-div{
+  margin: 10px;
+  position: relative;
+  max-width: 100px;
+}
+
+
+.output-label{
+  position: relative;
+  top: 18px;
+  left: 15px;
+  height: 45px;
+  text-align: center;
+}
+
 .io-window {
   grid-area: io;
   display: flex;
   flex-direction: column;
-  padding: 10px;
   justify-content: space-around;
 }
 .io-window  div{
@@ -70,13 +110,16 @@ body {
   justify-content: space-between;
 }
 .io-window div input {
-  height: 30px;
-  width: 70%;
+  height: 60px;
+  width: 90%;
 }
 .debugger-window {
   grid-area: debugger;
   display: flex;
   flex-direction: column;
+  margin: 5%;
+  position: relative;
+  top: 2%;
 }
 .debugger-window .stacks-container {
   height: 100%;
@@ -84,8 +127,20 @@ body {
 .debugger-window .button-container {
   display:flex;
   justify-content: space-between;
-  height: 20%;
+  height: 7%;
   padding: 10px;
+  background-color:#7892c2;
+}
+
+.status-button {
+  height: 100%;
+}
+.status-button {
+  display:flex;
+  justify-content: space-between;
+  height: 10%;
+  padding: 10px;
+  background-color:#7892c2;
 }
 
 .debugger-button {

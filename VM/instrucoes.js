@@ -11,9 +11,9 @@
  * e o valor do STACKPOINTER (HIGHLIGHTED).
  */
 
-export let instrucoes = {
+ let instrucoes = {
   "LDC": (k) => {   /* Load Constant */
-    stackPointer = stackPointer + 1                                        /* Incrementa o ponteiro de pilha (proxima posição de memoria) */
+    stackPointer = stackPointer + 1                                               /* Incrementa o ponteiro de pilha (proxima posição de memoria) */
     memoria[stackPointer] = k                                                     /* Insere a constante na pilha recebida como parametro (k) */
     console.log("Memoria: " + memoria)
     console.log("SP: " + stackPointer)
@@ -192,7 +192,7 @@ export let instrucoes = {
       pc = t                                                                     /* Salva o endereço "t" como proxima instrução (PC) */
     }
     else {
-      pc = pc                                                              /* Caso não atenda a condição aponta para proxima instrução e NAO DESVIA */
+      pc = pc                                                                    /* Caso não atenda a condição aponta para proxima instrução e NAO DESVIA */
     }
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
     console.log("Memoria: " + memoria)
@@ -214,7 +214,9 @@ export let instrucoes = {
   },
   "PRN": () => {  /* Operação PRINT */
     let out = document.getElementById("output");                                 /* Recupera o elemeto que recebra o valor */
-    out.innerHTML = memoria[stackPointer];                                       /* Escreve o valor no elemento HTML */
+    out.value += memoria[stackPointer];                                          /* Escreve o valor no elemento HTML */
+    out.value += "\r\n";
+    out.scrollTop = out.scrollHeight;                                            /* "Anda" automaticamente com o scroll */
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
     console.log("Memoria: " + memoria)
     console.log("SP: " + stackPointer)
@@ -230,7 +232,7 @@ export let instrucoes = {
     console.log("PC: " + pc)
   },
   "DALLOC": (m, n) => { /* Desalocar Memória de tamanho 'n' */
-    for (let k = n - 1; k >= 0; k++) {                                           /* Realiza o processo de DESALOCAR "n" VEZES */
+    for (let k = n - 1; k >= 0; k--) {                                           /* Realiza o processo de DESALOCAR "n" VEZES */
       memoria[m + k] = memoria[stackPointer]
       stackPointer = stackPointer - 1                                            /* Decrementa o stackPointer */
     }
@@ -253,5 +255,4 @@ export let instrucoes = {
     console.log("SP: " + stackPointer)
     console.log("PC: " + pc)
   },
-
 };

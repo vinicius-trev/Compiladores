@@ -5,6 +5,7 @@
   <title>Virtual Machine</title>
   <link rel="stylesheet" href="style.css" />
   <script src="mainWindow.js"></script>
+  <script src="instrucoes.js"></script>
   <script src="https://kit.fontawesome.com/0a1afe8067.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="openFile.js"></script>
@@ -12,7 +13,7 @@
 
 <body>
   <div class="code-window">
-    OPEN FILE (Ctrl+O)
+    OPEN FILE
   </div>
   <div class="debugger-window">
     <div class="stacks-container">
@@ -21,15 +22,22 @@
     <div class="button-container">
       <button class="debugger-button" id="play-normal" onclick="rodarCodigo()"><i class="fas fa-play"></i> Run</button>
       <button class="debugger-button" id="play-debbug"><i class="fas fa-bug"></i> Debug</button>
-      <button class="debugger-button" id="step-line"><i class="fas fa-step-forward"></i> Step</button>
+      <button class="debugger-button" id="step-line"><i class="fas fa-shoe-prints"></i> Step</button>
       <button class="debugger-button" id="continue"><i class="fas fa-arrow-down"></i> Continue</button>
-      <button id="button" onclick="openFile()">Open File</button>
+    </div>
+    <div class="status-button">
+        <button class="debugger-button" id="button" onclick="openFile()"><i class="fas fa-file-archive"></i> Open File</button>
+        <button class="debugger-button" id="button" onclick="reset()"><i class="fas fa-power-off"></i> Reset</button>
     </div>
   </div>
   <div class="io-window">
     <div class="output-container">
-      <span class="output-label">Output: </span>
-      <input type="text" name="output" id="output" disabled="true" class="output-fild">
+      <div class="output-container-div">
+          <span class="output-label"> Output<br>History</span>
+      </div>
+      <div>
+          <textarea name="output" id="output" disabled="true" class="output-window"></textarea>
+      </div>
     </div>
   </div>
 </body>

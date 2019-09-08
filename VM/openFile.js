@@ -8,7 +8,6 @@ function openFile(){
     input.type = 'file';
 
     input.onchange = e => { 
-
         // getting a hold of the file reference
         var file = e.target.files[0]; 
      
@@ -17,21 +16,17 @@ function openFile(){
         reader.readAsText(file,'UTF-8');
      
         // here we tell the reader what to do when it's done reading...
-        reader.onload = readerEvent => {
+        reader.onload = readerEvent => 
+        {
            var content = readerEvent.target.result; // this is the content!
            montarTexto(content);
         }
-     
      }
-
     input.click();
-
-
 }
 
-function montarTexto(code)                              /* Recebe o conteudo do arquivo (parametro code) e o trata nessa arrow function (Callback) */
+function montarTexto(code)                          /* Recebe o conteudo do arquivo (parametro code) e o trata nessa arrow function (Callback) */
 {
-  console.log(code);         
   const lines = code.split("\n");                   /* Quebra o conteudo do arquivo em linhas separadas a partir do \n */
   div = document.querySelector(".code-window");     /* Instanciacao do objeto que recebera o conteudo do arquivo - div onde irá aparecer o codigo bruto */
   div.innerHTML = "";                               /* Limpando o conteudo do objeto antes de carregar o codigo nesse objeto */
@@ -39,7 +34,7 @@ function montarTexto(code)                              /* Recebe o conteudo do 
   ol.classList.add("code-list");                    /* Adiciona uma classe no objeto HTML para o funcionamento do CSS */
   div.appendChild(ol)                               /* Adiciona a lista ordenada na div para exibir o codigo obj */
   let numLinha = 1                                  /* Inicia contagem da linha de texto como 1 */
-  lines.forEach((line, index, array) =>                             /* Para cada linha do codigo */
+  lines.forEach((line, index, array) =>             /* Para cada linha do codigo */
   {
     /* Cria o dicionário de Labels */
     if (line.includes('NULL'))                      /* Se existe o parametro NULL, eh label */
