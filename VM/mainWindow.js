@@ -4,6 +4,14 @@ let stackPointer;   /* Ponteiro da região de STACK (stackPointer = s) */
 let pc = 0;         /* Program Counter */
 
 /**
+ * Função executada para reiniciar a execucao da VM
+ */
+function reset()
+{
+  window.location.reload(true); 
+}
+
+/**
  * Função executada quando clicar no botão PLAY
  */
 function rodarCodigo() 

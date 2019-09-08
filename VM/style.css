@@ -84,8 +84,20 @@ body {
 .debugger-window .button-container {
   display:flex;
   justify-content: space-between;
-  height: 20%;
+  height: 7%;
   padding: 10px;
+  background-color:#7892c2;
+}
+
+.status-button {
+  height: 100%;
+}
+.status-button {
+  display:flex;
+  justify-content: space-between;
+  height: 10%;
+  padding: 10px;
+  background-color:#7892c2;
 }
 
 .debugger-button {

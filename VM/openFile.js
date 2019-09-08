@@ -35,7 +35,7 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
   ol.classList.add("code-list");                    /* Adiciona uma classe no objeto HTML para o funcionamento do CSS */
   div.appendChild(ol)                               /* Adiciona a lista ordenada na div para exibir o codigo obj */
   let numLinha = 1                                  /* Inicia contagem da linha de texto como 1 */
-  lines.forEach((line, index, array) =>                             /* Para cada linha do codigo */
+  lines.forEach((line, index, array) =>             /* Para cada linha do codigo */
   {
     /* Cria o dicionário de Labels */
     if (line.includes('NULL'))                      /* Se existe o parametro NULL, eh label */
