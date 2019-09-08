@@ -15,9 +15,7 @@ function reset()
  * Função executada quando clicar no botão PLAY
  */
 function rodarCodigo() 
-{
-  let count = 0;
- 
+{ 
   while(pc < codigo.length)                             /* Para cada linha do codigo */
   {
     let line = codigo[pc]
@@ -48,8 +46,8 @@ function rodarCodigo()
         /* Garante que o popup só pegara numeros inteiros */
         do
         {
-          var answer = parseInt(prompt("Digite o valor de INPUT: "))                 /* Abre um pop up para inserir o dado */
-        }while(isNaN(answer));
+          var answer = parseInt(prompt("Digite o valor de INPUT: "))  /* Abre um pop up para inserir o dado */
+        }while(isNaN(answer));                                        /* Garante que o dado sempre será um numero inteiro */
 
         if(answer != "")                                /* Se o dado inserido não for vazio (ou seja, inseriu algo valido *****TRATAR NUMEROS*****) */
         {
@@ -63,7 +61,6 @@ function rodarCodigo()
     }
     pc++;                                               /* Incrementa o valor de PC a cada instrução */
     console.log("***********************")
-    count++
     linha.classList.remove("highlight");
   }
 }
