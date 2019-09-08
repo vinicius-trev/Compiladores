@@ -37,7 +37,7 @@ body {
   overflow-x: scroll;
 }
 .code-window ol {
-  margin-left: 30px;
+  margin-left: 10px;
   list-style: none;
 }
 
@@ -58,6 +58,10 @@ body {
 
 .select{
   color: rgba(206, 111, 111, 0.867);
+}
+
+.select-trans{
+  color: rgba(255, 255, 255, 0);
 }
 
 .code-window ol li .line-div{

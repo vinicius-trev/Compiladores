@@ -1,6 +1,7 @@
 /* Variáveis Globais da VM */
 let codigo = [];    /* Variavel onde em cada posicao representa uma linha do codigo */
 let tabela = {};    /* Tabela labels x linha do codigo, utilizada para jumps */
+let breakpoints = {};
 
 /* Render Code Window ->> Handler ativado quando importar o código OBJ/TXT */
 function openFile(){
@@ -36,6 +37,8 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
   let numLinha = 1                                  /* Inicia contagem da linha de texto como 1 */
   lines.forEach((line, index, array) =>             /* Para cada linha do codigo */
   {
+    let clickou = false;
+
     /* Cria o dicionário de Labels */
     if (line.includes('NULL'))                      /* Se existe o parametro NULL, eh label */
     {    
@@ -61,20 +64,46 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
     divLine.classList.add("line-div")               /* Adiciona uma classe ao CSS para modificar o style de onde irá ficar o texto */
 
     /*
-     * Escrevedo o número da linha e o conteudo de cada uma delas (codigo)
+     * Escrevedo o botão, número da linha e o conteudo de cada uma delas (codigo)
     **/
-    const breakButton = document.createElement("BUTTON")
-    breakButton.onclick = apertouBreakpoint(breakButton);
-    breakButton.onfocus = cimaBreakpoint(breakButton);
 
+    /* BOTÃO */
+    const breakButton = document.createElement("button");
+    breakButton.setAttribute("id", "break-"+index);
+    breakButton.innerHTML = "<i class='fas fa-circle select-trans'></i>";
+    breakButton.addEventListener("click",function()
+    {
+      numLinha = this.id.split("-")[1];
+      if(clickou === false)
+      {
+        /* insere tabela o numero da linha */
+        breakpoints[numLinha] = true;
+        breakButton.innerHTML = "<i class='fas fa-circle break-div'></i>"
+        clickou = true;
+      } 
+      else
+      {
+        /* remove tabela  */
+        breakpoints[numLinha] = false;
+        breakButton.innerHTML = "<i class='fas fa-circle select-trans'></i>";
+        clickou = false;
+      }  
+    });
+    divBreak.appendChild(breakButton);
+
+    /* NUMERO LINHA */
     const numText = document.createTextNode(numLinha) /* Cria um const (variavel) para armazenar o numero da linha */
     divNumber.appendChild(numText)                    /* Escreve na divNumber o numero da linha */
 
+    /* CODIGO */
     const lineText = document.createTextNode(line)    /* Cria um const (variavel) para armazenar o código (linha a linha) */
     divLine.appendChild(lineText)                     /* Escreve na divLine o código */
 
+    breakpoints[numLinha-1] = false;                  /* Armazena onde tem breakpoints */
+
     numLinha++;                                       /* Incrementa o número da linha */
 
+    li.appendChild(divBreak);
     li.appendChild(divNumber);                        /* Insere a div de número de linha na lista de itens */
     li.appendChild(divLine);                          /* Insere a div de código na lista de itens */
 
@@ -84,15 +113,3 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
   });
 }
 /* Aqui finaliza o import do código texto */
-
-function apertouBreakpoint(breakButton)
-{
-  breakButton.innerHTML = "<i class='fas fa-circle break-div'></i>"
-  console.log("clickou")
-}
-
-function cimaBreakpoint(breakButton)
-{
-  breakButton.innerHTML = "<i class='fas fa-circle select'></i>"
-  console.log("mouse cima")
-}

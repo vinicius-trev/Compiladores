@@ -105,20 +105,17 @@ function ativarDebug()
 function setStep()
 {
   step = true;   /*  */
-  rodarCodigo();
+  //rodarCodigo();
 }
 
 function checkFlag() 
 {
-  console.log("entrei")
   if(step === false) 
   {
-    console.log("if")
      window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
   } 
   else 
   {
-    console.log("Sai");
     step = false;    
     return;
   }
