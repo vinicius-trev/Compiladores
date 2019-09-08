@@ -16,12 +16,12 @@
     OPEN FILE
   </div>
   <div class="debugger-window">
-    <div class="stacks-container">
+    <div id="stack-window" class="stacks-container">
 
     </div>
     <div class="button-container">
       <button class="debugger-button" id="play-normal" onclick="rodarCodigo()"><i class="fas fa-play"></i> Run</button>
-      <button class="debugger-button" id="play-debbug"><i class="fas fa-bug"></i> Debug</button>
+      <button class="debugger-button" id="play-debbug" onclick="ativarDebug()"><i class="fas fa-bug"></i> Debug</button>
       <button class="debugger-button" id="step-line"><i class="fas fa-shoe-prints"></i> Step</button>
       <button class="debugger-button" id="continue"><i class="fas fa-arrow-down"></i> Continue</button>
     </div>

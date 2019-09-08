@@ -16,6 +16,7 @@ function reset()
  */
 function rodarCodigo() 
 { 
+  let stackWindow = document.getElementById("stack-window");
   while(pc < codigo.length)                             /* Para cada linha do codigo */
   {
     let line = codigo[pc]
@@ -56,11 +57,26 @@ function rodarCodigo()
       }
       else
       {
-        instrucoes[funcao](...elementos)                /* Caso a função NÃO FOR READ, executa ela normal passando os argumentos */
+        if(funcao === "HLT") 
+          return
+        else
+          instrucoes[funcao](...elementos)                /* Caso a função NÃO FOR READ, executa ela normal passando os argumentos */
       }
     }
+
+    stackWindow.innerHTML += "Memoria: " + memoria;
+    stackWindow.innerHTML += `<br>`;
+    stackWindow.innerHTML += "SP: " + stackPointer;
+    stackWindow.innerHTML += `<br>`;
+    stackWindow.innerHTML += "PC: " + pc;
+    stackWindow.innerHTML += `<br>`;
+    stackWindow.innerHTML += `---------------------------`;
+    // console.log("Memoria: " + memoria)
+    // console.log("SP: " + stackPointer)
+    // console.log("PC: " + pc)
+
     pc++;                                               /* Incrementa o valor de PC a cada instrução */
-    console.log("***********************")
+    // console.log("***********************")
     linha.classList.remove("highlight");
   }
 }
