@@ -34,7 +34,7 @@ function rodarCodigo()
     {
       linhaAnterior.classList.remove("highlight");      /* Remove o highlight da linha */
       linha.classList.add("highlight");                 /* Aplica a classe highlight a linha que esta sendo executada */
-      if(breakpoints[pc] == true)
+      if(breakpoints[pc] == true) /************** EDITAR AQUIIIIIII *************** */
       {
         if(step == false)
         {
