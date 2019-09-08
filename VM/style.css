@@ -112,6 +112,7 @@ textarea {
 .io-window div input {
   height: 60px;
   width: 90%;
+  overflow-x: scroll;
 }
 .debugger-window {
   grid-area: debugger;
