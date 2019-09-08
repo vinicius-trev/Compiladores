@@ -17,21 +17,17 @@ function openFile(){
         reader.readAsText(file,'UTF-8');
      
         // here we tell the reader what to do when it's done reading...
-        reader.onload = readerEvent => {
+        reader.onload = readerEvent => 
+        {
            var content = readerEvent.target.result; // this is the content!
            montarTexto(content);
         }
-     
      }
-
     input.click();
-
-
 }
 
-function montarTexto(code)                              /* Recebe o conteudo do arquivo (parametro code) e o trata nessa arrow function (Callback) */
+function montarTexto(code)                          /* Recebe o conteudo do arquivo (parametro code) e o trata nessa arrow function (Callback) */
 {
-  console.log(code);         
   const lines = code.split("\n");                   /* Quebra o conteudo do arquivo em linhas separadas a partir do \n */
   div = document.querySelector(".code-window");     /* Instanciacao do objeto que recebera o conteudo do arquivo - div onde irá aparecer o codigo bruto */
   div.innerHTML = "";                               /* Limpando o conteudo do objeto antes de carregar o codigo nesse objeto */

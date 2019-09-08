@@ -11,9 +11,9 @@
  * e o valor do STACKPOINTER (HIGHLIGHTED).
  */
 
-export let instrucoes = {
+ let instrucoes = {
   "LDC": (k) => {   /* Load Constant */
-    stackPointer = stackPointer + 1                                        /* Incrementa o ponteiro de pilha (proxima posição de memoria) */
+    stackPointer = stackPointer + 1                                               /* Incrementa o ponteiro de pilha (proxima posição de memoria) */
     memoria[stackPointer] = k                                                     /* Insere a constante na pilha recebida como parametro (k) */
     console.log("Memoria: " + memoria)
     console.log("SP: " + stackPointer)
@@ -192,7 +192,7 @@ export let instrucoes = {
       pc = t                                                                     /* Salva o endereço "t" como proxima instrução (PC) */
     }
     else {
-      pc = pc                                                              /* Caso não atenda a condição aponta para proxima instrução e NAO DESVIA */
+      pc = pc                                                                    /* Caso não atenda a condição aponta para proxima instrução e NAO DESVIA */
     }
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
     console.log("Memoria: " + memoria)
@@ -253,5 +253,4 @@ export let instrucoes = {
     console.log("SP: " + stackPointer)
     console.log("PC: " + pc)
   },
-
 };
