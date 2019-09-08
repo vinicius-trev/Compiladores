@@ -8,7 +8,6 @@ function openFile(){
     input.type = 'file';
 
     input.onchange = e => { 
-
         // getting a hold of the file reference
         var file = e.target.files[0]; 
      
