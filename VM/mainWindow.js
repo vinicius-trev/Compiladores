@@ -27,21 +27,25 @@ function rodarCodigo()
     let elementos = line.trim().split(" ")              /* Remove os espacos extras do fim e começo e quebra a linha a cada espaco armanzenando cada elemento na variavel elemento*/
     let funcao = elementos.shift()                      /* Recupera e remove o primeiro elemento da linha (instrução ou label) */
     let linhaAnterior = document.getElementById("line-"+pcAnterior);
-    let linha = document.getElementById("line-"+pc)       /* Pega o objeto que representa a linha que esta sendo executada */
+    let linha = document.getElementById("line-"+pc)     /* Pega o objeto que representa a linha que esta sendo executada */
     pcAnterior = pc;
 
     if(debugFlag == 1)                                  /* Se a flag de debug for igual a 1, indica que o código esta sendo executado com a opção de debug */
     {
-      linhaAnterior.classList.remove("highlight");                /* Remove o highlight da linha */
-      linha.classList.add("highlight");                   /* Aplica a classe highlight a linha que esta sendo executada */
-      if(step == false)
+      linhaAnterior.classList.remove("highlight");      /* Remove o highlight da linha */
+      linha.classList.add("highlight");                 /* Aplica a classe highlight a linha que esta sendo executada */
+      if(breakpoints[pc] == true)
       {
-        return;
+        if(step == false)
+        {
+          return;
+        }
+        else
+        {
+          step = false;
+        }
       }
-      else
-      {
-        step = false;
-      }
+      console.log(step);
     }
 
     elementos.forEach((e, index, arr) =>                /* Para cada elemento restante, ou seja, argumentos ou a instrução NULL */
@@ -104,8 +108,14 @@ function ativarDebug()
 
 function setStep()
 {
-  step = true;   /*  */
-  //rodarCodigo();
+  step = true; 
+  rodarCodigo();
+}
+
+function setContinue()
+{
+  step = false;
+  rodarCodigo();
 }
 
 function checkFlag() 

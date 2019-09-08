@@ -17,7 +17,6 @@
     memoria[stackPointer] = k                                                     /* Insere a constante na pilha recebida como parametro (k) */
   },
   "LDV": (n) => {   /* Load Value */
-    console.log("LDV")
     stackPointer = stackPointer + 1                                               /* Incrementa o ponteiro da pilha (proxima posição de memória) */
     memoria[stackPointer] = memoria[n]                                            /* Insere o valor recebido (parametro n) na pilha */
   },
