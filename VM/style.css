@@ -130,9 +130,19 @@ textarea {
   position: relative;
   /* top: 1%; */
 }
-.debugger-window .stacks-container {
+
+.stack{
   height: 100%;
+  width: 100%;
+  position: relative;
+  top: -2%;
+  background-color: white;
+  font-family:Courier New;
+	font-size:14px;
+  padding:10px 11px;
+  border: 1px solid black;
 }
+
 .debugger-window .button-container {
   display:flex;
   justify-content: space-between;
