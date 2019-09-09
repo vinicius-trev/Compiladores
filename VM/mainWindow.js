@@ -5,6 +5,7 @@ let pc = 0;         /* Program Counter */
 let pcAnterior = 0;
 let debugFlag = 0;
 let step = false;
+let statusBreakpoint = 0
 
 
 /**
@@ -34,9 +35,14 @@ function rodarCodigo()
     {
       linhaAnterior.classList.remove("highlight");      /* Remove o highlight da linha */
       linha.classList.add("highlight");                 /* Aplica a classe highlight a linha que esta sendo executada */
-      if(breakpoints[pc] == true) /************** EDITAR AQUIIIIIII *************** */
+      if(breakpoints[pc] == true)                       /* Se existir um breakpoint ativo */
       {
-        if(step == false)
+       statusBreakpoint = 1;                            /* Ativa a flag para execução com breakpoint */
+      }
+
+      if(statusBreakpoint == 1)                         /* Caso a flag de breakpoint ainda estiver ativa, continua com o step */
+      {
+        if(step == false)                               /* Após executar a instrução parada sai do while */
         {
           return;
         }
@@ -45,7 +51,6 @@ function rodarCodigo()
           step = false;
         }
       }
-      console.log(step);
     }
 
     elementos.forEach((e, index, arr) =>                /* Para cada elemento restante, ou seja, argumentos ou a instrução NULL */
@@ -100,33 +105,21 @@ function rodarCodigo()
   }
 }
 
-function ativarDebug()
+function ativarDebug()  /* Acionada quando clicar no botão de debug */
 {
   debugFlag = 1;  /* Quando executar o código com a opção debug, seta a variavel global para 1 */
   rodarCodigo();  /* E roda o código */
 }
 
-function setStep()
+function setStep()     /* Acionada quando clicar no botão de step */
 {
-  step = true; 
-  rodarCodigo();
+  step = true;    /* Avisa que o step esta ativo */
+  rodarCodigo();  /* Executa o código */
 }
 
-function setContinue()
+function setContinue() /* Acionada quando clicar no botão de continue */
 {
-  step = false;
-  rodarCodigo();
-}
-
-function checkFlag() 
-{
-  if(step === false) 
-  {
-     window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
-  } 
-  else 
-  {
-    step = false;    
-    return;
-  }
+  step = false;           /* Desativa o modo step */
+  statusBreakpoint = 0;   /* Desativa o modo breakpoint */
+  rodarCodigo();          /* E roda o código */
 }
