@@ -37,7 +37,7 @@ body {
   overflow-x: scroll;
 }
 .code-window ol {
-  margin-left: 30px;
+  margin-left: 10px;
   list-style: none;
 }
 
@@ -50,6 +50,18 @@ body {
   width: 35px;
   margin-right: 5px;
   background: rgba(187, 187, 187, 0.867);
+}
+
+.break-div{
+  color: red;
+}
+
+.select{
+  color: rgba(206, 111, 111, 0.867);
+}
+
+.select-trans{
+  color: rgba(255, 255, 255, 0);
 }
 
 .code-window ol li .line-div{
@@ -120,11 +132,20 @@ textarea {
   flex-direction: column;
   margin: 5%;
   position: relative;
-  /* top: 1%; */
 }
-.debugger-window .stacks-container {
+
+.stack{
   height: 100%;
+  width: 100%;
+  position: relative;
+  top: -2%;
+  background-color: white;
+  font-family:Courier New;
+	font-size:14px;
+  padding:10px 11px;
+  border: 1px solid black;
 }
+
 .debugger-window .button-container {
   display:flex;
   justify-content: space-between;

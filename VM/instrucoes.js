@@ -151,13 +151,15 @@
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
   },
   "ALLOC": (m, n) => {  /* Alocar Memória de tamanho 'n' */
-    for (let k = 0; k < n; k++) {                                                /* Realiza o processo de ALLOC "n" VEZES */
+    for (let k = 0; k < n; k++) 
+    {                                                                            /* Realiza o processo de ALLOC "n" VEZES */
       stackPointer = stackPointer + 1                                            /* Incrementa o stackPointer */
       memoria[stackPointer] = memoria[m + k]
     }
   },
   "DALLOC": (m, n) => { /* Desalocar Memória de tamanho 'n' */
-    for (let k = n - 1; k >= 0; k--) {                                           /* Realiza o processo de DESALOCAR "n" VEZES */
+    for (let k = n - 1; k >= 0; k--) 
+    {                                                                            /* Realiza o processo de DESALOCAR "n" VEZES */
       memoria[m + k] = memoria[stackPointer]
       stackPointer = stackPointer - 1                                            /* Decrementa o stackPointer */
     }
