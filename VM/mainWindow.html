@@ -1,3 +1,10 @@
+<!-- 
+ * Máquina Virtual - Front End
+ * Bruno Vicente Donaio Kitaka - 16156341
+ * João Pedro Porta - 16039778
+ * Vinicius Trevisan - 16011231
+ -->
+
 <!DOCTYPE html>
 <html>
 
@@ -20,21 +27,24 @@
     <div class="button-container">
       <button class="debugger-button" id="play-normal" onclick="rodarCodigo()"><i class="fas fa-play"></i> Run</button>
       <button class="debugger-button" id="play-debbug" onclick="ativarDebug()"><i class="fas fa-bug"></i> Debug</button>
-      <button class="debugger-button" id="step-line" onclick="setStep()"><i class="fas fa-shoe-prints"></i> Step</button>
-      <button class="debugger-button" id="continue" onclick="setContinue()" ><i class="fas fa-arrow-down"></i> Continue</button>
+      <button class="debugger-button" id="step-line" onclick="setStep()"><i class="fas fa-shoe-prints"></i>
+        Step</button>
+      <button class="debugger-button" id="continue" onclick="setContinue()"><i class="fas fa-arrow-down"></i>
+        Continue</button>
     </div>
     <div class="status-button">
-        <button class="debugger-button" id="button" onclick="openFile()"><i class="fas fa-file-archive"></i> Open File</button>
-        <button class="debugger-button" id="button" onclick="reset()"><i class="fas fa-power-off"></i> Reset</button>
+      <button class="debugger-button" id="button" onclick="openFile()"><i class="fas fa-file-archive"></i> Open
+        File</button>
+      <button class="debugger-button" id="button" onclick="reset()"><i class="fas fa-power-off"></i> Reset</button>
     </div>
   </div>
   <div class="io-window">
     <div class="output-container">
       <div class="output-container-div">
-          <span class="output-label"> Output<br>History</span>
+        <span class="output-label"> Output<br>History</span>
       </div>
       <div>
-          <textarea name="output" id="output" disabled="true" class="output-window"></textarea>
+        <textarea name="output" id="output" disabled="true" class="output-window"></textarea>
       </div>
     </div>
   </div>
