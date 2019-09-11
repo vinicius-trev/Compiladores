@@ -13,41 +13,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>GUI</title>
+    <script type="text/javascript" src="Lexico/mainLexico.js"></script>
+    <script type="text/javascript" src="Lexico/funcoesTratamento.js"></script>
+    <title>Compilador</title>
     <style>
-        * {
+        html {
             padding: 0;
             margin: 0;
-            display: inline-block;
+            display: flexbox;
         }
 
         body {
             background-color: #192c46;
         }
 
-        .container .code {
-            height: 80%;
+        .container.code {
+            height: 78vh;
             width: 100%;
             background-color: #cccccc;
             color: #000;
+            border: 2px solid rgb(160, 156, 156);
         }
 
-        .container .console {
-            height: 20%;
+        .container.console {
+            height: 18vh;
             width: 100%;
-            background-color: #000;
+            background-color: #000000;
             color: #fff;
+            border: 2px solid rgb(160, 156, 156);
+        }
+
+        .caixa-codigo {
+            height: 100%;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0);
+
         }
     </style>
 </head>
 
 <body>
     <div class="container code">
-
+        <textarea class="caixa-codigo"></textarea>
     </div>
     <div class="container console">
-
     </div>
+
+    <script type="text/javascript">
+        function KeyPress(e) {
+            var evtobj = window.event ? event : e
+            if ((event.ctrlKey || event.metaKey) && event.which == 66) {
+                alert('FOI')
+                event.preventDefault()
+            }
+        }
+
+        document.onkeydown = KeyPress
+    </script>
 </body>
 
 </html>

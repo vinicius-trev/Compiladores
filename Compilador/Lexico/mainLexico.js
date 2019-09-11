@@ -13,4 +13,55 @@ class Token {
     }
 }
 
-let arrayToken = []
+let arrayToken = new Array(); /* para inserir objetos no arrray arrayToken.push(new Object()) */
+let caracter;
+let numLinha;
+let pattern_Digito = /[0-9]/g
+let pattern_Letra = /[a-zA-Z]/g
+let pattern_opAritmetico = /\+|-|\*/g
+let pattern_opRelacional = /<|>|=|!/g
+let pattern_pontuacao = /;|,|\(|\)|./g
+
+function lerCaracter() {
+    /* Essa função irá ler um caracter do arquivo e armazenar na variavel caracter */
+    /* Também irá atualizar a variavel numLinha */
+}
+
+function analisadorLexical() {
+    /* Função que ira ler caracter por caracter do arquivo fonte */
+    /* Ira remover todos os comentario, espaços tabulaçoes e quebra de linha */
+
+}
+
+function pegaToken() {
+    /* Tratando digitos numéricos */
+    if (pattern_Digito.test(caracter) === true) {
+        tratarDigito();
+    }
+    /* Tratando identificadores e palavras reservadas */
+    else if (pattern_Letra.test(caracter) === true) {
+        tratarIdentificadorPalavraReservada();
+    }
+    /* Tratando atribuição */
+    else if (caracter === ":") {
+        tratarAtribuicao();
+    }
+    /* Tratando operador aritimérico */
+    else if (pattern_opAritmetico.test(caracter) === true) {
+        tratarOperadorAritmetico();
+    }
+    /* Tratando operador Relacional */
+    else if (pattern_opRelacional.test(caracter) === true) {
+        tratarOperadorRelacional();
+    }
+    /* Tratando pontuação */
+    else if (pattern_pontuacao.test(caracter) === true) {
+        tratarPontuação();
+    }
+    else {
+        /* Caracter não pertence a linguagem */
+        /* Imprimir ERRO no FE, o caracter encontrado e o número da linha(X) */
+        /* Erro[X]: Caracter Y não pertence a gramática */
+    }
+
+}

@@ -130,7 +130,7 @@ textarea {
   grid-area: debugger;
   display: flex;
   flex-direction: column;
-  margin: 5%;
+  margin: 10%;
   position: relative;
 }
 
