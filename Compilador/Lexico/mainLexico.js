@@ -15,6 +15,17 @@ class Token {
 
 let arrayToken = new Array(); /* para inserir objetos no arrray arrayToken.push(new Object()) */
 let caracter;
+let numLinha;
+let pattern_Digito = /[0-9]/g
+let pattern_Letra = /[a-zA-Z]/g
+let pattern_opAritmetico = /\+|-|\*/g
+let pattern_opRelacional = /<|>|=|!/g
+let pattern_pontuacao = /;|,|\(|\)|./g
+
+function lerCaracter() {
+    /* Essa função irá ler um caracter do arquivo e armazenar na variavel caracter */
+    /* Também irá atualizar a variavel numLinha */
+}
 
 function analisadorLexical() {
     /* Função que ira ler caracter por caracter do arquivo fonte */
@@ -24,11 +35,11 @@ function analisadorLexical() {
 
 function pegaToken() {
     /* Tratando digitos numéricos */
-    if (caracter.test(/[0-9]/) === true) {
+    if (pattern_Digito.test(caracter) === true) {
         tratarDigito();
     }
     /* Tratando identificadores e palavras reservadas */
-    else if (caracter.test(/[a-zA-Z]/) === true) {
+    else if (pattern_Letra.test(caracter) === true) {
         tratarIdentificadorPalavraReservada();
     }
     /* Tratando atribuição */
@@ -36,20 +47,20 @@ function pegaToken() {
         tratarAtribuicao();
     }
     /* Tratando operador aritimérico */
-    else if (caracter.test([/\+|-|\*/]) === true) {
+    else if (pattern_opAritmetico.test(caracter) === true) {
         tratarOperadorAritmetico();
     }
     /* Tratando operador Relacional */
-    else if (caracter.test(/<|>|=|!/) === true) {
+    else if (pattern_opRelacional.test(caracter) === true) {
         tratarOperadorRelacional();
     }
     /* Tratando pontuação */
-    else if (caracter.test(/;|,|\(|\)|./) === true) {
+    else if (pattern_pontuacao.test(caracter) === true) {
         tratarPontuação();
     }
     else {
         /* Caracter não pertence a linguagem */
-        /* Imprimir ERRO, o caracter encontrado e o número da linha(X) */
+        /* Imprimir ERRO no FE, o caracter encontrado e o número da linha(X) */
         /* Erro[X]: Caracter Y não pertence a gramática */
     }
 
