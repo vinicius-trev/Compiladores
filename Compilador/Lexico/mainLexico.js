@@ -27,8 +27,31 @@ function lerCaracter() {
     /* Também irá atualizar a variavel numLinha */
 }
 
-function analisadorLexical() {
+function analisadorLexical(codigo) {
     /* Função que ira ler caracter por caracter do arquivo fonte */
+    lerCaracter()
+    while (codigo.length > 0)
+    {
+        while ((/{| |\n|\t/g.test(caracter)) && codigo.length > 0)
+        {
+            if(caracter === "{")
+            {
+                while((caracter != "}") && codigo.length > 0)
+                {
+                    lerCaracter();
+                } 
+                lerCaracter();
+            }
+            while((/{| |\n|\t/g.test(caracter)) && codigo.length > 0)
+            {
+                lerCaracter();
+            }
+        }
+        if(codigo.length != 0)
+        {
+            pegarToken();
+        }
+    }
     /* Ira remover todos os comentario, espaços tabulaçoes e quebra de linha */
 
 }
