@@ -15,6 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script type="text/javascript" src="Lexico/mainLexico.js"></script>
     <script type="text/javascript" src="Lexico/funcoesTratamento.js"></script>
+    <script type="text/javascript" src="Lexico/openFile.js"></script>
     <title>Compilador</title>
     <style>
         html {
@@ -49,6 +50,31 @@
             background-color: rgba(0, 0, 0, 0);
 
         }
+
+        .code{
+            overflow-x: scroll;
+        }
+
+        .code ol {
+        /* margin-left: 10px; */
+        list-style: none;
+        }
+
+        .code ol li {
+        display: flex;
+        justify-content: left;
+        }
+
+        .code ol li .line-div{
+            text-align: start;
+        }
+
+        .code ol li .number-div{
+            text-align: end;
+            width: 35px;
+            margin-right: 5px;
+            background: rgba(187, 187, 187, 0.867);
+        }
     </style>
 </head>
 
@@ -64,6 +90,10 @@
             var evtobj = window.event ? event : e
             if ((event.ctrlKey || event.metaKey) && event.which == 66) {
                 alert('FOI')
+                event.preventDefault()
+            }
+            if ((event.ctrlKey || event.metaKey) && event.which == 79) {
+                openFile()
                 event.preventDefault()
             }
         }
