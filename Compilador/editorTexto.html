@@ -26,6 +26,9 @@
 
         body {
             background-color: #192c46;
+            display: grid;
+            grid-template-rows: 1fr 15fr 6fr;
+            height: 100vh;
         }
 
         .container.code {
@@ -43,11 +46,21 @@
             color: #fff;
             border: 2px solid rgb(160, 156, 156);
         }
-
+        .container.code{
+            display: grid;
+            grid-template-columns: 1fr 30fr;
+        }
+        .numbers-line{
+            height: 100%;
+            width: 100%;
+            background-color: rgba(226, 226, 226, 0.74);
+            font-size: 2em;
+        }
         .caixa-codigo {
             height: 100%;
             width: 100%;
             background-color: rgba(0, 0, 0, 0);
+            font-size: 2em;
 
         }
 
@@ -79,26 +92,62 @@
 </head>
 
 <body>
+    <div class="container buttons">
+        <div class="abrir-arquivo button">
+            <button onclick="document.getElementById('file-input').click();">Abrir ( Crtl + O )</button>
+            <input id="file-input" type="file" accept='text/plain' name="name" onchange="lerArquivo(event)" style="display: none;" />
+        </div>
+        <div class="salvar-arquivo button">
+                <button onclick="document.getElementById('file-input').click();">Salvar ( Crtl + S )</button>
+                <input id="file-input2" type="file" name="name" style="display: none;" />
+        </div>
+        <div class="abrir-arquivo button">
+                <button onclick="document.getElementById('file-input').click();">Build ( Crtl + B )</button>
+        </div>
+    </div>
     <div class="container code">
+        <textarea class="numbers-line"></textarea>
         <textarea class="caixa-codigo"></textarea>
     </div>
     <div class="container console">
     </div>
-
     <script type="text/javascript">
+        let arquivo
         function KeyPress(e) {
             var evtobj = window.event ? event : e
+            // Build Crtl + B
             if ((event.ctrlKey || event.metaKey) && event.which == 66) {
                 alert('FOI')
                 event.preventDefault()
             }
+            // Abrir Arquivo Crtl + O
             if ((event.ctrlKey || event.metaKey) && event.which == 79) {
-                openFile()
+                document.getElementById('file-input').click()
+                event.preventDefault()
+            }// Salvar Arquivo Crtl + S
+            if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                alert('FOI')
                 event.preventDefault()
             }
         }
 
         document.onkeydown = KeyPress
+
+        
+        // Abrir Arquivo
+        function lerArquivo(e){
+            let file = e.target.files[0]
+            let reader = new FileReader()
+            reader.onload = () => {
+                arquivo = reader.result
+                caixaTexto = document.querySelector('.caixa-codigo')
+                codigo = document.createTextNode(arquivo)
+                caixaTexto.appendChild(codigo)
+
+            }
+            reader.readAsText(file);
+        }
+
     </script>
 </body>
 
