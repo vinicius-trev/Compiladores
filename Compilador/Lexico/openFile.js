@@ -1,3 +1,9 @@
+/* Compilador - Analisador Léxico
+ * Bruno Vicente Donaio Kitaka - 16156341
+ * João Pedro Porta - 16039778
+ * Vinicius Trevisan - 16011231
+ */
+
 let codigo = []; /* Variavel onde em cada posicao representa uma linha do codigo */
 
 let arquivo

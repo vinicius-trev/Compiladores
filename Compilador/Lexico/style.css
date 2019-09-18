@@ -1,3 +1,9 @@
+/* Compilador - Analisador Léxico
+ * Bruno Vicente Donaio Kitaka - 16156341
+ * João Pedro Porta - 16039778
+ * Vinicius Trevisan - 16011231
+ */
+ 
 html {
     padding: 0;
     margin: 0;
@@ -9,6 +15,18 @@ body {
     display: grid;
     grid-template-rows: 1fr 15fr 6fr;
     height: 100vh;
+}
+
+textarea {
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    resize: none; /remove the resize handle on the bottom right/
 }
 
 .container.code {

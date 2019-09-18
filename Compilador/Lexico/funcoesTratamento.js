@@ -1,3 +1,9 @@
+/* Compilador - Analisador Léxico
+ * Bruno Vicente Donaio Kitaka - 16156341
+ * João Pedro Porta - 16039778
+ * Vinicius Trevisan - 16011231
+ */
+
 /* Função responsável por tratar tokens que formam dígitos 0-9 */
 function tratarDigito() {
     let numero = "";
@@ -20,7 +26,7 @@ function tratarIdentificadorPalavraReservada() {
     id.concat(caracter);
     lerCaracter();
 
-    while (pattern_Letra.test(caracter) === true) {
+    while (pattern_Letra.test(caracter) === true || pattern_Digito.test(caracter) === true)  {
         id.concat(caracter);
         lerCaracter();
     }
@@ -32,22 +38,22 @@ function tratarIdentificadorPalavraReservada() {
         arrayToken.push(new Token(id, "sse", numLinha))
     }
     else if (id === "entao") {
-        arrayToken.push(new Token(id, "entao", numLinha))
+        arrayToken.push(new Token(id, "sentao", numLinha))
     }
     else if (id === "senao") {
-        arrayToken.push(new Token(id, "senao", numLinha))
+        arrayToken.push(new Token(id, "ssenao", numLinha))
     }
     else if (id === "enquanto") {
-        arrayToken.push(new Token(id, "enquanto", numLinha))
+        arrayToken.push(new Token(id, "senquanto", numLinha))
     }
     else if (id === "faca") {
-        arrayToken.push(new Token(id, "faca", numLinha))
+        arrayToken.push(new Token(id, "sfaca", numLinha))
     }
     else if (id === "inicio") {
-        arrayToken.push(new Token(id, "inicio", numLinha))
+        arrayToken.push(new Token(id, "sinicio", numLinha))
     }
     else if (id === "fim") {
-        arrayToken.push(new Token(id, "fim", numLinha))
+        arrayToken.push(new Token(id, "sfim", numLinha))
     }
     else if (id === "escreva") {
         arrayToken.push(new Token(id, "sse", numLinha))
