@@ -22,7 +22,6 @@ function KeyPress(e) {
 
 document.onkeydown = KeyPress
 
-
 // Abrir Arquivo
 function lerArquivo(e){
     let file = e.target.files[0]
