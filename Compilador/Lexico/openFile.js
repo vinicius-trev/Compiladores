@@ -1,5 +1,42 @@
 let codigo = []; /* Variavel onde em cada posicao representa uma linha do codigo */
 
+let arquivo
+
+function KeyPress(e) {
+    var evtobj = window.event ? event : e
+    // Build Crtl + B
+    if ((event.ctrlKey || event.metaKey) && event.which == 66) {
+        alert('FOI')
+        event.preventDefault()
+    }
+    // Abrir Arquivo Crtl + O
+    if ((event.ctrlKey || event.metaKey) && event.which == 79) {
+        document.getElementById('file-input').click()
+        event.preventDefault()
+    }// Salvar Arquivo Crtl + S
+    if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+        alert('FOI')
+        event.preventDefault()
+    }
+}
+
+document.onkeydown = KeyPress
+
+
+// Abrir Arquivo
+function lerArquivo(e){
+    let file = e.target.files[0]
+    let reader = new FileReader()
+    reader.onload = () => {
+        arquivo = reader.result
+        caixaTexto = document.querySelector('.caixa-codigo')
+        codigo = document.createTextNode(arquivo)
+        caixaTexto.appendChild(codigo)
+
+    }
+    reader.readAsText(file);
+}
+
 /* Render Code Window ->> Handler ativado quando importar o código OBJ/TXT */
 function openFile() {
     var input = document.createElement('input');
