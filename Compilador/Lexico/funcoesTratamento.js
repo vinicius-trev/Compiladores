@@ -6,13 +6,14 @@
 
 /* Função responsável por tratar tokens que formam dígitos 0-9 */
 function tratarDigito() {
+    console.log("tratarDigito")
     let numero = "";
 
-    numero.concat(caracter);
+    numero = numero.concat(caracter);
     lerCaracter();
 
-    while (pattern_Digito.test(caracter) === true) {
-        numero.concat(caracter);
+    while (/[0-9]/g.test(caracter) === true) {
+        numero = numero.concat(caracter);
         lerCaracter();
     }
 
@@ -21,13 +22,15 @@ function tratarDigito() {
 
 /* Função responsável por tratar tokens que formam identificadores e palavras reservadas a-Z considerando _ */
 function tratarIdentificadorPalavraReservada() {
+    console.log("tratarIdentificadorPalavraReservada")
+
     let id = "";
 
-    id.concat(caracter);
+    id = id.concat(caracter);
     lerCaracter();
 
-    while (pattern_Letra.test(caracter) === true || pattern_Digito.test(caracter) === true)  {
-        id.concat(caracter);
+    while (/[A-Za-z]/g.test(caracter) === true || /[0-9]/g.test(caracter) === true)  {
+        id = id.concat(caracter);
         lerCaracter();
     }
 
@@ -101,14 +104,17 @@ function tratarIdentificadorPalavraReservada() {
 
 /* Função responsável por tratar tokens que formam simbolos de atribuição : := */
 function tratarAtribuicao() {
+    console.log("tratarAtribuicao")
+
     let atribuicao = "";
 
-    atribuicao.concat(caracter);
+    atribuicao = atribuicao.concat(caracter);
     lerCaracter();
 
     if (caracter === "=") {
-        atribuicao.concat(caracter);
+        atribuicao = atribuicao.concat(caracter);
         arrayToken.push(new Token(atribuicao, "satribuicao", numLinha));
+        lerCaracter();
     }
     else {
         arrayToken.push(new Token(atribuicao, "sdoispontos", numLinha));
@@ -117,6 +123,8 @@ function tratarAtribuicao() {
 
 /* Função responsável por tratar tokens que formam operadores aritmeticos + - *  */
 function tratarOperadorAritmetico() {
+    console.log("tratarOperadorAritmetico")
+
     if (caracter === "+") {
         arrayToken.push(new Token("+", "smais", numLinha));
     }
@@ -126,53 +134,62 @@ function tratarOperadorAritmetico() {
     else if (caracter === "*") {
         arrayToken.push(new Token("*", "smult", numLinha));
     }
+    lerCaracter();
 }
 
 /* Função responsável por tratar tokens que formam operadores relacionais < <= > >= != */
 function tratarOperadorRelacional() {
-    let opRelacional;
+    console.log("tratarOperadorRelacional")
+
+    let opRelacional = "";
 
     if (caracter === ">") {
-        opRelacional.concat(caracter);
+        opRelacional = opRelacional.concat(caracter);
         lerCaracter();
 
         if (caracter === "=") {
-            opRelacional.concat(caracter);
+            opRelacional = opRelacional.concat(caracter);
             arrayToken.push(new Token(opRelacional, "smaiorig", numLinha));
+            lerCaracter();
         }
         else {
             arrayToken.push(new Token(opRelacional, "smaior", numLinha));
         }
     }
     else if (caracter === "<") {
-        opRelacional.concat(caracter);
+        opRelacional = opRelacional.concat(caracter);
         lerCaracter();
 
         if (caracter === "=") {
-            opRelacional.concat(caracter);
+            opRelacional = opRelacional.concat(caracter);
             arrayToken.push(new Token(opRelacional, "smenorig", numLinha));
+            lerCaracter();
         }
         else {
             arrayToken.push(new Token(opRelacional, "smenor", numLinha));
         }
     }
     else if (caracter === "!") {
-        opRelacional.concat(caracter);
+        opRelacional = opRelacional.concat(caracter);
         lerCaracter();
 
         if (caracter === "=") {
-            opRelacional.concar(caracter);
+            opRelacional = opRelacional.concat(caracter);
             arrayToken.push(new Token(opRelacional, "sdif", numLinha));
+            lerCaracter();
         }
     }
     else if (caracter === "=") {
-        opRelacional.concat(caracter);
+        opRelacional = opRelacional.concat(caracter);
         arrayToken.push(new Token(opRelacional, "sig", numLinha));
+        lerCaracter();
     }
 }
 
 /* Função responsável por tratar tokens que formam pontuação . , ; ( ) */
 function tratarPontuação() {
+    console.log("tratarPontuação")
+
     if (caracter === ".") {
         arrayToken.push(new Token(".", "sponto", numLinha));
     }
@@ -188,4 +205,5 @@ function tratarPontuação() {
     else if (caracter === ")") {
         arrayToken.push(new Token(")", "sfecha_parenteses", numLinha));
     }
+    lerCaracter();
 }

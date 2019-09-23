@@ -4,7 +4,7 @@
  * Vinicius Trevisan - 16011231
  */
 
-let codigo = []; /* Variavel onde em cada posicao representa uma linha do codigo */
+//let codigo = []; /* Variavel onde em cada posicao representa uma linha do codigo */
 let arquivo
 
 // Event bindings
