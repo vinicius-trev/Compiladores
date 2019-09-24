@@ -17,9 +17,10 @@ let arrayToken = new Array(); /* para inserir objetos no arrray arrayToken.push(
 let caracter;
 let numLinha;
 let erro;
+let count = 1;
 
 /* TESTE */
-let codigo = "{jkhkjhkjhkjhjkh}}\
+let codigo = "{jkhkjhkjhkjhjkh}\
 programa teste1;\
 var x, y: integer;\
 \
@@ -43,19 +44,20 @@ fim.  \
 \
 "
 
-analisadorLexical();
+// analisadorLexical();
 
 function lerCaracter() {
     /* Essa função irá ler um caracter do arquivo e armazenar na variavel caracter */
     /* Também irá atualizar a variavel numLinha */
     caracter = codigo.slice(0, 1)
     codigo = codigo.slice(1)
-    numLinha = 
+    numLinha = count;
 }
 
 function analisadorLexical() {
+    console.log(codigo);
+    codigo = codigo.concat(" ") /* Permite pegar o ultimo token */
     /* Função que ira ler caracter por caracter do arquivo fonte */
-    codigo = codigo.concat(" ") /* Permite pega o ultimo token */
     lerCaracter()
     while (codigo.length > 0 && erro != 1) {
         while ((/{| |\n|\t/g.test(caracter)) && codigo.length > 0) {
@@ -109,4 +111,13 @@ function pegaToken() {
         erro = 1;
         console.log("ERRO: Caractere " + caracter + " Não esperado");
     }
+
+    let consoleTerminal = document.getElementById("consoleTerminal");
+    consoleTerminal.innerHTML += `
+        <p>Lexema: "${arrayToken[arrayToken.length-1].lexema}", Identificador: "${arrayToken[arrayToken.length-1].identificador}" - Linha ${arrayToken[arrayToken.length-1].numLinha}</p>
+    `;
+}
+
+function build(){
+    analisadorLexical();
 }

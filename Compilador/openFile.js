@@ -4,7 +4,7 @@
  * Vinicius Trevisan - 16011231
  */
 
-//let codigo = []; /* Variavel onde em cada posicao representa uma linha do codigo */
+let codigo; /* Variavel onde em cada posicao representa uma linha do codigo */
 let arquivo
 
 // Event bindings
@@ -128,8 +128,9 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
 
         ol.appendChild(li);                               /* Insere a linha da lista de itens na lista ordenada (que contera o codigo inteiro) */
 
-        codigo.push(line);                                /* Armazenando o conteudo do arquivo em nossa variavel */
+        codigo.concat(line);                                /* Armazenando o conteudo do arquivo em nossa variavel */
     });
+    codigo = codigo.concat(" ") /* Permite pegar o ultimo token */
 }
 /* Aqui finaliza o import do código texto */
 

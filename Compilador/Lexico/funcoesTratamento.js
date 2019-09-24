@@ -16,7 +16,6 @@ function tratarDigito() {
         numero = numero.concat(caracter);
         lerCaracter();
     }
-
     arrayToken.push(new Token(+numero, "snúmero", numLinha));
 }
 
