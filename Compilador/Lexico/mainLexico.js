@@ -55,7 +55,8 @@ function lerCaracter() {
 }
 
 function analisadorLexical() {
-    console.log(codigo);
+    // console.log(typeof codigo);
+    codigo = codigo.toString();
     codigo = codigo.concat(" ") /* Permite pegar o ultimo token */
     /* Função que ira ler caracter por caracter do arquivo fonte */
     lerCaracter()
