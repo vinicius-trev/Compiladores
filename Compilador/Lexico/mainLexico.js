@@ -19,7 +19,7 @@ let numLinha;
 let erro;
 
 /* TESTE */
-let codigo = "\
+let codigo = "{jkhkjhkjhkjhjkh}}\
 programa teste1;\
 var x, y: integer;\
 \
@@ -33,7 +33,7 @@ var x, y: integer;\
         y:=y*z\
      fim ;\
 inicio\
-leia(x);\
+    leia(x);\
 p;  \
 escreva (y);\
 escreva (x)\
@@ -50,7 +50,7 @@ function lerCaracter() {
     /* Também irá atualizar a variavel numLinha */
     caracter = codigo.slice(0, 1)
     codigo = codigo.slice(1)
-    console.log("Char: "+caracter)
+    numLinha = 
 }
 
 function analisadorLexical() {
