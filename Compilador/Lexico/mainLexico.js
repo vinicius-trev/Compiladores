@@ -110,7 +110,12 @@ function pegaToken() {
         /* Imprimir ERRO no FE, o caracter encontrado e o número da linha(X) */
         /* Erro[X]: Caracter Y não pertence a gramática */
         erro = 1;
+        let consoleTerminal = document.getElementById("consoleTerminal");
+        consoleTerminal.innerHTML += `
+            <p>"ERRO: Caractere "${caracter}" Não esperado"</p>
+        `;
         console.log("ERRO: Caractere " + caracter + " Não esperado");
+
     }
 
     let consoleTerminal = document.getElementById("consoleTerminal");
