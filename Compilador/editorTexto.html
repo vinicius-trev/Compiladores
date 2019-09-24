@@ -26,7 +26,7 @@
     <div class="container buttons">
         <div class="abrir-arquivo button">
             <button onclick="document.getElementById('file-input').click();">Abrir (CTRL+O)</button>
-            <input id="file-input" type="file" accept='text/plain' name="name" onchange="lerArquivo(event)"
+            <input id="file-input" type="file" accept='text/plain' name="name" onchange="openFile()"
                 style="display: none;" />
         </div>
         <div class="salvar-arquivo button">

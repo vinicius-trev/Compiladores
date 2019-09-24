@@ -4,7 +4,7 @@
  * Vinicius Trevisan - 16011231
  */
 
-// let codigo = []; /* Variavel onde em cada posicao representa uma linha do codigo */
+let codigo = []; /* Variavel onde em cada posicao representa uma linha do codigo */
 let arquivo
 
 // Event bindings
@@ -83,12 +83,12 @@ function openFile() {
     input.click();
 }
 
-function montarTexto(code)                          /* Recebe o conteudo do arquivo (parametro code) e o trata nessa arrow function (Callback) */ {
+function montarTexto(code)                            /* Recebe o conteudo do arquivo (parametro code) e o trata nessa arrow function (Callback) */ {
     const lines = code.split("\n");                   /* Quebra o conteudo do arquivo em linhas separadas a partir do \n */
-    div = document.querySelector(".code");            /* Instanciacao do objeto que recebera o conteudo do arquivo - div onde irá aparecer o codigo bruto */
+    div = document.querySelector(".code");    /* Instanciacao do objeto que recebera o conteudo do arquivo - div onde irá aparecer o codigo bruto */
     div.innerHTML = "";                               /* Limpando o conteudo do objeto antes de carregar o codigo nesse objeto */
-    ol = document.createElement("ol")                 /* Cria uma lista ordenada (ol) para armazenar cada linha do código */
-    ol.classList.add("code-list");                    /* Adiciona uma classe no objeto HTML para o funcionamento do CSS */
+    ol = document.createElement("ul")                 /* Cria uma lista ordenada (ol) para armazenar cada linha do código */
+    // ol.classList.add("code-list");                    /* Adiciona uma classe no objeto HTML para o funcionamento do CSS */
     div.appendChild(ol)                               /* Adiciona a lista ordenada na div para exibir o codigo obj */
     let numLinha = 1                                  /* Inicia contagem da linha de texto como 1 */
     lines.forEach((line, index, array) =>             /* Para cada linha do codigo */ {
@@ -103,8 +103,8 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
 
         /* Cria uma div para cada linha (cada uma dessas divs é composta por uma região cinza - esquerda - e uma região branca - direita) */
 
-        const divNumber = document.createElement("div") /* Cria a barra lateral esquerda para exibir o número da linha */
-        divNumber.classList.add("number-div")           /* Adiciona uma classe ao CSS para modificar o style da barra criada acima */
+        // const divNumber = document.createElement("div") /* Cria a barra lateral esquerda para exibir o número da linha */
+        // divNumber.classList.add("number-div")           /* Adiciona uma classe ao CSS para modificar o style da barra criada acima */
 
         const divLine = document.createElement("div")   /* Cria a linha que sera exibido o código */
         divLine.classList.add("line-div")               /* Adiciona uma classe ao CSS para modificar o style de onde irá ficar o texto */
@@ -114,8 +114,8 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
         **/
 
         /* NUMERO LINHA */
-        const numText = document.createTextNode(numLinha) /* Cria um const (variavel) para armazenar o numero da linha */
-        divNumber.appendChild(numText)                    /* Escreve na divNumber o numero da linha */
+        // const numText = document.createTextNode(numLinha) /* Cria um const (variavel) para armazenar o numero da linha */
+        // divNumber.appendChild(numText)                    /* Escreve na divNumber o numero da linha */
 
         /* CODIGO */
         const lineText = document.createTextNode(line)    /* Cria um const (variavel) para armazenar o código (linha a linha) */
@@ -123,14 +123,15 @@ function montarTexto(code)                          /* Recebe o conteudo do arqu
 
         numLinha++;                                       /* Incrementa o número da linha */
 
-        li.appendChild(divNumber);                        /* Insere a div de número de linha na lista de itens */
+        // li.appendChild(divNumber);                        /* Insere a div de número de linha na lista de itens */
         li.appendChild(divLine);                          /* Insere a div de código na lista de itens */
 
         ol.appendChild(li);                               /* Insere a linha da lista de itens na lista ordenada (que contera o codigo inteiro) */
 
-        codigo.concat(line);                                /* Armazenando o conteudo do arquivo em nossa variavel */
+        codigo.push(line);                                /* Armazenando o conteudo do arquivo em nossa variavel */
     });
-    codigo = codigo.concat(" ") /* Permite pegar o ultimo token */
+
+    console.log(codigo);
 }
 /* Aqui finaliza o import do código texto */
 

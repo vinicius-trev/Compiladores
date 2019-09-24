@@ -104,21 +104,22 @@ textarea {
     overflow-x: scroll;
 }
 
-.code ol {
+.code ul {
 /* margin-left: 10px; */
 list-style: none;
+width: 200%;
 }
 
-.code ol li {
+.code ul li {
 display: flex;
 justify-content: left;
 }
 
-.code ol li .line-div{
+.code ul li .line-div{
     text-align: start;
 }
 
-.code ol li .number-div{
+.code ul li .number-div{
     text-align: end;
     width: 35px;
     margin-right: 5px;
