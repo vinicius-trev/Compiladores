@@ -154,7 +154,7 @@ function pegaToken() {
         erro = 1;
         let consoleTerminal = document.getElementById("consoleTerminal");
         consoleTerminal.innerHTML += `
-            <p style:"color:red;">ERRO: Caractere "${caracter}" Não esperado na linha ${linhaControle+1}</p>
+            <p style="color:red;">ERRO: Caractere "${caracter}" Não esperado na linha ${linhaControle+1}</p>
         `;
         // console.log("ERRO: Caractere " + caracter + " Não esperado");
 
