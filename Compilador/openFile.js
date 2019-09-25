@@ -30,7 +30,7 @@ function KeyPress(e) {
 
     /* Atalho para buildar o codigo (CTRL+B)  */
     if ((event.ctrlKey || event.metaKey) && event.which == 66) {
-        alert('FOI')
+        analisadorLexical()
         event.preventDefault()
     }
     /* Atalho para abrir um arquivo (CTRL+O)  */
@@ -40,11 +40,12 @@ function KeyPress(e) {
     }
     /* Atalho para salvar o codigo da janela de texto (CTRL+S)  */
     if ((event.ctrlKey || event.metaKey) && event.which == 83) {
-        alert('FOI')
+        
         event.preventDefault()
     }
     /* Atalho para recarregar a GUI do Compilador (CTRL+R)  */
     if ((event.ctrlKey || event.metaKey) && event.which == 82) {
+        reset()
         event.preventDefault()
     }
 }
