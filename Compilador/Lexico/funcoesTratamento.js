@@ -28,7 +28,7 @@ function tratarIdentificadorPalavraReservada() {
     id = id.concat(caracter);
     lerCaracter();
 
-    while (/[A-Za-z]/g.test(caracter) === true || /[0-9]/g.test(caracter) === true)  {
+    while (/[A-Za-z]/g.test(caracter) === true || /[0-9]/g.test(caracter) === true) {
         id = id.concat(caracter);
         lerCaracter();
     }
@@ -176,6 +176,10 @@ function tratarOperadorRelacional() {
             opRelacional = opRelacional.concat(caracter);
             arrayToken.push(new Token(opRelacional, "sdif", numLinha));
             lerCaracter();
+        }
+        else {
+            caracter = "!"
+            erro = 1;
         }
     }
     else if (caracter === "=") {

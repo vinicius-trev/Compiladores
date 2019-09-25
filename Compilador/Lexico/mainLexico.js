@@ -30,20 +30,16 @@ function lerCaracter() {
     // console.log("codigo.length: "+ codigo.length)
     // console.log("codigo[linhaControle].length: "+ codigo[linhaControle].length)
 
-    if(codigo[linhaControle])
-    {
-        if(codigo[linhaControle].length > 0)
-        {
+    if (codigo[linhaControle]) {
+        if (codigo[linhaControle].length > 0) {
             caracter = codigo[linhaControle].slice(0, 1)
             codigo[linhaControle] = codigo[linhaControle].slice(1)
             numLinha = linhaControle;
         }
     }
-    else if(linhaControle < codigo.length)
-    {
+    else if (linhaControle < codigo.length) {
         linhaControle++;
-        if(!caracter)
-        {
+        if (!caracter) {
             caracter = codigo[linhaControle].slice(0, 1)
             codigo[linhaControle] = codigo[linhaControle].slice(1)
             numLinha = linhaControle;
@@ -56,39 +52,30 @@ function analisadorLexical() {
 
     /* Função que ira ler caracter por caracter do arquivo fonte */
     lerCaracter()
-    while(linhaControle < codigo.length && erro != 1) 
-    {
+    while (linhaControle < codigo.length && erro != 1) {
         //console.log("A linha é " + codigo[linhaControle]);
-        while ((/{| |\n|\t/g.test(caracter)) && linhaControle < codigo.length) 
-        {
-            if (caracter === "{") 
-            {
-                while ((caracter != "}") && linhaControle < codigo.length) 
-                {
+        while ((/{| |\n|\t/g.test(caracter)) && linhaControle < codigo.length) {
+            if (caracter === "{") {
+                while ((caracter != "}") && linhaControle < codigo.length) {
                     lerCaracter();
                 }
                 lerCaracter();
             }
-            while ((/ |\n|\t/g.test(caracter)) && linhaControle < codigo.length) 
-            {
+            while ((/ |\n|\t/g.test(caracter)) && linhaControle < codigo.length) {
                 lerCaracter();
             }
         }
         //console.log("terminei de pegar e o tamanho da linha = " + codigo[numLinha].length);
-        if (codigo.length > 0 && linhaControle < codigo.length) 
-        {
+        if (codigo.length > 0 && linhaControle < codigo.length) {
             pegaToken();
         }
 
-        if(linhaControle < codigo.length)
-        {
-            if(codigo[linhaControle].length == 0)
-            {
+        if (linhaControle < codigo.length) {
+            if (codigo[linhaControle].length == 0) {
                 linhaControle++;
             }
         }
-        else
-        {
+        else {
             break;
         }
     }
@@ -120,6 +107,13 @@ function pegaToken() {
     else if (/;|,|\(|\)|\./g.test(caracter) === true) {
         tratarPontuação();
     }
+
+    if (!erro) {
+        let consoleTerminal = document.getElementById("consoleTerminal");
+        consoleTerminal.innerHTML += `
+            <p>Lexema: ${arrayToken[arrayToken.length - 1].lexema} - Identificador: ${arrayToken[arrayToken.length - 1].identificador} - Linha ${arrayToken[arrayToken.length - 1].numLinha + 1}</p>
+        `;
+    }
     else {
         /* Caracter não pertence a linguagem */
         /* Imprimir ERRO no FE, o caracter encontrado e o número da linha(X) */
@@ -127,19 +121,11 @@ function pegaToken() {
         erro = 1;
         let consoleTerminal = document.getElementById("consoleTerminal");
         consoleTerminal.innerHTML += `
-            <p style="color:red;">ERRO: Caractere ${caracter} Não esperado na linha ${linhaControle+1}</p>
+            <p style="color:red;">ERRO: Caractere ${caracter} Não esperado na linha ${linhaControle + 1}</p>
         `;
     }
-
-    if(!erro)
-    {
-        let consoleTerminal = document.getElementById("consoleTerminal");
-        consoleTerminal.innerHTML += `
-            <p>Lexema: ${arrayToken[arrayToken.length-1].lexema} - Identificador: ${arrayToken[arrayToken.length-1].identificador} - Linha ${arrayToken[arrayToken.length-1].numLinha+1}</p>
-        `;
-    }  
 }
 
-function build(){
+function build() {
     analisadorLexical();
 }
