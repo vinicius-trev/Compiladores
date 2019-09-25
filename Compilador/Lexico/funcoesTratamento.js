@@ -6,7 +6,7 @@
 
 /* Função responsável por tratar tokens que formam dígitos 0-9 */
 function tratarDigito() {
-    console.log("tratarDigito")
+    //console.log("tratarDigito")
     let numero = "";
 
     numero = numero.concat(caracter);
@@ -21,7 +21,7 @@ function tratarDigito() {
 
 /* Função responsável por tratar tokens que formam identificadores e palavras reservadas a-Z considerando _ */
 function tratarIdentificadorPalavraReservada() {
-    console.log("tratarIdentificadorPalavraReservada")
+    //console.log("tratarIdentificadorPalavraReservada")
 
     let id = "";
 
@@ -103,7 +103,7 @@ function tratarIdentificadorPalavraReservada() {
 
 /* Função responsável por tratar tokens que formam simbolos de atribuição : := */
 function tratarAtribuicao() {
-    console.log("tratarAtribuicao")
+    //console.log("tratarAtribuicao")
 
     let atribuicao = "";
 
@@ -122,7 +122,7 @@ function tratarAtribuicao() {
 
 /* Função responsável por tratar tokens que formam operadores aritmeticos + - *  */
 function tratarOperadorAritmetico() {
-    console.log("tratarOperadorAritmetico")
+    //console.log("tratarOperadorAritmetico")
 
     if (caracter === "+") {
         arrayToken.push(new Token("+", "smais", numLinha));
@@ -138,7 +138,7 @@ function tratarOperadorAritmetico() {
 
 /* Função responsável por tratar tokens que formam operadores relacionais < <= > >= != */
 function tratarOperadorRelacional() {
-    console.log("tratarOperadorRelacional")
+    //console.log("tratarOperadorRelacional")
 
     let opRelacional = "";
 
@@ -187,7 +187,7 @@ function tratarOperadorRelacional() {
 
 /* Função responsável por tratar tokens que formam pontuação . , ; ( ) */
 function tratarPontuação() {
-    console.log("tratarPontuação")
+    //console.log("tratarPontuação")
 
     if (caracter === ".") {
         arrayToken.push(new Token(".", "sponto", numLinha));
