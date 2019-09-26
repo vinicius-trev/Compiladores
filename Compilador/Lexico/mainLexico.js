@@ -107,6 +107,8 @@ function pegaToken() {
     else if (/;|,|\(|\)|\./g.test(caracter) === true) {
         tratarPontuação();
     }
+    else
+        erro = 1
 
     if (!erro) {
         let consoleTerminal = document.getElementById("consoleTerminal");

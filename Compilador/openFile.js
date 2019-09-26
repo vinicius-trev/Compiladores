@@ -110,13 +110,15 @@ function montarTexto(code)                            /* Recebe o conteudo do ar
 
         /* CODIGO */
         lineHTML = line;
-        lineHTML = line.replace(/ /g, '\u00a0');
-        if (line.length == 0)
+        lineHTML = line.replace(/ /g, '\u00a0');                            /* Substitui os espaços */
+        lineHTML = lineHTML.replace(/(?:\\[rn]|[\r?\n]+)+/g, "<br>");       /* Substitui /r/n por <br> */
+        if (lineHTML.length == 0)                                           /* Substitui /n por <br> */
             lineHTML = "<br>"
-        //lineHTML = lineHTML.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-        const lineText = document.createTextNode(lineHTML)    /* Cria um const (variavel) para armazenar o código (linha a linha) */
-        divLine.appendChild(lineText)                     /* Escreve na divLine o código */
+        lineHTML = lineHTML.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')      /* Substitui tab por 4x &nbsp */
+        const lineText = document.createTextNode(lineHTML)                  /* Cria um const (variavel) para armazenar o código (linha a linha) */
+        divLine.appendChild(lineText)                                       /* Escreve na divLine o código */
 
+        console.log(lineHTML)
         // numLinha++;                                       /* Incrementa o número da linha */
 
         // li.appendChild(divNumber);                        /* Insere a div de número de linha na lista de itens */
