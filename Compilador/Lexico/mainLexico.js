@@ -24,12 +24,6 @@ function lerCaracter() {
     /* Essa função irá ler um caracter do arquivo e armazenar na variavel caracter */
     /* Também irá atualizar a variavel numLinha */
 
-    // console.log(codigo);
-    // console.log("caracter: " + caracter);
-    // console.log("linhaControle: " + linhaControle);
-    // console.log("codigo.length: "+ codigo.length)
-    // console.log("codigo[linhaControle].length: "+ codigo[linhaControle].length)
-
     if (codigo[linhaControle]) {
         if (codigo[linhaControle].length > 0) {
             caracter = codigo[linhaControle].slice(0, 1)
@@ -45,6 +39,12 @@ function lerCaracter() {
             numLinha = linhaControle;
         }
     }
+
+    console.log(codigo);
+    console.log("caracter: " + caracter);
+    console.log("linhaControle: " + linhaControle);
+    console.log("codigo.length: " + codigo.length)
+    console.log("codigo[linhaControle].length: " + codigo[linhaControle].length)
 }
 
 function analisadorLexical() {
@@ -54,14 +54,14 @@ function analisadorLexical() {
     lerCaracter()
     while (linhaControle < codigo.length && erro != 1) {
         //console.log("A linha é " + codigo[linhaControle]);
-        while ((/{| |\n|\t/g.test(caracter)) && linhaControle < codigo.length) {
+        while ((/{| |\n|\t|\r/g.test(caracter)) && linhaControle < codigo.length) {
             if (caracter === "{") {
                 while ((caracter != "}") && linhaControle < codigo.length) {
                     lerCaracter();
                 }
                 lerCaracter();
             }
-            while ((/ |\n|\t/g.test(caracter)) && linhaControle < codigo.length) {
+            while ((/ |\n|\t|\r/g.test(caracter)) && linhaControle < codigo.length) {
                 lerCaracter();
             }
         }

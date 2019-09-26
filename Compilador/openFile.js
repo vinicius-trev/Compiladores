@@ -40,7 +40,7 @@ function KeyPress(e) {
     }
     /* Atalho para salvar o codigo da janela de texto (CTRL+S)  */
     if ((event.ctrlKey || event.metaKey) && event.which == 83) {
-        
+
         event.preventDefault()
     }
     /* Atalho para recarregar a GUI do Compilador (CTRL+R)  */
@@ -50,26 +50,13 @@ function KeyPress(e) {
     }
 }
 
-/* Função para abrir o POP UP para carregar um arquivo */
-function lerArquivo(e) {
-    let file = e.target.files[0]
-    let reader = new FileReader()
-    reader.onload = () => {
-        arquivo = reader.result
-        caixaTexto = document.querySelector('.caixa-codigo')
-        codigo = document.createTextNode(arquivo)
-        caixaTexto.appendChild(codigo)
-
-    }
-    reader.readAsText(file);
-}
-
 /* Render Code Window ->> Handler ativado quando importar o código TXT */
 function openFile() {
     var input = document.createElement('input');
     input.type = 'file';
 
     input.onchange = e => {
+
         // getting a hold of the file reference
         var file = e.target.files[0];
 
@@ -89,10 +76,10 @@ function openFile() {
 function montarTexto(code)                            /* Recebe o conteudo do arquivo (parametro code) e o trata nessa arrow function (Callback) */ {
     let lineHTML;
     const lines = code.split("\n");                   /* Quebra o conteudo do arquivo em linhas separadas a partir do \n */
-    div = document.querySelector(".code");    /* Instanciacao do objeto que recebera o conteudo do arquivo - div onde irá aparecer o codigo bruto */
+    div = document.querySelector(".code");            /* Instanciacao do objeto que recebera o conteudo do arquivo - div onde irá aparecer o codigo bruto */
     div.innerHTML = "";                               /* Limpando o conteudo do objeto antes de carregar o codigo nesse objeto */
     ol = document.createElement("ul")                 /* Cria uma lista ordenada (ol) para armazenar cada linha do código */
-    // ol.classList.add("code-list");                    /* Adiciona uma classe no objeto HTML para o funcionamento do CSS */
+    ol.classList.add("code-list");                    /* Adiciona uma classe no objeto HTML para o funcionamento do CSS */
     div.appendChild(ol)                               /* Adiciona a lista ordenada na div para exibir o codigo obj */
     let numLinha = 1                                  /* Inicia contagem da linha de texto como 1 */
     lines.forEach((line, index, array) =>             /* Para cada linha do codigo */ {
@@ -123,25 +110,24 @@ function montarTexto(code)                            /* Recebe o conteudo do ar
 
         /* CODIGO */
         lineHTML = line;
-        //lineHTML = "     teste     \n         multilinha Opa  Banana"
         lineHTML = line.replace(/ /g, '\u00a0');
-        if(line.length == 0)
+        if (line.length == 0)
             lineHTML = "<br>"
-        lineHTML = lineHTML.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-        //const lineText = document.createTextNode(lineHTML)    /* Cria um const (variavel) para armazenar o código (linha a linha) */
-        //divLine.appendChild(lineText)                     /* Escreve na divLine o código */
+        //lineHTML = lineHTML.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+        const lineText = document.createTextNode(lineHTML)    /* Cria um const (variavel) para armazenar o código (linha a linha) */
+        divLine.appendChild(lineText)                     /* Escreve na divLine o código */
 
-        numLinha++;                                       /* Incrementa o número da linha */
+        // numLinha++;                                       /* Incrementa o número da linha */
 
         // li.appendChild(divNumber);                        /* Insere a div de número de linha na lista de itens */
-        //li.appendChild(divLine);                          /* Insere a div de código na lista de itens */
+        li.appendChild(divLine);                          /* Insere a div de código na lista de itens */
 
         ol.appendChild(li);                               /* Insere a linha da lista de itens na lista ordenada (que contera o codigo inteiro) */
 
-        document.getElementById("line-"+index).innerHTML = lineHTML
+        document.getElementById("line-" + index).innerHTML = lineHTML
 
         codigo.push(line);                                /* Armazenando o conteudo do arquivo em nossa variavel */
-        codigo[codigo.length-1] = codigo[codigo.length-1].concat("\n")
+        codigo[codigo.length - 1] = codigo[codigo.length - 1].concat("\n")
     });
 }
 /* Aqui finaliza o import do código texto */

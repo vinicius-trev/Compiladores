@@ -25,13 +25,12 @@
 <body>
     <div class="container buttons">
         <div class="abrir-arquivo button">
-            <button onclick="document.getElementById('file-input').click();">Abrir (CTRL+O)</button>
-            <input id="file-input" type="file" accept='text/plain' name="name" onchange="openFile()"
-                style="display: none;" />
+            <button id="file-input" type="file" accept='text/plain' name="name" onclick="openFile()">Abrir
+                (CTRL+O)</button>
         </div>
         <div class="salvar-arquivo button">
-            <button onclick="document.getElementById('file-input').click();">Salvar (CTRL+S)</button>
-            <input id="file-input2" type="file" name="name" style="display: none;" />
+            <button id="file-input" type="file" accept='text/plain' name="name" onclick="saveFile()">Salvar
+                (CTRL+S)</button>
         </div>
         <div class="abrir-arquivo button">
             <button onclick=build()>Build (CTRL+B)</button>
@@ -48,7 +47,7 @@
 
     <div class="container console" id="consoleTerminal">
     </div>
-    
+
 </body>
 
 </html>
