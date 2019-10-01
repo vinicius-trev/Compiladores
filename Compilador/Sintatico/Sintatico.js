@@ -289,4 +289,60 @@ class Sintatico {
         }
     }
 
+    analisaExpressaoSimples() {
+        if (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos') {
+            this.token = this.lexico.pegaToken()
+            this.analisaTermo()
+            while (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos' || this.token.simbolo == 'sou') {
+                this.token == this.lexico.pegaToken()
+                this.analisaTermo()
+            }
+        }
+    }
+
+    analisaTermo() {
+        this.analisaFator()
+        while (this.token.simbolo == 'smult' || this.token.simbolo == 'sdiv' || this.token.simbolo == 'se') {
+            this.token = this.lexico.pegaToken()
+            this.analisaFator()
+        }
+    }
+
+    analisaFator() {
+        if (this.token.simbolo == 'sidentificador') {
+            this.analisaChamadaFuncao()
+        }
+        else {
+            if (this.token.simbolo == 'snumero') {
+                this.token = this.lexico.pegaToken()
+            }
+            else {
+                if (this.token.simbolo == 'snao') {
+                    this.token = this.lexico.pegaToken()
+                    this.analisaFator()
+                }
+                else {
+                    if (this.token.simbolo == 'sabre_parenteses') {
+                        this.token = this.lexico.pegaToken()
+                        this.analisaExpressao()
+                        if (this.token.simbolo == 'sfecha_parentes') {
+                            this.token = this.lexico.pegaToken()
+                        }
+                        else {
+                            this.raiseError("Erro analisaFator()")
+                        }
+                    }
+                    else {
+                        if (this.token.lexema == 'verdadeiro' || this.token.lexema == 'falso') {
+                            this.token = this.lexico.pegaToken()
+                        }
+                        else {
+                            this.raiseError("Erro analisaFator()")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
