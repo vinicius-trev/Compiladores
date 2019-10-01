@@ -139,7 +139,113 @@ class Sintatico {
     }
 
     analisaAtribChprocedimento() {
+        this.token = this.Lexico.pegaToken()
+        if (this.token.simbolo == 'satribuicao') {
+            this.analisaAtribuicao()
+        }
+        else {
+            this.chamadaProcedimento()
+        }
+    }
 
+    analisaLeia() {
+        this.token = this.Lexico.pegaToken()
+        if (this.token.simbolo == 'sabre_parenteses') {
+            this.token = this.Lexico.pegaToken()
+            if (this.token.simbolo == 'sidentificador') {
+                this.token = this.Lexico.pegaToken()
+                if (this.token.simbolo == 'sfecha_parenteses') {
+                    this.token = this.Lexico.token
+                }
+                else {
+                    this.raiseError('Erro analisaLeia()')
+                }
+            }
+            else {
+                this.raiseError('Erro analisaLeia()')
+            }
+        }
+        else {
+            this.raiseError('Erro analisaLeia()')
+        }
+    }
+
+    analisaEscreva() {
+        this.token = this.Lexico.pegaToken()
+        if (this.token.simbolo == 'sabre_parenteses') {
+            this.token = this.Lexico.pegaToken()
+            if (this.token.simbolo == 'sidentificador') {
+                this.token = this.Lexico.pegaToken()
+                if (this.token.simbolo == 'sfecha_parenteses') {
+                    this.token = this.Lexico.token
+                }
+                else {
+                    this.raiseError('Erro analisaEscreva()')
+                }
+            }
+            else {
+                this.raiseError('Erro analisaEscreva()')
+            }
+        }
+        else {
+            this.raiseError('Erro analisaEscreva()')
+        }
+    }
+
+    analisaEnquanto() {
+        this.token = this.Lexico.pegaToken()
+        this.analisaExpressao()
+        if (this.token.simbolo == 'sfaca') {
+            this.token = this.Lexico.pegaToken()
+            this.analisaComandoSimples()
+        }
+        else {
+            this.raiseError('Erro analisaEnquanto()')
+        }
+    }
+
+    analisaSe() {
+        this.token = this.Lexico.pegaToken()
+        this.analisaExpressao()
+        if (this.token.simbolo == 'sentao') {
+            this.token = this.Lexico.pegaToken()
+            this.analisaComandoSimples()
+            if (this.token.simbolo == 'ssenao') {
+                this.token = this.Lexico.pegaToken()
+                this.analisaComandoSimples()
+            }
+        }
+        else {
+            this.raiseError('Erro analisaSe()')
+        }
+    }
+
+    analisaSubrotinas() {
+        let flag = 0
+        if (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {
+            // Geracao de codigo
+        }
+        while (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {
+            if (this.token.simbolo == 'sprocedimento') {
+                this.analisaDeclaracaoProcedimento()
+            }
+            else {
+                this.analisaDeclaracaoFuncao()
+            }
+            if (this.token.simbolo == 'spontovirgula') {
+                this.token = this.Lexico.pegaToken()
+            }
+            else {
+                this.raiseError('Erro analisaSubrotinas()')
+            }
+        }
+        if (flag == 1) {
+            // Geracao de codigo
+        }
+    }
+
+    analisaDeclaracaoProcedimento() {
+        this.token = this.Lexico.pegaToken()
     }
 
 }
