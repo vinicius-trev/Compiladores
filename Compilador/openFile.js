@@ -140,3 +140,8 @@ function montarTexto(code)                            /* Recebe o conteudo do ar
 function reset() {
     window.location.reload(true);  /* Recarrega a página ao clicar no botão reset */
 }
+
+function build() {
+    sintatico = new Sintatico(codigo)
+    sintatico.analisador()
+}
