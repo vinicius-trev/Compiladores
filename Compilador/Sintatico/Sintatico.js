@@ -6,7 +6,7 @@ class Sintatico {
         this.token = null
     }
 
-    analisador() {
+    analisador() { // Main Sintatico
         this.token = this.Lexico.pegaToken()
         if (this.token.simbolo == 'sprograma') {
             this.token = this.lexico.pegaToken()
@@ -343,5 +343,10 @@ class Sintatico {
                 }
             }
         }
+    }
+
+    raiseError(error) {
+        console.log(error)
+        console.log('Token: ' + this.token)
     }
 }
