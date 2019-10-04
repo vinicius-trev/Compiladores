@@ -4,6 +4,7 @@ class Lexico {
         this.caracter = null
         this.inComment = false
         this.token = new Token()
+        this.numLinha = 1
         this.lerCaracter()
     }
 
@@ -53,6 +54,7 @@ class Lexico {
         // Se { comecou comentario
         if (this.caracter === '{') this.inComment = true
         while (/\s/.test(this.caracter) || this.inComment) {
+            if (/\n/.test(this.caracter)) this.numLinha++
             if (this.caracter === '}') this.inComment = false
             this.lerCaracter()
             if (this.caracter === '{') this.inComment = true

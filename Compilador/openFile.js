@@ -69,6 +69,11 @@ function openFile() {
         reader.onload = readerEvent => {
             var content = readerEvent.target.result; // this is the content!
             montarTexto(content);
+            noLinhas = (content.match(/\n/g) || []).length
+            textAreaNoLinha = document.querySelector('.numbers-line')
+            let numeros = ''
+            for (let i = 1; i <= noLinhas + 1; i++) numeros += `${i}\n`
+            textAreaNoLinha.value = numeros
         }
     }
     input.click();
