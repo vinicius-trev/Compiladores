@@ -1,11 +1,8 @@
 class Lexico {
     constructor(text) {
         this.text = text
-        this.pos = 0
-        this.numLinha = 0
         this.caracter = null
-        this.erro = false
-        this.linhaControle = 0
+        this.inComment = false
         this.token = new Token()
         this.lerCaracter()
     }
@@ -36,63 +33,47 @@ class Lexico {
         else if (/;|,|\(|\)|\./g.test(this.caracter) === true) {
             this.tratarPontuação();
         }
-        else
-            this.erro = true
-        if (!this.erro)
-            return this.token
         else {
-            console.log("ERRO LEXICO")
-            console.log("Linha: " + this.linhaControle)
+            console.log("ERRO Lexico pegaToken()")
             console.log("token: " + this.token.toString())
+            console.log(this.caracter)
+            return null
         }
+        return this.token
     }
 
     analisador() {
-        /* Função que ira ler caracter por caracter do arquivo fonte */
-        while ((/{| |\n|\t|\r/g.test(this.caracter)) && this.linhaControle < this.text.length) {
-            if (this.caracter === "{") {
-                while ((this.caracter != "}") && this.linhaControle < this.text.length) {
-                    this.lerCaracter();
-                }
-                this.lerCaracter();
-            }
-            while ((/ |\n|\t|\r/g.test(this.caracter)) && this.linhaControle < this.text.length) {
-                this.lerCaracter();
-            }
+        // Se final de arquivo
+        if (this.caracter === 'EOF') {
+            console.log("FINAL DO ARQUIVO")
+            this.token.simbolo = 'SEOF'
+            this.token.lexema = 'EOF'
+            return this.token
         }
-        if (this.text.length > 0 && this.linhaControle < this.text.length) {
-            return this.pegaToken();
+        // Se { comecou comentario
+        if (this.caracter === '{') this.inComment = true
+        while (/\s/.test(this.caracter) || this.inComment) {
+            if (this.caracter === '}') this.inComment = false
+            this.lerCaracter()
+            if (this.caracter === '{') this.inComment = true
         }
+        // Caracter nao whitespace e nao comentario encontrado
+        console.log('Comecar a pegar token: ' + this.caracter);
+        this.pegaToken()
+        console.log('Token encontrado: ' + this.token.simbolo)
+        return this.token
 
-        if (this.linhaControle < this.text.length) {
-            if (this.text[this.linhaControle].length == 0) {
-                this.linhaControle++;
-            }
-        }
     }
 
     lerCaracter() {
-        if (this.text[this.linhaControle]) {
-            if (this.text[this.linhaControle].length > 0) {
-                this.caracter = this.text[this.linhaControle].slice(0, 1)
-                this.text[this.linhaControle] = this.text[this.linhaControle].slice(1)
-                this.numLinha = this.linhaControle
-            }
+        if (this.text.length != 0) {
+            this.caracter = this.text[0]
+            this.text = this.text.substr(1)
+            console.log(this.caracter)
         }
-        else if (this.linhaControle < this.text.length) {
-            this.linhaControle++
-            if (!this.caracter) {
-                this.caracter = this.text[this.linhaControle].slice(0, 1)
-                this.text[this.linhaControle] = this.text[this.linhaControle].slice(1)
-                this.numLinha = this.linhaControle
-            }
+        else {
+            this.caracter = 'EOF'
         }
-
-        console.log(this.text)
-        console.log("this.caracter: " + this.caracter)
-        console.log("linhaControle: " + this.numLinha)
-        console.log("this.text.length: " + this.text.length)
-        console.log("this.text[linhaControle].length: " + this.text[this.numLinha].length)
     }
 
     // Funcoes de criacao do token
@@ -109,7 +90,6 @@ class Lexico {
         this.token.lexema = +numero
         this.token.simbolo = "snumero"
         this.token.linha = this.numLinha
-        this.pos = null
     }
 
     tratarIdentificadorPalavraReservada() {
