@@ -4,8 +4,9 @@
  * Vinicius Trevisan - 16011231
  */
 
-let codigo; /* Variavel onde em cada posicao representa uma linha do codigo */
+let codigo /* Variavel onde em cada posicao representa uma linha do codigo */
 let arquivo
+let noLinhas
 
 // Event bindings
 document.onkeydown = KeyPress
@@ -85,4 +86,12 @@ function reset() {
 function build() {
     sintatico = new Sintatico(codigo)
     sintatico.analisador()
+}
+function atualizaNoLinha() {
+    codigo = document.querySelector(".caixa-codigo").value
+    noLinhas = (codigo.match(/\n/g) || []).length
+    textAreaNoLinha = document.querySelector('.numbers-line')
+    let numeros = ''
+    for (let i = 1; i <= noLinhas; i++) numeros += `${i}\n`
+    textAreaNoLinha.value = numeros
 }
