@@ -35,10 +35,8 @@ class Lexico {
             this.tratarPontuação();
         }
         else {
-            console.log("ERRO Lexico pegaToken()")
-            console.log("token: " + this.token.toString())
-            console.log(this.caracter)
-            return null
+            // Throw error
+            this.raiseError('caracter Invalido')
         }
         return this.token
     }
@@ -57,12 +55,11 @@ class Lexico {
             if (/\n/.test(this.caracter)) this.numLinha++
             if (this.caracter === '}') this.inComment = false
             this.lerCaracter()
+            if (this.caracter === 'EOF') this.raiseError('comentario nao fechado')
             if (this.caracter === '{') this.inComment = true
         }
         // Caracter nao whitespace e nao comentario encontrado
-        console.log('Comecar a pegar token: ' + this.caracter);
         this.pegaToken()
-        console.log('Token encontrado: ' + this.token.simbolo)
         return this.token
 
     }
@@ -315,8 +312,7 @@ class Lexico {
                 this.lerCaracter();
             }
             else {
-                this.caracter = "!"
-                this.erro = 1;
+                this.raiseError("caracter ! invalido")
             }
         }
         else if (this.caracter === "=") {
@@ -358,5 +354,12 @@ class Lexico {
             this.token.linha = this.numlinha
         }
         this.lerCaracter();
+    }
+    raiseError(error) {
+        throw {
+            arquivo: "Lexico",
+            numLinha: this.numLinha,
+            msg: error
+        }
     }
 }

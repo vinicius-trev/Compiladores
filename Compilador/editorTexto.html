@@ -18,7 +18,6 @@
     <script type="text/javascript" src="Token/Token.js"></script>
     <script type="text/javascript" src="Lexico/Lexico.js"></script>
     <script type="text/javascript" src="Sintatico/Sintatico.js"></script>
-    <script type="text/javascript" src="openFile.js"></script>
     <title>Compilador</title>
 
 </head>
@@ -33,7 +32,7 @@
             <button id="file-input" type="file" accept='text/plain' name="name" onclick="saveFile()">Salvar
                 (CTRL+S)</button>
         </div>
-        <div class="abrir-arquivo button">
+        <div class="build-arquivo button">
             <button onclick=build()>Build (CTRL+B)</button>
         </div>
         <div class="reset button">
@@ -41,14 +40,14 @@
         </div>
     </div>
     <div class="container code">
-        <textarea class="numbers-line scroller"></textarea>
-        <textarea class="caixa-codigo scroller" oninput="atualizaNoLinha()"></textarea>
+        <div class="numbers-line scroller" id="codigo"></div>
+        <textarea spellcheck="false" class="caixa-codigo scroller" id="numero" oninput="atualizaNoLinha()"></textarea>
     </div>
 
 
     <div class="container console" id="consoleTerminal">
     </div>
-
+    <script type="text/javascript" src="openFile.js"></script>
 </body>
 
 </html>

@@ -11,6 +11,20 @@ let noLinhas
 // Event bindings
 document.onkeydown = KeyPress
 
+// Linking scrollbars
+let s1 = document.getElementById('codigo')
+let s2 = document.getElementById('numero')
+
+console.log(s1)
+console.log(s2)
+
+function select_scroll_1(e) { s2.scrollTop = s1.scrollTop }
+function select_scroll_2(e) { s1.scrollTop = s2.scrollTop }
+
+s1.addEventListener('scroll', select_scroll_1, false)
+s2.addEventListener('scroll', select_scroll_2, false)
+
+
 // Functions
 // Binding numberline and code scrollers
 let textAreaScrollers = document.querySelectorAll("textarea.scroller")
@@ -31,7 +45,7 @@ function KeyPress(e) {
 
     /* Atalho para buildar o codigo (CTRL+B)  */
     if ((event.ctrlKey || event.metaKey) && event.which == 66) {
-        analisadorLexical()
+        build()
         event.preventDefault()
     }
     /* Atalho para abrir um arquivo (CTRL+O)  */
@@ -69,11 +83,12 @@ function openFile() {
         reader.onload = readerEvent => {
             var content = readerEvent.target.result; // this is the content!
             montarTexto(content);
-            noLinhas = (content.match(/\n/g) || []).length
-            textAreaNoLinha = document.querySelector('.numbers-line')
-            let numeros = ''
-            for (let i = 1; i <= noLinhas + 1; i++) numeros += `${i}\n`
-            textAreaNoLinha.value = numeros
+            // noLinhas = (content.match(/\n/g) || []).length
+            // textAreaNoLinha = document.querySelector('.numbers-line')
+            // let numeros = ''
+            // for (let i = 1; i <= noLinhas + 1; i++) numeros += `<span id=${i}\n`
+            // textAreaNoLinha.value = numeros
+            atualizaNoLinha()
         }
     }
     input.click();
@@ -89,14 +104,26 @@ function reset() {
 }
 
 function build() {
+    const consolebox = document.querySelector('#consoleTerminal')
+    consolebox.innerHTML = ''
     sintatico = new Sintatico(codigo)
-    sintatico.analisador()
+    try {
+        sintatico.analisador()
+        const consolebox = document.querySelector('#consoleTerminal')
+        consolebox.innerHTML = `<p style="color:green;">SUCESSO</p>`
+    }
+    catch (e) {
+        console.log(e)
+        const consolebox = document.querySelector('#consoleTerminal')
+        consolebox.innerHTML = `<p>${e.msg}</p>`
+        const lineError = document.getElementById(`numero-${e.numLinha}`)
+        lineError.style.backgroundColor = 'red'
+    }
 }
 function atualizaNoLinha() {
     codigo = document.querySelector(".caixa-codigo").value
     noLinhas = (codigo.match(/\n/g) || []).length
     textAreaNoLinha = document.querySelector('.numbers-line')
-    let numeros = ''
-    for (let i = 1; i <= noLinhas; i++) numeros += `${i}\n`
-    textAreaNoLinha.value = numeros
+    textAreaNoLinha.innerHTML = ''
+    for (let i = 1; i <= noLinhas + 1; i++) textAreaNoLinha.innerHTML += `<span id="numero-${i}">${i}<br></span>`
 }

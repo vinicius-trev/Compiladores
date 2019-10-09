@@ -5,9 +5,10 @@
  */
  
 html {
-    padding: 0;
+    padding: 8px;
     margin: 0;
     display: flexbox;
+    overflow: hidden;
 }
 
 body {
@@ -19,7 +20,7 @@ body {
 
 textarea {
     border: none;
-    overflow: auto;
+    /* overflow: none; */
     outline: none;
 
     -webkit-box-shadow: none;
@@ -83,45 +84,24 @@ button:hover {
     background-color: rgba(0, 0, 0, 0);
     font-family: 'Inconsolata', monospace;
     font-size: 1em;
+    height: 100%;
+    overflow: hidden;
 }
-textarea::-webkit-scrollbar { 
-    width: 0 !important;
-}
-textarea {
-    overflow: -moz-scrollbars-none;
-    -ms-overflow-style: none;
-}
+
+
 
 .container.buttons{
     display: flex; 
 }
 
 .code{
-    overflow-x: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .console{
-    overflow-x: scroll;
+    overflow-y: scroll;
 }
-
-.code ul {
-/* margin-left: 10px; */
-list-style: none;
-width: 200%;
-}
-
-.code ul li {
-display: flex;
-justify-content: left;
-}
-
-.code ul li .line-div{
-    text-align: start;
-}
-
-.code ul li .number-div{
-    text-align: end;
-    width: 35px;
-    margin-right: 5px;
-    background: rgba(187, 187, 187, 0.867);
+.console > p {
+    color: red;
 }

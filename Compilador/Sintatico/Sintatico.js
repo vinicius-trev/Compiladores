@@ -19,22 +19,24 @@ class Sintatico {
                             console.log("SUCESSO")
                         // Se nao
                         else
-                            console.log("ERRO NO FINAL")
+                            this.raiseError("Token inesperado ao final do arquivo")
                     }
                     else {
-                        this.raiseError('Faltando token "."')
+                        this.raiseError("Faltando token '.'")
                     }
                 }
                 else {
-                    this.raiseError('Faltando token ";"')
+                    this.raiseError("Faltando token ';'")
                 }
             }
             else {
-                this.raiseError('Erro Indentificador do programa')
+                this.raiseError("Erro identificador do programa")
             }
         }
         else {
-            this.raiseError('Erro no inicio do programa')
+
+            this.raiseError("Erro no inicio do programa")
+
         }
     }
 
@@ -368,10 +370,10 @@ class Sintatico {
     }
 
     raiseError(error) {
-        console.log(error)
-        console.log('Token Lex: ' + this.token.lexema)
-        console.log('Token Sim: ' + this.token.simbolo)
-        console.log('Token Lin: ' + this.token.linha)
-
+        throw {
+            arquivo: "Sintatico",
+            numLinha: this.token.linha,
+            msg: error
+        }
     }
 }
