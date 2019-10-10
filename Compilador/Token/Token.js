@@ -4,5 +4,6 @@ class Token {
         this.lexema = null
         this.linha = null
         this.pos = null
+        this.numLinhaAnterior = null
     }
 }

@@ -36,7 +36,12 @@ class Lexico {
         }
         else {
             // Throw error
-            this.raiseError('caracter Invalido')
+            if(this.caracter === "_")
+            {
+                this.raiseError("Erro Léxico: Caracter '" + this.caracter + "' não permitido no início de Identificadores")
+            }
+            else
+                this.raiseError("Erro Léxico: Caracter '" + this.caracter + "' não permitido na LPD")
         }
         return this.token
     }
@@ -51,14 +56,30 @@ class Lexico {
         }
         // Se { comecou comentario
         if (this.caracter === '{') this.inComment = true
-        while (/\s/.test(this.caracter) || this.inComment) {
+        this.token.numLinhaAnterior = this.numLinha;
+        while (/\s/.test(this.caracter) || this.inComment) 
+        {
+            console.log("Char:" + this.caracter)
             if (/\n/.test(this.caracter)) this.numLinha++
+
             if (this.caracter === '}') this.inComment = false
             this.lerCaracter()
-            if (this.caracter === 'EOF') this.raiseError('comentario nao fechado')
+
+            if (this.caracter === 'EOF' && this.inComment == true) 
+            {
+                this.raiseError("Erro Léxico: Comentário não possuí fim '}'")
+            }
+
             if (this.caracter === '{') this.inComment = true
         }
         // Caracter nao whitespace e nao comentario encontrado
+
+        if(this.caracter === "EOF") 
+        {
+            this.token.simbolo = 'SEOF'
+            this.token.lexema = 'EOF'
+            return this.token
+        }
         this.pegaToken()
         return this.token
 
@@ -68,7 +89,6 @@ class Lexico {
         if (this.text.length != 0) {
             this.caracter = this.text[0]
             this.text = this.text.substr(1)
-            console.log(this.caracter)
         }
         else {
             this.caracter = 'EOF'
@@ -97,7 +117,7 @@ class Lexico {
         id = id.concat(this.caracter);
         this.lerCaracter();
 
-        while (/[A-Za-z]/g.test(this.caracter) === true || /[0-9]/g.test(this.caracter) === true) {
+        while (/[A-Za-z]/g.test(this.caracter) === true || /[0-9]/g.test(this.caracter) === true || /[_]/g.test(this.caracter) === true) {
             id = id.concat(this.caracter);
             this.lerCaracter();
         }
@@ -312,7 +332,7 @@ class Lexico {
                 this.lerCaracter();
             }
             else {
-                this.raiseError("caracter ! invalido")
+                this.raiseError("Erro Léxico: Caracter '!' não permitido na LPD")
             }
         }
         else if (this.caracter === "=") {

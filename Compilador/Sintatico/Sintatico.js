@@ -12,31 +12,38 @@ class Sintatico {
                 this.token = this.lexico.analisador()
                 if (this.token.simbolo == 'sponto_virgula') {
                     this.analisaBloco()
-                    if (this.token.simbolo == 'sponto') {
+                    if (this.token.simbolo == 'sponto') 
+                    {
+                        console.log(this.token)
                         this.token = this.lexico.analisador()
+                        console.log(this.token)
+
                         // Se acabou arquivo ou comentario
                         if (this.token.simbolo === 'SEOF')
+                        {
                             console.log("SUCESSO")
+                        }
                         // Se nao
                         else
-                            this.raiseError("Token inesperado ao final do arquivo")
+                            this.raiseError("Erro Sintático: Token '"+ this.token.simbolo +"' não esperado")
                     }
                     else {
-                        this.raiseError("Faltando token '.'")
+                        if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                        this.raiseError("Erro Sintático: Caracter '.' esperado após símbolo 'sfim' -> Encontrado '" + this.token.lexema + "'")
                     }
                 }
                 else {
-                    this.raiseError("Faltando token ';'")
+                    this.token.linha = this.token.numLinhaAnterior
+                    this.raiseError("Erro Sintático: Caracter ';' não encontrado após nome do programa")
                 }
             }
             else {
-                this.raiseError("Erro identificador do programa")
+                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Sintático: Identificador do programa '" + this.token.lexema + "' inválido")
             }
         }
         else {
-
-            this.raiseError("Erro no inicio do programa")
-
+            this.raiseError("Erro Sintático: Esperado 'programa' -> Encontrado '" + this.token.lexema + "'")
         }
     }
 
@@ -57,11 +64,16 @@ class Sintatico {
                     this.analisaVariaveis()
                     if (this.token.simbolo == 'sponto_virgula')
                         this.token = this.lexico.analisador()
-                    else this.raiseError('Erro analisaEtVariaveis()')
+                    else 
+                    {
+                        this.token.linha = this.token.numLinhaAnterior
+                        this.raiseError("Erro Sintático: Caracter ';' não encontrado após declaração de variáveis")
+                    }
                 }
             }
             else {
-                this.raiseError('Erro analisaEtVariaveis()')
+                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Sintático: Identificador incorreto para variável '" + this.token.lexema + "'")
             }
         }
     }
@@ -75,16 +87,19 @@ class Sintatico {
                     if (this.token.simbolo == 'svirgula') {
                         this.token = this.lexico.analisador()
                         if (this.token.simbolo == 'sdoispontos') {
-                            this.raiseError('Erro analisaVariaveis()')
+                            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                            this.raiseError("Erro Sintático: Váriavel não encontrada após ',' -> Encontrado '" + this.token.lexema + "'")
                         }
                     }
                 }
                 else {
-                    this.raiseError('Erro analisaVariaveis()')
+                    if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                    this.raiseError("Erro Sintático: Caracter ':' não encontrado antes da declaração de tipo -> Encontrado '" + this.token.lexema + "'")
                 }
             }
             else {
-                this.raiseError('Erro analisaVariaveis()')
+                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Sintático: Identificador incorreto para variável '" + this.token.lexema + "'")
             }
         } while (this.token.simbolo != 'sdoispontos')
         this.token = this.lexico.analisador()
@@ -94,7 +109,8 @@ class Sintatico {
     analisaTipo() {
         console.log("Sintatico: analisaTipo")
         if (this.token.simbolo != 'sinteiro' && this.token.simbolo != 'sbooleano') {
-            this.raiseError('Erro analisaTipo()')
+            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: Tipo de variável inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
         }
         this.token = this.lexico.analisador()
     }
@@ -112,13 +128,15 @@ class Sintatico {
 
                 }
                 else {
-                    this.raiseError('Erro anailsaComandos()')
+                    this.token.linha = this.token.numLinhaAnterior
+                    this.raiseError("Erro Sintático: Caracter ';' não encontrado após comando")
                 }
             }
             this.token = this.lexico.analisador()
         }
         else {
-            this.raiseError('Erro anailsaComandos()')
+            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: 'inicio' não encontrado no bloco de comandos -> Encontrado '" + this.token.lexema + "'")
         }
     }
 
@@ -169,15 +187,18 @@ class Sintatico {
                     this.token = this.lexico.analisador()
                 }
                 else {
-                    this.raiseError('Erro analisaLeia()')
+                    if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                    this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
                 }
             }
             else {
-                this.raiseError('Erro analisaLeia()')
+                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Sintático: Identificador incorreto para o comando 'leia'")
             }
         }
         else {
-            this.raiseError('Erro analisaLeia()')
+            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: Esperado '(' -> Encontrado '" + this.token.lexema + "'")
         }
     }
 
@@ -192,15 +213,18 @@ class Sintatico {
                     this.token = this.lexico.analisador()
                 }
                 else {
-                    this.raiseError('Erro analisaEscreva()')
+                    if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                    this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
                 }
             }
             else {
-                this.raiseError('Erro analisaEscreva()')
+                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Sintático: Identificador incorreto para o comando 'escreva'")
             }
         }
         else {
-            this.raiseError('Erro analisaEscreva()')
+            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: Esperado '(' -> Encontrado '" + this.token.lexema + "'")
         }
     }
 
@@ -213,7 +237,8 @@ class Sintatico {
             this.analisaComandoSimples()
         }
         else {
-            this.raiseError('Erro analisaEnquanto()')
+            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: Esperado 'faca' -> Encontrado '" + this.token.lexema + "'")
         }
     }
 
@@ -230,7 +255,8 @@ class Sintatico {
             }
         }
         else {
-            this.raiseError('Erro analisaSe()')
+            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: Esperado 'entao' -> Encontrado '" + this.token.lexema + "'")
         }
     }
 
@@ -251,7 +277,8 @@ class Sintatico {
                 this.token = this.lexico.analisador()
             }
             else {
-                this.raiseError('Erro analisaSubrotinas()')
+                this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Sintático: Caracter ';' não encontrado após subrotina")
             }
         }
         if (flag == 1) {
@@ -268,11 +295,13 @@ class Sintatico {
                 this.analisaBloco()
             }
             else {
-                this.raiseError("Erro analisaDeclaracaoProcedimento()")
+                this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Sintático: Caracter ';' não encontrado após identificador do procedimento")
             }
         }
         else {
-            this.raiseError("Erro analisaDeclaracaoProcedimento()")
+            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: Identificador '" +this.token.lexema + "' incorreto para a declaração de procedimento")
         }
     }
 
@@ -289,13 +318,21 @@ class Sintatico {
                         this.analisaBloco()
                     }
                     else {
-                        this.raiseError("Erro analisaDeclaracaoFuncao()")
+                        this.token.linha = this.token.numLinhaAnterior
+                        this.raiseError("Erro Sintático: Caracter ';' não encontrado após identificador da função")
                     }
                 }
-                else this.raiseError("Erro analisaDeclaracaoFuncao()")
+                else {
+                    if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                    this.raiseError("Erro Sintático: Tipo de retorno da função inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
+                }
             }
         }
-        else this.raiseError("Erro analisaDeclaracaoFuncao()")
+        else 
+        {
+            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: Identificador '" +this.token.lexema + "' incorreto para a declaração de função")
+        }
     }
 
     analisaExpressao() {
@@ -350,7 +387,8 @@ class Sintatico {
                             this.token = this.lexico.analisador()
                         }
                         else {
-                            this.raiseError("Erro analisaFator()")
+                            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                            this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
                         }
                     }
                     else {
@@ -358,7 +396,8 @@ class Sintatico {
                             this.token = this.lexico.analisador()
                         }
                         else {
-                            this.raiseError("Erro analisaFator()")
+                            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                            this.raiseError("Erro na expressão, esperado lexema 'verdadeiro' ou 'falso'")
                         }
                     }
                 }
