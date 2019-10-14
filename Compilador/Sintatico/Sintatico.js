@@ -339,15 +339,33 @@ class TabelaSimbolos {
     }
 
     insereTabela(lexema, escopo, memoria, tipo) {
-
+        if(memoria != null && tipo != null){
+            this.simbolos.push(new SimboloVar(lexema, escopo, memoria, tipo))
+        }
+        else if(memoria == null && tipo != null){
+            this.simbolos.push(new SimboloFuncao(lexema, escopo, tipo))
+        }
+        else if(memoria == null && tipo == null){
+            this.simbolos.push(new SimboloProcedimentoPrograma(lexema, escopo))
+        }
     }
 
     consultaTabela(lexema) {
-
+        for(let i in tabela){
+            if(tabela[i].lexema == lexema){
+                return true;
+            }
+        }
+        return false;
     }
 
-    insereTipoVariaveis() {
+    insereTipoVariaveis(lexema) {
+        if(lexema === "sinteiro"){
+            
+        }
+        else if(lexema === "sbooleano"){
 
+        }
     }
 }
 
