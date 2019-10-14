@@ -392,5 +392,7 @@ class SimboloFuncao extends Simbolo {
 }
 
 class SimboloProcedimentoPrograma {
-
+    constructor(lexema, escopo){
+        Simbolo.call(this, lexema, escopo);
+    }
 }
