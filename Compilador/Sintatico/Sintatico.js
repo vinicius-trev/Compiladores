@@ -3,12 +3,14 @@ import Lexico from '../Lexico/Lexico'
 class Sintatico {
     constructor(codigo) {
         this.lexico = new Lexico(codigo)
+        this.tabela = new TabelaSimbolos();
         this.token = null
     }
 
     analisador() { // Main Sintatico
         this.token = this.Lexico.pegaToken()
         if (this.token.simbolo == 'sprograma') {
+            this.tabela.insereTabela(this.token.lexema, "nomedeprograma", null, null)
             this.token = this.lexico.pegaToken()
             if (this.token.simbolo == 'sindentificador') {
                 this.token = this.lexico.pegaToken()
@@ -19,20 +21,16 @@ class Sintatico {
                         //Sucesso
                         // Se nao
                         // ERRO
-                    }
-                    else {
+                    } else {
                         this.raiseError('Faltando token "."')
                     }
-                }
-                else {
+                } else {
                     this.raiseError('Faltando token ";"')
                 }
-            }
-            else {
+            } else {
                 this.raiseError('Erro Indentificador do programa')
             }
-        }
-        else {
+        } else {
             this.raiseError('Erro no inicio do programa')
         }
     }
@@ -55,8 +53,7 @@ class Sintatico {
                     }
                     this.raiseError('Erro analisaEtVariaveis()')
                 }
-            }
-            else {
+            } else {
                 this.raiseError('Erro analisaEtVariaveis()')
             }
         }
@@ -64,22 +61,26 @@ class Sintatico {
 
     analisaVariaveis() {
         do {
-            if (this.token.simbolo == 'sidentificador') {
-                this.token = this.lexico.pegaToken()
-                if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
-                    if (this.token.simbolo == 'svirgula') {
-                        this.token = this.lexico.pegaToken()
-                        if (this.token.simbolo == 'sdoispontos') {
-                            this.raiseError('Erro analisaVariaveis()')
+            var duplicada = this.tabela.consultaTabela(this.token.lexema);
+            if (!duplicada) {
+                if (this.token.simbolo == 'sidentificador') {
+                    this.tabela.insereTabela(token.lexema, "variável")
+                    this.token = this.lexico.pegaToken()
+                    if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
+                        if (this.token.simbolo == 'svirgula') {
+                            this.token = this.lexico.pegaToken()
+                            if (this.token.simbolo == 'sdoispontos') {
+                                this.raiseError('Erro analisaVariaveis()')
+                            }
                         }
+                    } else {
+                        this.raiseError('Erro analisaVariaveis()')
                     }
-                }
-                else {
+                } else {
                     this.raiseError('Erro analisaVariaveis()')
                 }
-            }
-            else {
-                this.raiseError('Erro analisaVariaveis()')
+            } else {
+                this.raiseError('Erro duplicidade de variaveis')
             }
         } while (this.token.simbolo != 'sdoispontos')
         this.token = this.lexico.pegaToken()
@@ -89,6 +90,9 @@ class Sintatico {
     analisaTipo() {
         if (this.token.simbolo != 'sinteiro' || this.token.simbolo != 'sbooleano') {
             this.raiseError('Erro analisaTipo()')
+        }
+        else{
+            this.tabela.insereTipoVariaveis(token.lexema)
         }
         this.token = this.lexico.pegaToken()
     }
@@ -103,14 +107,12 @@ class Sintatico {
                     if (this.token.simbolo != 'sfim') {
                         this.analisaComandoSimples()
                     }
-                }
-                else {
+                } else {
                     this.raiseError('Erro anailsaComandos()')
                 }
             }
             this.token = this.lexico.pegaToken()
-        }
-        else {
+        } else {
             this.raiseError('Erro anailsaComandos()')
         }
     }
@@ -142,13 +144,12 @@ class Sintatico {
         this.token = this.lexico.pegaToken()
         if (this.token.simbolo == 'satribuicao') {
             this.analisaAtribuicao()
-        }
-        else {
+        } else {
             this.chamadaProcedimento()
         }
     }
 
-    analisaLeia() {
+    analisaLeia() { //NAO ENTENDI
         this.token = this.lexico.pegaToken()
         if (this.token.simbolo == 'sabre_parenteses') {
             this.token = this.lexico.pegaToken()
@@ -156,21 +157,18 @@ class Sintatico {
                 this.token = this.lexico.pegaToken()
                 if (this.token.simbolo == 'sfecha_parenteses') {
                     this.token = this.lexico.token
-                }
-                else {
+                } else {
                     this.raiseError('Erro analisaLeia()')
                 }
-            }
-            else {
+            } else {
                 this.raiseError('Erro analisaLeia()')
             }
-        }
-        else {
+        } else {
             this.raiseError('Erro analisaLeia()')
         }
     }
 
-    analisaEscreva() {
+    analisaEscreva() { //NAO ENTENDI
         this.token = this.lexico.pegaToken()
         if (this.token.simbolo == 'sabre_parenteses') {
             this.token = this.lexico.pegaToken()
@@ -178,16 +176,13 @@ class Sintatico {
                 this.token = this.lexico.pegaToken()
                 if (this.token.simbolo == 'sfecha_parenteses') {
                     this.token = this.lexico.token
-                }
-                else {
+                } else {
                     this.raiseError('Erro analisaEscreva()')
                 }
-            }
-            else {
+            } else {
                 this.raiseError('Erro analisaEscreva()')
             }
-        }
-        else {
+        } else {
             this.raiseError('Erro analisaEscreva()')
         }
     }
@@ -198,8 +193,7 @@ class Sintatico {
         if (this.token.simbolo == 'sfaca') {
             this.token = this.lexico.pegaToken()
             this.analisaComandoSimples()
-        }
-        else {
+        } else {
             this.raiseError('Erro analisaEnquanto()')
         }
     }
@@ -214,8 +208,7 @@ class Sintatico {
                 this.token = this.lexico.pegaToken()
                 this.analisaComandoSimples()
             }
-        }
-        else {
+        } else {
             this.raiseError('Erro analisaSe()')
         }
     }
@@ -228,14 +221,12 @@ class Sintatico {
         while (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {
             if (this.token.simbolo == 'sprocedimento') {
                 this.analisaDeclaracaoProcedimento()
-            }
-            else {
+            } else {
                 this.analisaDeclaracaoFuncao()
             }
             if (this.token.simbolo == 'spontovirgula') {
                 this.token = this.lexico.pegaToken()
-            }
-            else {
+            } else {
                 this.raiseError('Erro analisaSubrotinas()')
             }
         }
@@ -250,12 +241,10 @@ class Sintatico {
             this.token = this.lexico.pegaToken()
             if (this.token.simbolo == 'spontovirgula') {
                 this.analisaBloco()
-            }
-            else {
+            } else {
                 this.raiseError("Erro analisaDeclaracaoProcedimento()")
             }
-        }
-        else {
+        } else {
             this.raiseError("Erro analisaDeclaracaoProcedimento()")
         }
     }
@@ -270,8 +259,7 @@ class Sintatico {
                     this.token = this.lexico.pegaToken()
                     if (this.token.simbolo == 'spontovirgula') {
                         this.analisaBloco()
-                    }
-                    else {
+                    } else {
                         this.raiseError("Erro analisaDeclaracaoFuncao()")
                     }
                 }
@@ -311,32 +299,26 @@ class Sintatico {
     analisaFator() {
         if (this.token.simbolo == 'sidentificador') {
             this.analisaChamadaFuncao()
-        }
-        else {
+        } else {
             if (this.token.simbolo == 'snumero') {
                 this.token = this.lexico.pegaToken()
-            }
-            else {
+            } else {
                 if (this.token.simbolo == 'snao') {
                     this.token = this.lexico.pegaToken()
                     this.analisaFator()
-                }
-                else {
+                } else {
                     if (this.token.simbolo == 'sabre_parenteses') {
                         this.token = this.lexico.pegaToken()
                         this.analisaExpressao()
                         if (this.token.simbolo == 'sfecha_parentes') {
                             this.token = this.lexico.pegaToken()
-                        }
-                        else {
+                        } else {
                             this.raiseError("Erro analisaFator()")
                         }
-                    }
-                    else {
+                    } else {
                         if (this.token.lexema == 'verdadeiro' || this.token.lexema == 'falso') {
                             this.token = this.lexico.pegaToken()
-                        }
-                        else {
+                        } else {
                             this.raiseError("Erro analisaFator()")
                         }
                     }
@@ -356,28 +338,28 @@ class TabelaSimbolos {
         this.simbolos = [];
     }
 
-    insereTabela(){
-        
-    }
-
-    consultaTabela(){
+    insereTabela(lexema, escopo, memoria, tipo) {
 
     }
 
-    insereTipoVariaveis(){
+    consultaTabela(lexema) {
+
+    }
+
+    insereTipoVariaveis() {
 
     }
 }
 
 class Simbolo {
-    constructor(lexema, escopo){
+    constructor(lexema, escopo) {
         this.lexema = lexema;
         this.escopo = escopo;
     }
 }
 
 class SimboloVar extends Simbolo {
-    constructor(lexema, escopo, memoria, tipo){
+    constructor(lexema, escopo, memoria, tipo) {
         Simbolo.call(this, lexema, escopo);
         this.memoria = memoria;
         this.tipo = tipo;
@@ -385,14 +367,14 @@ class SimboloVar extends Simbolo {
 }
 
 class SimboloFuncao extends Simbolo {
-    constructor(lexema, escopo, tipo){
+    constructor(lexema, escopo, tipo) {
         Simbolo.call(this, lexema, escopo);
         this.tipo = tipo;
     }
 }
 
 class SimboloProcedimentoPrograma {
-    constructor(lexema, escopo){
+    constructor(lexema, escopo) {
         Simbolo.call(this, lexema, escopo);
     }
 }
