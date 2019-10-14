@@ -350,3 +350,47 @@ class Sintatico {
         console.log('Token: ' + this.token)
     }
 }
+
+class TabelaSimbolos {
+    constructor() {
+        this.simbolos = [];
+    }
+
+    insereTabela(){
+        
+    }
+
+    consultaTabela(){
+
+    }
+
+    insereTipoVariaveis(){
+
+    }
+}
+
+class Simbolo {
+    constructor(lexema, escopo){
+        this.lexema = lexema;
+        this.escopo = escopo;
+    }
+}
+
+class SimboloVar extends Simbolo {
+    constructor(lexema, escopo, memoria, tipo){
+        Simbolo.call(this, lexema, escopo);
+        this.memoria = memoria;
+        this.tipo = tipo;
+    }
+}
+
+class SimboloFuncao extends Simbolo {
+    constructor(lexema, escopo, tipo){
+        Simbolo.call(this, lexema, escopo);
+        this.tipo = tipo;
+    }
+}
+
+class SimboloProcedimentoPrograma {
+
+}
