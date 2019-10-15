@@ -1,7 +1,9 @@
 class Sintatico {
     constructor(codigo) {
         this.lexico = new Lexico(codigo)
-        this.token = new Token
+        this.tabela = new TabelaSimbolos();
+        this.token = null
+
     }
 
     analisador() { // Main Sintatico
@@ -90,6 +92,8 @@ class Sintatico {
                             if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
                             this.raiseError("Erro Sintático: Váriavel não encontrada após ',' -> Encontrado '" + this.token.lexema + "'")
                         }
+                    } else {
+                        this.raiseError('Erro analisaVariaveis()')
                     }
                 }
                 else {
@@ -269,8 +273,7 @@ class Sintatico {
         while (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {
             if (this.token.simbolo == 'sprocedimento') {
                 this.analisaDeclaracaoProcedimento()
-            }
-            else {
+            } else {
                 this.analisaDeclaracaoFuncao()
             }
             if (this.token.simbolo == 'sponto_virgula') {
@@ -369,8 +372,7 @@ class Sintatico {
         console.log("Sintatico: analisaFator")
         if (this.token.simbolo == 'sidentificador') {
             this.analisaChamadaFuncao()
-        }
-        else {
+        } else {
             if (this.token.simbolo == 'snumero') {
                 this.token = this.lexico.analisador()
             }
@@ -378,8 +380,7 @@ class Sintatico {
                 if (this.token.simbolo == 'snao') {
                     this.token = this.lexico.analisador()
                     this.analisaFator()
-                }
-                else {
+                } else {
                     if (this.token.simbolo == 'sabre_parenteses') {
                         this.token = this.lexico.analisador()
                         this.analisaExpressao()
@@ -390,8 +391,7 @@ class Sintatico {
                             if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
                             this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
                         }
-                    }
-                    else {
+                    } else {
                         if (this.token.lexema == 'verdadeiro' || this.token.lexema == 'falso') {
                             this.token = this.lexico.analisador()
                         }
@@ -414,5 +414,69 @@ class Sintatico {
             numLinha: this.token.linha,
             msg: error
         }
+    }
+}
+
+class TabelaSimbolos {
+    constructor() {
+        this.simbolos = [];
+    }
+
+    insereTabela(lexema, escopo, memoria, tipo) {
+        if(memoria != null && tipo != null){
+            this.simbolos.push(new SimboloVar(lexema, escopo, memoria, tipo))
+        }
+        else if(memoria == null && tipo != null){
+            this.simbolos.push(new SimboloFuncao(lexema, escopo, tipo))
+        }
+        else if(memoria == null && tipo == null){
+            this.simbolos.push(new SimboloProcedimentoPrograma(lexema, escopo))
+        }
+    }
+
+    consultaTabela(lexema) {
+        for(let i in tabela){
+            if(tabela[i].lexema == lexema){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    insereTipoVariaveis(lexema) {
+        if(lexema === "sinteiro"){
+            
+        }
+        else if(lexema === "sbooleano"){
+
+        }
+    }
+}
+
+class Simbolo {
+    constructor(lexema, escopo) {
+        this.lexema = lexema;
+        this.escopo = escopo;
+    }
+}
+
+class SimboloVar extends Simbolo {
+    constructor(lexema, escopo, memoria, tipo) {
+        Simbolo.call(this, lexema, escopo);
+        this.memoria = memoria;
+        this.tipo = tipo;
+    }
+}
+
+class SimboloFuncao extends Simbolo {
+    constructor(lexema, escopo, tipo) {
+        Simbolo.call(this, lexema, escopo);
+        this.tipo = tipo;
+    }
+}
+
+class SimboloProcedimentoPrograma {
+    constructor(lexema, escopo) {
+        Simbolo.call(this, lexema, escopo);
     }
 }
