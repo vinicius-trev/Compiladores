@@ -59,7 +59,7 @@ class Lexico {
         this.token.numLinhaAnterior = this.numLinha;
         while (/\s/.test(this.caracter) || this.inComment) 
         {
-            console.log("Char:" + this.caracter)
+            
             if (/\n/.test(this.caracter)) this.numLinha++
 
             if (this.caracter === '}') this.inComment = false
@@ -86,6 +86,7 @@ class Lexico {
     }
 
     lerCaracter() {
+        console.log(this.text.length)
         if (this.text.length != 0) {
             this.caracter = this.text[0]
             this.text = this.text.substr(1)
@@ -93,6 +94,7 @@ class Lexico {
         else {
             this.caracter = 'EOF'
         }
+        console.log("Char:" + this.caracter)
     }
 
     // Funcoes de criacao do token
@@ -117,7 +119,7 @@ class Lexico {
         id = id.concat(this.caracter);
         this.lerCaracter();
 
-        while (/[A-Za-z]/g.test(this.caracter) === true || /[0-9]/g.test(this.caracter) === true || /[_]/g.test(this.caracter) === true) {
+        while ((/[A-Za-z]/g.test(this.caracter) === true || /[0-9]/g.test(this.caracter) === true || /[_]/g.test(this.caracter) === true) && this.caracter != 'EOF') {
             id = id.concat(this.caracter);
             this.lerCaracter();
         }

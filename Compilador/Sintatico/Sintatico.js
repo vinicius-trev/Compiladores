@@ -11,6 +11,7 @@ class Sintatico {
         if (this.token.simbolo == 'sprograma') {
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sidentificador') {
+                //this.tabela.insereTabela(token.lexema, "nomedeprograma", null, null)
                 this.token = this.lexico.analisador()
                 if (this.token.simbolo == 'sponto_virgula') {
                     this.analisaBloco()
@@ -84,6 +85,7 @@ class Sintatico {
         console.log("Sintatico: analisaVariaveis")
         do {
             if (this.token.simbolo == 'sidentificador') {
+
                 this.token = this.lexico.analisador()
                 if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
                     if (this.token.simbolo == 'svirgula') {
@@ -92,8 +94,6 @@ class Sintatico {
                             if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
                             this.raiseError("Erro Sintático: Váriavel não encontrada após ',' -> Encontrado '" + this.token.lexema + "'")
                         }
-                    } else {
-                        this.raiseError('Erro analisaVariaveis()')
                     }
                 }
                 else {
@@ -414,69 +414,5 @@ class Sintatico {
             numLinha: this.token.linha,
             msg: error
         }
-    }
-}
-
-class TabelaSimbolos {
-    constructor() {
-        this.simbolos = [];
-    }
-
-    insereTabela(lexema, escopo, memoria, tipo) {
-        if(memoria != null && tipo != null){
-            this.simbolos.push(new SimboloVar(lexema, escopo, memoria, tipo))
-        }
-        else if(memoria == null && tipo != null){
-            this.simbolos.push(new SimboloFuncao(lexema, escopo, tipo))
-        }
-        else if(memoria == null && tipo == null){
-            this.simbolos.push(new SimboloProcedimentoPrograma(lexema, escopo))
-        }
-    }
-
-    consultaTabela(lexema) {
-        for(let i in tabela){
-            if(tabela[i].lexema == lexema){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    insereTipoVariaveis(lexema) {
-        if(lexema === "sinteiro"){
-            
-        }
-        else if(lexema === "sbooleano"){
-
-        }
-    }
-}
-
-class Simbolo {
-    constructor(lexema, escopo) {
-        this.lexema = lexema;
-        this.escopo = escopo;
-    }
-}
-
-class SimboloVar extends Simbolo {
-    constructor(lexema, escopo, memoria, tipo) {
-        Simbolo.call(this, lexema, escopo);
-        this.memoria = memoria;
-        this.tipo = tipo;
-    }
-}
-
-class SimboloFuncao extends Simbolo {
-    constructor(lexema, escopo, tipo) {
-        Simbolo.call(this, lexema, escopo);
-        this.tipo = tipo;
-    }
-}
-
-class SimboloProcedimentoPrograma {
-    constructor(lexema, escopo) {
-        Simbolo.call(this, lexema, escopo);
     }
 }
