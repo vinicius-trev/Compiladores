@@ -11,7 +11,7 @@ class Sintatico {
         if (this.token.simbolo == 'sprograma') {
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sidentificador') {
-                this.tabela.insereTabela(this.token.lexema, this.escopoAtual, null, "nomedeprograma")
+                this.tabela.insereTabela(this.token.lexema, true, null, null)
                 this.token = this.lexico.analisador()
                 if (this.token.simbolo == 'sponto_virgula') {
                     this.analisaBloco()
@@ -82,8 +82,8 @@ class Sintatico {
         console.log("Sintatico: analisaVariaveis")
         do {
             if (this.token.simbolo == 'sidentificador') {
-                if (!this.tabela.consultaTabela(this.token.lexema, this.escopoAtual)) {
-                    this.tabela.insereTabela(this.token.lexema, this.escopoAtual, null, 'variavel')
+                if (!this.tabela.consultaTabela(this.token.lexema)) {
+                    this.tabela.insereTabela(this.token.lexema, false, 0, 0)
                     this.token = this.lexico.analisador()
                     if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
                         if (this.token.simbolo == 'svirgula') {
@@ -93,10 +93,10 @@ class Sintatico {
                                 this.raiseError("Erro Sintático: Váriavel não encontrada após ',' -> Encontrado '" + this.token.lexema + "'")
                             }
                         }
-                        else {
-                            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                            this.raiseError("Erro Sintático: Caracter ':' não encontrado antes da declaração de tipo -> Encontrado '" + this.token.lexema + "'")
-                        }
+                    }
+                    else {
+                        if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                        this.raiseError("Erro Sintático: Caracter ':' não encontrado antes da declaração de tipo -> Encontrado '" + this.token.lexema + "'")
                     }
                 }
                 else {
@@ -122,7 +122,7 @@ class Sintatico {
             this.raiseError("Erro Sintático: Tipo de variável inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
         }
         else {
-            this.tabela
+            this.tabela.insereTipoVariaveis(this.token.lexema)
             this.token = this.lexico.analisador()
         }
     }
@@ -301,6 +301,8 @@ class Sintatico {
         console.log("Sintatico: analisaDeclaracaoProcedimento")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'sindentificador') {
+            // if pesquisa semantico
+            this.tabela.insereTabela(this.token.lexema, true)
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'spontovirgula') {
                 this.analisaBloco()
@@ -314,16 +316,20 @@ class Sintatico {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Identificador '" + this.token.lexema + "' incorreto para a declaração de procedimento")
         }
+        this.tabela.atualizarEscopo()
     }
 
     analisaDeclaracaoFuncao() {
         console.log("Sintatico: analisaDeclaracaoFuncao")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'sidentificador') {
+            // if pesquisa semantico
+            this.tabela.insereTabela(this.token.lexema, true, null, 0)
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sdoispontos') {
                 this.token = this.lexico.analisador()
                 if (this.token.simbolo == 'sinteiro' || this.token.simbolo == 'sbooleano') {
+                    this.tabela.simbolos[this.tabela.simbolos.length-1].tipo = this.token.lexema
                     this.token = this.lexico.analisador()
                     if (this.token.simbolo == 'sponto_virgula') {
                         this.analisaBloco()
@@ -343,6 +349,7 @@ class Sintatico {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Identificador '" + this.token.lexema + "' incorreto para a declaração de função")
         }
+        this.tabela.atualizarEscopo()
     }
 
     analisaExpressao() {

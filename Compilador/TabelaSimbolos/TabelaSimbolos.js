@@ -15,9 +15,10 @@ class TabelaSimbolos {
         }
     }
 
-    consultaTabela(lexema, escopo) {
-        for(let i in tabela){
-            if(tabela[i].lexema == lexema && tabela[i].escopo == escopo){
+
+    consultaTabela(lexema) {
+        for(let i in this.simbolos){
+            if(i.lexema == lexema){
                 return true;
             }
         }
@@ -25,12 +26,26 @@ class TabelaSimbolos {
     }
 
     insereTipoVariaveis(lexema) {
-        if(lexema === "sinteiro"){
-            
-        }
-        else if(lexema === "sbooleano"){
 
+        for(let i = this.simbolos.length-1; i >= 0; i--){
+            if(this.simbolos[i] instanceof SimboloVar){
+                this.simbolos[i].tipo = lexema;
+            }
+            else{
+                break;
+            }
         }
+    }
+
+    atualizarEscopo()
+    {
+        let i = this.simbolos.length-1;
+        while(this.simbolos[i].escopo == false || i >= 0){
+            this.simbolos.pop();
+            i--;
+        }
+
+        this.simbolos[i].escopo = false;
     }
 }
 
