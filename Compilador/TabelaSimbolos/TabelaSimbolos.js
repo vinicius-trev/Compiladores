@@ -15,9 +15,9 @@ class TabelaSimbolos {
         }
     }
 
-    consultaTabela(lexema) {
+    consultaTabela(lexema, escopo) {
         for(let i in tabela){
-            if(tabela[i].lexema == lexema){
+            if(tabela[i].lexema == lexema && tabela[i].escopo == escopo){
                 return true;
             }
         }
@@ -43,7 +43,7 @@ class Simbolo {
 
 class SimboloVar extends Simbolo {
     constructor(lexema, escopo, memoria, tipo) {
-        Simbolo.call(this, lexema, escopo);
+        super(lexema, escopo);
         this.memoria = memoria;
         this.tipo = tipo;
     }
@@ -51,13 +51,13 @@ class SimboloVar extends Simbolo {
 
 class SimboloFuncao extends Simbolo {
     constructor(lexema, escopo, tipo) {
-        Simbolo.call(this, lexema, escopo);
+        super(lexema, escopo);
         this.tipo = tipo;
     }
 }
 
-class SimboloProcedimentoPrograma {
+class SimboloProcedimentoPrograma extends Simbolo{
     constructor(lexema, escopo) {
-        Simbolo.call(this, lexema, escopo);
+        super(lexema, escopo);
     }
 }

@@ -3,7 +3,7 @@ class Sintatico {
         this.lexico = new Lexico(codigo)
         this.tabela = new TabelaSimbolos();
         this.token = null
-
+        this.escopoAtual = 0
     }
 
     analisador() { // Main Sintatico
@@ -11,27 +11,25 @@ class Sintatico {
         if (this.token.simbolo == 'sprograma') {
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sidentificador') {
-                //this.tabela.insereTabela(token.lexema, "nomedeprograma", null, null)
+                this.tabela.insereTabela(this.token.lexema, this.escopoAtual, null, "nomedeprograma")
                 this.token = this.lexico.analisador()
                 if (this.token.simbolo == 'sponto_virgula') {
                     this.analisaBloco()
-                    if (this.token.simbolo == 'sponto') 
-                    {
+                    if (this.token.simbolo == 'sponto') {
                         console.log(this.token)
                         this.token = this.lexico.analisador()
                         console.log(this.token)
 
                         // Se acabou arquivo ou comentario
-                        if (this.token.simbolo === 'SEOF')
-                        {
+                        if (this.token.simbolo === 'SEOF') {
                             console.log("SUCESSO")
                         }
                         // Se nao
                         else
-                            this.raiseError("Erro Sintático: Token '"+ this.token.simbolo +"' não esperado")
+                            this.raiseError("Erro Sintático: Token '" + this.token.simbolo + "' não esperado")
                     }
                     else {
-                        if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                        if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                         this.raiseError("Erro Sintático: Caracter '.' esperado após símbolo 'sfim' -> Encontrado '" + this.token.lexema + "'")
                     }
                 }
@@ -41,7 +39,7 @@ class Sintatico {
                 }
             }
             else {
-                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Sintático: Identificador do programa '" + this.token.lexema + "' inválido")
             }
         }
@@ -67,15 +65,14 @@ class Sintatico {
                     this.analisaVariaveis()
                     if (this.token.simbolo == 'sponto_virgula')
                         this.token = this.lexico.analisador()
-                    else 
-                    {
+                    else {
                         this.token.linha = this.token.numLinhaAnterior
                         this.raiseError("Erro Sintático: Caracter ';' não encontrado após declaração de variáveis")
                     }
                 }
             }
             else {
-                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Sintático: Identificador incorreto para variável '" + this.token.lexema + "'")
             }
         }
@@ -85,26 +82,34 @@ class Sintatico {
         console.log("Sintatico: analisaVariaveis")
         do {
             if (this.token.simbolo == 'sidentificador') {
-
-                this.token = this.lexico.analisador()
-                if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
-                    if (this.token.simbolo == 'svirgula') {
-                        this.token = this.lexico.analisador()
-                        if (this.token.simbolo == 'sdoispontos') {
-                            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
-                            this.raiseError("Erro Sintático: Váriavel não encontrada após ',' -> Encontrado '" + this.token.lexema + "'")
+                if (!this.tabela.consultaTabela(token.lexema, this.escopoAtual)){
+                    this.tabela.insereTabela(this.token.lexema, this.escopoAtual, null, 'variavel')
+                    this.token = this.lexico.analisador()
+                    if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
+                        if (this.token.simbolo == 'svirgula') {
+                            this.token = this.lexico.analisador()
+                            if (this.token.simbolo == 'sdoispontos') {
+                                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                                this.raiseError("Erro Sintático: Váriavel não encontrada após ',' -> Encontrado '" + this.token.lexema + "'")
+                            }
+                        }
+                        else {
+                            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                            this.raiseError("Erro Sintático: Caracter ':' não encontrado antes da declaração de tipo -> Encontrado '" + this.token.lexema + "'")
                         }
                     }
                 }
-                else {
-                    if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
-                    this.raiseError("Erro Sintático: Caracter ':' não encontrado antes da declaração de tipo -> Encontrado '" + this.token.lexema + "'")
+                else{
+                    if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                    this.raiseError("Erro Tabela de simbolos: Identificador já declarado nesse escopo. '" + this.token.lexema + "'")
                 }
             }
+
             else {
-                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Sintático: Identificador incorreto para variável '" + this.token.lexema + "'")
             }
+
         } while (this.token.simbolo != 'sdoispontos')
         this.token = this.lexico.analisador()
         this.analisaTipo()
@@ -113,10 +118,13 @@ class Sintatico {
     analisaTipo() {
         console.log("Sintatico: analisaTipo")
         if (this.token.simbolo != 'sinteiro' && this.token.simbolo != 'sbooleano') {
-            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Tipo de variável inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
         }
-        this.token = this.lexico.analisador()
+        else{
+            this.tabela
+            this.token = this.lexico.analisador()
+        }
     }
 
     analisaComandos() {
@@ -139,7 +147,7 @@ class Sintatico {
             this.token = this.lexico.analisador()
         }
         else {
-            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: 'inicio' não encontrado no bloco de comandos -> Encontrado '" + this.token.lexema + "'")
         }
     }
@@ -191,17 +199,17 @@ class Sintatico {
                     this.token = this.lexico.analisador()
                 }
                 else {
-                    if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                    if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                     this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
                 }
             }
             else {
-                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Sintático: Identificador incorreto para o comando 'leia'")
             }
         }
         else {
-            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Esperado '(' -> Encontrado '" + this.token.lexema + "'")
         }
     }
@@ -217,17 +225,17 @@ class Sintatico {
                     this.token = this.lexico.analisador()
                 }
                 else {
-                    if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                    if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                     this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
                 }
             }
             else {
-                if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Sintático: Identificador incorreto para o comando 'escreva'")
             }
         }
         else {
-            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Esperado '(' -> Encontrado '" + this.token.lexema + "'")
         }
     }
@@ -241,7 +249,7 @@ class Sintatico {
             this.analisaComandoSimples()
         }
         else {
-            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Esperado 'faca' -> Encontrado '" + this.token.lexema + "'")
         }
     }
@@ -259,7 +267,7 @@ class Sintatico {
             }
         }
         else {
-            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Esperado 'entao' -> Encontrado '" + this.token.lexema + "'")
         }
     }
@@ -303,8 +311,8 @@ class Sintatico {
             }
         }
         else {
-            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
-            this.raiseError("Erro Sintático: Identificador '" +this.token.lexema + "' incorreto para a declaração de procedimento")
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: Identificador '" + this.token.lexema + "' incorreto para a declaração de procedimento")
         }
     }
 
@@ -326,15 +334,14 @@ class Sintatico {
                     }
                 }
                 else {
-                    if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                    if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                     this.raiseError("Erro Sintático: Tipo de retorno da função inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
                 }
             }
         }
-        else 
-        {
-            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
-            this.raiseError("Erro Sintático: Identificador '" +this.token.lexema + "' incorreto para a declaração de função")
+        else {
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Sintático: Identificador '" + this.token.lexema + "' incorreto para a declaração de função")
         }
     }
 
@@ -388,7 +395,7 @@ class Sintatico {
                             this.token = this.lexico.analisador()
                         }
                         else {
-                            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                             this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
                         }
                     } else {
@@ -396,7 +403,7 @@ class Sintatico {
                             this.token = this.lexico.analisador()
                         }
                         else {
-                            if(this.token.linha == null)  this.token.linha = this.token.numLinhaAnterior
+                            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                             this.raiseError("Erro na expressão, esperado lexema 'verdadeiro' ou 'falso'")
                         }
                     }
