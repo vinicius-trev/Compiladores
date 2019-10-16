@@ -82,7 +82,7 @@ class Sintatico {
         console.log("Sintatico: analisaVariaveis")
         do {
             if (this.token.simbolo == 'sidentificador') {
-                if (!this.tabela.consultaTabela(token.lexema, this.escopoAtual)){
+                if (!this.tabela.consultaTabela(this.token.lexema, this.escopoAtual)) {
                     this.tabela.insereTabela(this.token.lexema, this.escopoAtual, null, 'variavel')
                     this.token = this.lexico.analisador()
                     if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
@@ -99,7 +99,7 @@ class Sintatico {
                         }
                     }
                 }
-                else{
+                else {
                     if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                     this.raiseError("Erro Tabela de simbolos: Identificador já declarado nesse escopo. '" + this.token.lexema + "'")
                 }
@@ -121,7 +121,7 @@ class Sintatico {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Tipo de variável inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
         }
-        else{
+        else {
             this.tabela
             this.token = this.lexico.analisador()
         }
