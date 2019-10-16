@@ -133,7 +133,7 @@ class Sintatico {
                 }
                 else {
                     this.token.linha = this.token.numLinhaAnterior
-                    this.raiseError("Erro Sintático: Caracter ';' não encontrado após comando")
+                    this.raiseError("Erro Sintático: Caracter ';' não encontrado ou comando inválido")
                 }
             }
             this.token = this.lexico.analisador()
@@ -405,7 +405,12 @@ class Sintatico {
         }
     }
     analisaChamadaFuncao() {
+        console.log("Sintatico: analisaChamadaFuncao")
         this.lexico.analisador()
+    }
+
+    analisaChamadaProcedimento() {
+        console.log("Sintatico: analisaChamadaProcedimento")
     }
 
     raiseError(error) {
