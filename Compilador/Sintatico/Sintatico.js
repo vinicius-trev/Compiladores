@@ -99,12 +99,12 @@ class Sintatico {
                         this.raiseError("Erro Sintático: Caracter ':' não encontrado antes da declaração de tipo -> Encontrado '" + this.token.lexema + "'")
                     }
                 }
-                else {
+                else 
+                {
                     if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                    this.raiseError("Erro Tabela de simbolos: Identificador já declarado nesse escopo. '" + this.token.lexema + "'")
+                    this.raiseError("Erro Tabela de simbolos: Identificador '" + this.token.lexema + "' já declarado nesse escopo.")
                 }
             }
-
             else {
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Sintático: Identificador incorreto para variável '" + this.token.lexema + "'")
@@ -141,7 +141,7 @@ class Sintatico {
                 }
                 else {
                     this.token.linha = this.token.numLinhaAnterior
-                    this.raiseError("Erro Sintático: Caracter ';' não encontrado ou comando inválido")
+                    this.raiseError("Erro Sintático: Caracter ';' não encontrado ou COMANDO INVÁLIDO")
                 }
             }
             this.token = this.lexico.analisador()
@@ -301,9 +301,12 @@ class Sintatico {
         console.log("Sintatico: analisaDeclaracaoProcedimento")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'sidentificador') {
-            // if pesquisa semantico
+
+            // if pesquisa semantico - Falta Fazer - pesquisa_declproc_tabela(token.lexema)
+            // se nao encontrou insere na tabela
             this.tabela.insereTabela(this.token.lexema, true)
             this.token = this.lexico.analisador()
+
             if (this.token.simbolo == 'sponto_virgula') {
                 this.analisaBloco()
             }
@@ -323,9 +326,12 @@ class Sintatico {
         console.log("Sintatico: analisaDeclaracaoFuncao")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'sidentificador') {
-            // if pesquisa semantico
+
+            // if pesquisa semantico - Falta Fazer - pesquisa_declfunc_tabela(token.lexema)
+            // se nao encontrou insere na tabela
             this.tabela.insereTabela(this.token.lexema, true, null, 0)
             this.token = this.lexico.analisador()
+
             if (this.token.simbolo == 'sdoispontos') {
                 this.token = this.lexico.analisador()
                 if (this.token.simbolo == 'sinteiro' || this.token.simbolo == 'sbooleano') {
@@ -344,6 +350,10 @@ class Sintatico {
                     this.raiseError("Erro Sintático: Tipo de retorno da função inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
                 }
             }
+            else {
+                this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Sintático: Caracter ':' não encontrado na declaração de tipo da função")
+            }
         }
         else {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
@@ -355,7 +365,7 @@ class Sintatico {
     analisaExpressao() {
         console.log("Sintatico: analisaExpressao")
         this.analisaExpressaoSimples()
-        if (this.token.simbolo == 'smaior' || this.token.simbolo == 'smaiorig' || this.token.simbolo == 'smenor' || this.token.simbolo == 'smenorig' || this.token.simbolo == 'sdif') {
+        if (this.token.simbolo == 'smaior' || this.token.simbolo == 'smaiorig' || this.token.simbolo == 'smenor' || this.token.simbolo == 'smenorig' || this.token.simbolo == 'sdif' || this.token.simbolo == 'sig') {
             this.token = this.lexico.analisador()
             this.analisaExpressaoSimples()
         }
@@ -412,7 +422,7 @@ class Sintatico {
                         }
                         else {
                             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                            this.raiseError("Erro na expressão, esperado lexema 'verdadeiro' ou 'falso'")
+                            this.raiseError("Erro Sintático: Expressão está incorreta - Construção de Expressão inválida")
                         }
                     }
                 }

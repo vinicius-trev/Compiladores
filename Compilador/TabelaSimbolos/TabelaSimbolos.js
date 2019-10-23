@@ -19,10 +19,14 @@ class TabelaSimbolos {
 
 
     consultaTabela(lexema) {
-        for(let i in this.simbolos){
+        let i,j=this.simbolos.length-1;
+        while(this.simbolos[j].escopo == false){
+            
+            i=this.simbolos[j]
             if(i.lexema == lexema){
                 return true;
             }
+            j--;
         }
         return false;
     }
