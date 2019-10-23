@@ -16,9 +16,9 @@ class Sintatico {
                 if (this.token.simbolo == 'sponto_virgula') {
                     this.analisaBloco()
                     if (this.token.simbolo == 'sponto') {
-                        console.log(this.token)
+                        //console.log(this.token)
                         this.token = this.lexico.analisador()
-                        console.log(this.token)
+                        //console.log(this.token)
 
                         // Se acabou arquivo ou comentario
                         if (this.token.simbolo === 'SEOF') {
@@ -300,11 +300,11 @@ class Sintatico {
     analisaDeclaracaoProcedimento() {
         console.log("Sintatico: analisaDeclaracaoProcedimento")
         this.token = this.lexico.analisador()
-        if (this.token.simbolo == 'sindentificador') {
+        if (this.token.simbolo == 'sidentificador') {
             // if pesquisa semantico
             this.tabela.insereTabela(this.token.lexema, true)
             this.token = this.lexico.analisador()
-            if (this.token.simbolo == 'spontovirgula') {
+            if (this.token.simbolo == 'sponto_virgula') {
                 this.analisaBloco()
             }
             else {
@@ -355,7 +355,7 @@ class Sintatico {
     analisaExpressao() {
         console.log("Sintatico: analisaExpressao")
         this.analisaExpressaoSimples()
-        if (this.token.simbolo == 'smaior' || this.token.simbolo == 'smaiorig' || this.token.simbolo == 'smenor' || this.token.simbolo == 'smenorir' || this.token.simbolo == 'sdif') {
+        if (this.token.simbolo == 'smaior' || this.token.simbolo == 'smaiorig' || this.token.simbolo == 'smenor' || this.token.simbolo == 'smenorig' || this.token.simbolo == 'sdif') {
             this.token = this.lexico.analisador()
             this.analisaExpressaoSimples()
         }
@@ -398,11 +398,12 @@ class Sintatico {
                     if (this.token.simbolo == 'sabre_parenteses') {
                         this.token = this.lexico.analisador()
                         this.analisaExpressao()
-                        if (this.token.simbolo == 'sfecha_parentes') {
+                        if (this.token.simbolo == 'sfecha_parenteses') {
                             this.token = this.lexico.analisador()
                         }
                         else {
                             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                            console.log(this.token)
                             this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
                         }
                     } else {

@@ -49,7 +49,7 @@ class Lexico {
     analisador() {
         // Se final de arquivo
         if (this.caracter === 'EOF') {
-            console.log("FINAL DO ARQUIVO")
+           // console.log("FINAL DO ARQUIVO")
             this.token.simbolo = 'SEOF'
             this.token.lexema = 'EOF'
             return this.token
@@ -86,7 +86,7 @@ class Lexico {
     }
 
     lerCaracter() {
-        console.log(this.text.length)
+        //console.log(this.text.length)
         if (this.text.length != 0) {
             this.caracter = this.text[0]
             this.text = this.text.substr(1)
@@ -94,7 +94,7 @@ class Lexico {
         else {
             this.caracter = 'EOF'
         }
-        console.log("Char:" + this.caracter)
+        //console.log("Char:" + this.caracter)
     }
 
     // Funcoes de criacao do token

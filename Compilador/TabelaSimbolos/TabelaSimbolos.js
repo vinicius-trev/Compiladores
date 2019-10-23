@@ -5,10 +5,12 @@ class TabelaSimbolos {
 
     insereTabela(lexema, escopo, memoria, tipo) {
         if(memoria != null && tipo != null){
-            this.simbolos.push(new SimboloVar(lexema, escopo, memoria, tipo))
+            let sym = new SimboloVar(lexema, escopo, memoria, tipo); 
+            this.simbolos.push(sym)
         }
         else if(memoria == null && tipo != null){
-            this.simbolos.push(new SimboloFuncao(lexema, escopo, tipo))
+            let sym = new SimboloFuncao(lexema, escopo, tipo);
+            this.simbolos.push(sym)
         }
         else if(memoria == null && tipo == null){
             this.simbolos.push(new SimboloProcedimentoPrograma(lexema, escopo))
@@ -40,7 +42,7 @@ class TabelaSimbolos {
     atualizarEscopo()
     {
         let i = this.simbolos.length-1;
-        while(this.simbolos[i].escopo == false || i >= 0){
+        while(this.simbolos[i].escopo == false && i >= 0){
             this.simbolos.pop();
             i--;
         }
