@@ -1,0 +1,107 @@
+/* Compilador - Analisador Léxico
+ * Bruno Vicente Donaio Kitaka - 16156341
+ * João Pedro Porta - 16039778
+ * Vinicius Trevisan - 16011231
+ */
+ 
+html {
+    padding: 8px;
+    margin: 0;
+    display: flexbox;
+    overflow: hidden;
+}
+
+body {
+    background-color: #192c46;
+    display: grid;
+    grid-template-rows: 1fr 15fr 6fr;
+    height: 100vh;
+}
+
+textarea {
+    border: none;
+    /* overflow: none; */
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    resize: none;
+}
+
+button {
+    border: 2px outset black;
+    background-color:rgba(226, 226, 226, 0.74);
+    height:30px;
+    width:20hv;
+    cursor:pointer;
+    position: relative;
+    top: -3px;
+    left: -2px;
+}
+
+input[type=button] {
+    font-family: 'Inconsolata', monospace;
+}
+
+button:hover {
+    background-color:  rgb(160, 156, 156);
+    color:rgb(0, 0, 0);
+ }
+
+.container.code {
+    height: 75vh;
+    width: 100%;
+    background-color: #cccccc;
+    color: #000;
+    border: 2px solid rgb(160, 156, 156);
+}
+
+.container.console {
+    height: 18vh;
+    width: 100%;
+    background-color: #000000;
+    color: #ffffff;
+    border: 2px solid rgb(160, 156, 156);
+    font-family: 'Inconsolata', monospace;
+    font-size: 1em;
+}
+.container.code{
+    display: grid;
+    grid-template-columns: 1fr 42fr;
+}
+.numbers-line{
+    height: 100%;
+    width: 90%;
+    background-color: rgba(226, 226, 226, 0.74);
+    font-family: 'Inconsolata', monospace;
+    font-size: 1em;
+}
+.caixa-codigo {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    font-family: 'Inconsolata', monospace;
+    font-size: 1em;
+    height: 100%;
+    overflow: hidden;
+}
+
+
+
+.container.buttons{
+    display: flex; 
+}
+
+.code{
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.console{
+    overflow-y: scroll;
+}
+.console > p {
+    color: red;
+}

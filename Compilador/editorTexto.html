@@ -13,10 +13,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="Lexico/style.css" />
-    <script type="text/javascript" src="Lexico/mainLexico.js"></script>
-    <script type="text/javascript" src="Lexico/funcoesTratamento.js"></script>
-    <script type="text/javascript" src="Lexico/openFile.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="Token/Token.js"></script>
+    <script type="text/javascript" src="TabelaSimbolos/TabelaSimbolos.js"></script>
+    <script type="text/javascript" src="Lexico/Lexico.js"></script>
+    <script type="text/javascript" src="Sintatico/Sintatico.js"></script>
     <title>Compilador</title>
 
 </head>
@@ -24,24 +26,29 @@
 <body>
     <div class="container buttons">
         <div class="abrir-arquivo button">
-            <button onclick="document.getElementById('file-input').click();">Abrir ( Crtl + O )</button>
-            <input id="file-input" type="file" accept='text/plain' name="name" onchange="lerArquivo(event)" style="display: none;" />
+            <button id="file-input" type="file" accept='text/plain' name="name" onclick="openFile()">Abrir
+                (CTRL+O)</button>
         </div>
         <div class="salvar-arquivo button">
-                <button onclick="document.getElementById('file-input').click();">Salvar ( Crtl + S )</button>
-                <input id="file-input2" type="file" name="name" style="display: none;" />
+            <button id="file-input" type="file" accept='text/plain' name="name" onclick="saveFile()">Salvar
+                (CTRL+S)</button>
         </div>
-        <div class="abrir-arquivo button">
-                <button onclick="document.getElementById('file-input').click();">Build ( Crtl + B )</button>
+        <div class="build-arquivo button">
+            <button onclick=build()>Build (CTRL+B)</button>
+        </div>
+        <div class="reset button">
+            <button onclick=reset()>Reset (CTRL+R)</button>
         </div>
     </div>
     <div class="container code">
-        <textarea class="numbers-line"></textarea>
-        <textarea class="caixa-codigo"></textarea>
+        <div class="numbers-line scroller" id="codigo"></div>
+        <textarea spellcheck="false" class="caixa-codigo scroller" id="numero" oninput="atualizaNoLinha()"></textarea>
     </div>
 
-    <div class="container console">
-        
+
+    <div class="container console" id="consoleTerminal">
     </div>
+    <script type="text/javascript" src="openFile.js"></script>
+</body>
 
 </html>
