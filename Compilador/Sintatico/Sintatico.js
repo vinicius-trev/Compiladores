@@ -11,18 +11,18 @@ class Sintatico {
         if (this.token.simbolo == 'sprograma') {
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sidentificador') {
-                this.tabela.insereTabela(this.token.lexema, true, null, null)
+                this.tabela.insereTabela(this.token.lexema, true, null, null) /* Insere Tabela Simbolos */
                 this.token = this.lexico.analisador()
                 if (this.token.simbolo == 'sponto_virgula') {
                     this.analisaBloco()
                     if (this.token.simbolo == 'sponto') {
-                        //console.log(this.token)
+                        //if(dev) (this.token)
                         this.token = this.lexico.analisador()
-                        //console.log(this.token)
+                        //if(dev) (this.token)
 
                         // Se acabou arquivo ou comentario
                         if (this.token.simbolo === 'SEOF') {
-                            console.log("SUCESSO")
+                            if(dev) ("SUCESSO")
                         }
                         // Se nao
                         else
@@ -49,7 +49,7 @@ class Sintatico {
     }
 
     analisaBloco() {
-        console.log("Sintatico: AnalisaBloco")
+        if(dev) ("Sintatico: AnalisaBloco")
         this.token = this.lexico.analisador()
         this.analisaEtVariaveis()
         this.analisaSubrotinas()
@@ -57,7 +57,7 @@ class Sintatico {
     }
 
     analisaEtVariaveis() {
-        console.log("Sintatico: analisaEtVariaveis")
+        if(dev) ("Sintatico: analisaEtVariaveis")
         if (this.token.simbolo == 'svar') {
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sidentificador') {
@@ -79,11 +79,11 @@ class Sintatico {
     }
 
     analisaVariaveis() {
-        console.log("Sintatico: analisaVariaveis")
+        if(dev) ("Sintatico: analisaVariaveis")
         do {
             if (this.token.simbolo == 'sidentificador') {
-                if (!this.tabela.consultaTabela(this.token.lexema)) {
-                    this.tabela.insereTabela(this.token.lexema, false, 0, 0)
+                if (!this.tabela.consultaTabela(this.token.lexema)) {   /* Verifica se a variável não está duplicada no mesmo escopo */
+                    this.tabela.insereTabela(this.token.lexema, false, 0, 0)    /* Se não existir nada duplicado insere na tabela */
                     this.token = this.lexico.analisador()
                     if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
                         if (this.token.simbolo == 'svirgula') {
@@ -116,19 +116,19 @@ class Sintatico {
     }
 
     analisaTipo() {
-        console.log("Sintatico: analisaTipo")
+        if(dev) ("Sintatico: analisaTipo")
         if (this.token.simbolo != 'sinteiro' && this.token.simbolo != 'sbooleano') {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Tipo de variável inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
         }
         else {
-            this.tabela.insereTipoVariaveis(this.token.lexema)
+            this.tabela.insereTipoVariaveis(this.token.lexema) /* Insere tipo nas variáveis */
             this.token = this.lexico.analisador()
         }
     }
 
     analisaComandos() {
-        console.log("Sintatico: analisaComandos")
+        if(dev) ("Sintatico: analisaComandos")
         if (this.token.simbolo == 'sinicio') {
             this.token = this.lexico.analisador()
             this.analisaComandoSimples()
@@ -153,7 +153,7 @@ class Sintatico {
     }
 
     analisaComandoSimples() {
-        console.log("Sintatico: analisaComandoSimples")
+        if(dev) ("Sintatico: analisaComandoSimples")
         switch (this.token.simbolo) {
             case 'sidentificador':
                 this.analisaAtribChprocedimento()
@@ -177,7 +177,7 @@ class Sintatico {
     }
 
     analisaAtribChprocedimento() {
-        console.log("Sintatico: analisaAtribChprocedimento")
+        if(dev) ("Sintatico: analisaAtribChprocedimento")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'satribuicao') {
             this.lexico.analisador()
@@ -189,18 +189,25 @@ class Sintatico {
     }
 
     analisaLeia() {
-        console.log("Sintatico: analisaLeia")
+        if(dev) console.log("Sintatico: analisaLeia")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'sabre_parenteses') {
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sidentificador') {
-                this.token = this.lexico.analisador()
-                if (this.token.simbolo == 'sfecha_parenteses') {
+                if(this.tabela.pesquisaDeclaracaoVarTabela(this.token.lexema)){   
+                    // --> {DUVIDA} O QUE É PESQUISA EM TODA TABELA (QUA) <-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     this.token = this.lexico.analisador()
+                    if (this.token.simbolo == 'sfecha_parenteses') {
+                        this.token = this.lexico.analisador()
+                    }
+                    else {
+                        if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                        this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
+                    }
                 }
                 else {
                     if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                    this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
+                        this.raiseError("Erro Tabela de Simbolos: Variável '" + this.token.lexema + "' não declarada")
                 }
             }
             else {
@@ -215,18 +222,26 @@ class Sintatico {
     }
 
     analisaEscreva() {
-        console.log("Sintatico: analisaEscreva")
+        if(dev) console.log("Sintatico: analisaEscreva")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'sabre_parenteses') {
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sidentificador') {
-                this.token = this.lexico.analisador()
-                if (this.token.simbolo == 'sfecha_parenteses') {
+                if(this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)){   
+                // --> {DUVIDA} O QUE É PESQUISA EM TODA TABELA (QUA) <-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     this.token = this.lexico.analisador()
+                    if (this.token.simbolo == 'sfecha_parenteses') {
+                        this.token = this.lexico.analisador()
+                    }
+                    else {
+                        if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                        this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
+                    }
                 }
-                else {
+                else
+                {
                     if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                    this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
+                        this.raiseError("Erro Tabela de Simbolos: Variável ou Função '" + this.token.lexema + "' não declarada")
                 }
             }
             else {
@@ -241,7 +256,7 @@ class Sintatico {
     }
 
     analisaEnquanto() {
-        console.log("Sintatico: analisaEnquanto")
+        if(dev) ("Sintatico: analisaEnquanto")
         this.token = this.lexico.analisador()
         this.analisaExpressao()
         if (this.token.simbolo == 'sfaca') {
@@ -255,7 +270,7 @@ class Sintatico {
     }
 
     analisaSe() {
-        console.log("Sintatico: analisaSe")
+        if(dev) ("Sintatico: analisaSe")
         this.token = this.lexico.analisador()
         this.analisaExpressao()
         if (this.token.simbolo == 'sentao') {
@@ -273,7 +288,7 @@ class Sintatico {
     }
 
     analisaSubrotinas() {
-        console.log("Sintatico: analisaSubrotinas")
+        if(dev) ("Sintatico: analisaSubrotinas")
         let flag = 0
         if (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {
             // Geracao de codigo
@@ -298,21 +313,27 @@ class Sintatico {
     }
 
     analisaDeclaracaoProcedimento() {
-        console.log("Sintatico: analisaDeclaracaoProcedimento")
+        if(dev) ("Sintatico: analisaDeclaracaoProcedimento")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'sidentificador') {
 
             // if pesquisa semantico - Falta Fazer - pesquisa_declproc_tabela(token.lexema)
             // se nao encontrou insere na tabela
-            this.tabela.insereTabela(this.token.lexema, true)
-            this.token = this.lexico.analisador()
+            if(!this.tabela.pesquisaDeclaracaoProcTabela(this.token.lexema)) {
+                this.tabela.insereTabela(this.token.lexema, true)
+                this.token = this.lexico.analisador()
 
-            if (this.token.simbolo == 'sponto_virgula') {
-                this.analisaBloco()
+                if (this.token.simbolo == 'sponto_virgula') {
+                    this.analisaBloco()
+                }
+                else {
+                    this.token.linha = this.token.numLinhaAnterior
+                    this.raiseError("Erro Sintático: Caracter ';' não encontrado após identificador do procedimento")
+                }
             }
             else {
-                this.token.linha = this.token.numLinhaAnterior
-                this.raiseError("Erro Sintático: Caracter ';' não encontrado após identificador do procedimento")
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Tabela de Simbolos: Procedimento '" + this.token.lexema + "' já declarado")
             }
         }
         else {
@@ -323,37 +344,48 @@ class Sintatico {
     }
 
     analisaDeclaracaoFuncao() {
-        console.log("Sintatico: analisaDeclaracaoFuncao")
+        if(dev) ("Sintatico: analisaDeclaracaoFuncao")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'sidentificador') {
 
-            // if pesquisa semantico - Falta Fazer - pesquisa_declfunc_tabela(token.lexema)
-            // se nao encontrou insere na tabela
-            this.tabela.insereTabela(this.token.lexema, true, null, 0)
-            this.token = this.lexico.analisador()
-
-            if (this.token.simbolo == 'sdoispontos') {
+            if(!this.tabela.pesquisaDeclaracaoFuncTabela(this.token.lexema)) 
+            {
+                // if pesquisa semantico - Falta Fazer - pesquisa_declfunc_tabela(token.lexema)
+                // se nao encontrou insere na tabela
+                this.tabela.insereTabela(this.token.lexema, true, null, 0)
                 this.token = this.lexico.analisador()
-                if (this.token.simbolo == 'sinteiro' || this.token.simbolo == 'sbooleano') {
-                    this.tabela.simbolos[this.tabela.simbolos.length-1].tipo = this.token.lexema
+
+                if (this.token.simbolo == 'sdoispontos') {
                     this.token = this.lexico.analisador()
-                    if (this.token.simbolo == 'sponto_virgula') {
-                        this.analisaBloco()
+
+                    if (this.token.simbolo == 'sinteiro' || this.token.simbolo == 'sbooleano') {
+                        this.tabela.simbolos[this.tabela.simbolos.length-1].tipo = this.token.lexema
+                        if(dev) console.table(this.tabela.simbolos)     
+                        
+                        this.token = this.lexico.analisador()
+                        if (this.token.simbolo == 'sponto_virgula') {
+                            this.analisaBloco()
+                        }
+                        else {
+                            this.token.linha = this.token.numLinhaAnterior
+                            this.raiseError("Erro Sintático: Caracter ';' não encontrado após identificador da função")
+                        }
                     }
                     else {
-                        this.token.linha = this.token.numLinhaAnterior
-                        this.raiseError("Erro Sintático: Caracter ';' não encontrado após identificador da função")
+                        if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                        this.raiseError("Erro Sintático: Tipo de retorno da função inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
                     }
                 }
                 else {
-                    if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                    this.raiseError("Erro Sintático: Tipo de retorno da função inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
+                    this.token.linha = this.token.numLinhaAnterior
+                    this.raiseError("Erro Sintático: Caracter ':' não encontrado na declaração de tipo da função")
                 }
             }
             else {
-                this.token.linha = this.token.numLinhaAnterior
-                this.raiseError("Erro Sintático: Caracter ':' não encontrado na declaração de tipo da função")
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Tabela de Simbolos: Função '" + this.token.lexema + "' já declarada")
             }
+
         }
         else {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
@@ -363,7 +395,7 @@ class Sintatico {
     }
 
     analisaExpressao() {
-        console.log("Sintatico: analisaExpressao")
+        if(dev) ("Sintatico: analisaExpressao")
         this.analisaExpressaoSimples()
         if (this.token.simbolo == 'smaior' || this.token.simbolo == 'smaiorig' || this.token.simbolo == 'smenor' || this.token.simbolo == 'smenorig' || this.token.simbolo == 'sdif' || this.token.simbolo == 'sig') {
             this.token = this.lexico.analisador()
@@ -372,7 +404,7 @@ class Sintatico {
     }
 
     analisaExpressaoSimples() {
-        console.log("Sintatico: analisaExpressaoSimples")
+        if(dev) ("Sintatico: analisaExpressaoSimples")
         if (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos')
             this.token = this.lexico.analisador()
         this.analisaTermo()
@@ -384,7 +416,7 @@ class Sintatico {
     }
 
     analisaTermo() {
-        console.log("Sintatico: analisaTermo")
+        if(dev) ("Sintatico: analisaTermo")
         this.analisaFator()
         while (this.token.simbolo == 'smult' || this.token.simbolo == 'sdiv' || this.token.simbolo == 'se') {
             this.token = this.lexico.analisador()
@@ -393,9 +425,21 @@ class Sintatico {
     }
 
     analisaFator() {
-        console.log("Sintatico: analisaFator")
+        if(dev) ("Sintatico: analisaFator")
         if (this.token.simbolo == 'sidentificador') {
-            this.analisaChamadaFuncao()
+            if(dev) console.table(this.tabela.simbolos)
+            if(this.tabela.pesquisaTabela(this.token.lexema)){
+                if(this.tabela.pesquisaDeclaracaoFuncTabela(this.token.lexema)){
+                    this.analisaChamadaFuncao()
+                }
+                else{
+                    this.token = this.lexico.analisador()
+                }
+            }
+            else{
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Tabela de Simbolos: Indentificador '" + this.token.lexema + "' não declarado ou fora de escopo")
+            }
         } else {
             if (this.token.simbolo == 'snumero') {
                 this.token = this.lexico.analisador()
@@ -413,7 +457,7 @@ class Sintatico {
                         }
                         else {
                             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                            console.log(this.token)
+                            if(dev) (this.token)
                             this.raiseError("Erro Sintático: Esperado ')' -> Encontrado '" + this.token.lexema + "'")
                         }
                     } else {
@@ -430,12 +474,12 @@ class Sintatico {
         }
     }
     analisaChamadaFuncao() {
-        console.log("Sintatico: analisaChamadaFuncao")
+        if(dev) ("Sintatico: analisaChamadaFuncao")
         this.lexico.analisador()
     }
 
     analisaChamadaProcedimento() {
-        console.log("Sintatico: analisaChamadaProcedimento")
+        if(dev) ("Sintatico: analisaChamadaProcedimento")
     }
 
     raiseError(error) {

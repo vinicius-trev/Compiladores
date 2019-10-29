@@ -31,16 +31,19 @@ class TabelaSimbolos {
         return false;
     }
 
-    insereTipoVariaveis(lexema) {
+    insereTipoVariaveis(tipo) {
 
         for(let i = this.simbolos.length-1; i >= 0; i--){
-            if(this.simbolos[i] instanceof SimboloVar){
-                this.simbolos[i].tipo = lexema;
+            if(this.simbolos[i] instanceof SimboloVar && this.simbolos[i].tipo == 0){
+                this.simbolos[i].tipo = tipo;
             }
             else{
                 break;
             }
         }
+        // Imprimir tabela simbolos
+        if(dev) console.table(this.simbolos)
+        
     }
 
     atualizarEscopo()
@@ -52,6 +55,43 @@ class TabelaSimbolos {
         }
 
         this.simbolos[i].escopo = false;
+    }
+
+    // Pesquisas de Declaração
+    pesquisaTabela(lexema){
+        for(let i in this.simbolos){
+            if(this.simbolos[i].lexema == lexema) return true
+        }
+        return false
+    }
+    pesquisaDeclaracaoVarTabela(lexema){
+        for(let i = this.simbolos.length - 1; i >= 0; i--){
+            if(this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloVar) return true
+        }
+        return false
+    }
+    
+    pesquisaDeclaracaoVarFuncTabela(lexema){
+        for(let i = this.simbolos.length - 1; i >= 0; i--){
+            if(this.simbolos[i].lexema == lexema && (this.simbolos[i] instanceof SimboloVar || this.simbolos[i] instanceof SimboloFuncao)) return true
+        }
+        return false
+    }
+
+    pesquisaDeclaracaoProcTabela(lexema)
+    {
+        for(let i = this.simbolos.length - 1; i >= 0; i--){
+            if(this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloProcedimentoPrograma) return true
+        }
+        return false
+    }
+
+    pesquisaDeclaracaoFuncTabela(lexema)
+    {
+        for(let i = this.simbolos.length - 1; i >= 0; i--){
+            if(this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloFuncao) return true
+        }
+        return false
     }
 }
 
