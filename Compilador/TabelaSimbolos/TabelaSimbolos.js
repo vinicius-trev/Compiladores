@@ -4,26 +4,26 @@ class TabelaSimbolos {
     }
 
     insereTabela(lexema, escopo, memoria, tipo) {
-        if(memoria != null && tipo != null){
-            let sym = new SimboloVar(lexema, escopo, memoria, tipo); 
+        if (memoria != null && tipo != null) {
+            let sym = new SimboloVar(lexema, escopo, memoria, tipo);
             this.simbolos.push(sym)
         }
-        else if(memoria == null && tipo != null){
+        else if (memoria == null && tipo != null) {
             let sym = new SimboloFuncao(lexema, escopo, tipo);
             this.simbolos.push(sym)
         }
-        else if(memoria == null && tipo == null){
+        else if (memoria == null && tipo == null) {
             this.simbolos.push(new SimboloProcedimentoPrograma(lexema, escopo))
         }
     }
 
 
     consultaTabela(lexema) {
-        let i,j=this.simbolos.length-1;
-        while(this.simbolos[j].escopo == false){
-            
-            i=this.simbolos[j]
-            if(i.lexema == lexema){
+        let i, j = this.simbolos.length - 1;
+        while (this.simbolos[j].escopo == false) {
+
+            i = this.simbolos[j]
+            if (i.lexema == lexema) {
                 return true;
             }
             j--;
@@ -33,23 +33,22 @@ class TabelaSimbolos {
 
     insereTipoVariaveis(tipo) {
 
-        for(let i = this.simbolos.length-1; i >= 0; i--){
-            if(this.simbolos[i] instanceof SimboloVar && this.simbolos[i].tipo == 0){
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i] instanceof SimboloVar && this.simbolos[i].tipo == 0) {
                 this.simbolos[i].tipo = tipo;
             }
-            else{
+            else {
                 break;
             }
         }
         // Imprimir tabela simbolos
-        if(dev) console.table(this.simbolos)
-        
+        if (dev) console.table(this.simbolos)
+
     }
 
-    atualizarEscopo()
-    {
-        let i = this.simbolos.length-1;
-        while(this.simbolos[i].escopo == false && i >= 0){
+    atualizarEscopo() {
+        let i = this.simbolos.length - 1;
+        while (this.simbolos[i].escopo == false && i >= 0) {
             this.simbolos.pop();
             i--;
         }
@@ -58,38 +57,41 @@ class TabelaSimbolos {
     }
 
     // Pesquisas de Declaração
-    pesquisaTabela(lexema){
-        for(let i in this.simbolos){
-            if(this.simbolos[i].lexema == lexema) return true
+    pesquisaTabelaVar(lexema) {
+        let escopo = false
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (!escopo) {
+                escopo = this.simbolos[i].escopo
+                if (this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloVar) return true
+            }
+            if (this.simbolos[i].lexema == lexema && !this.simbolos[i] instanceof SimboloVar) return true
         }
         return false
     }
-    pesquisaDeclaracaoVarTabela(lexema){
-        for(let i = this.simbolos.length - 1; i >= 0; i--){
-            if(this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloVar) return true
-        }
-        return false
-    }
-    
-    pesquisaDeclaracaoVarFuncTabela(lexema){
-        for(let i = this.simbolos.length - 1; i >= 0; i--){
-            if(this.simbolos[i].lexema == lexema && (this.simbolos[i] instanceof SimboloVar || this.simbolos[i] instanceof SimboloFuncao)) return true
-        }
-        return false
-    }
-
-    pesquisaDeclaracaoProcTabela(lexema)
-    {
-        for(let i = this.simbolos.length - 1; i >= 0; i--){
-            if(this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloProcedimentoPrograma) return true
+    pesquisaDeclaracaoVarTabela(lexema) {
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i].lexema == lexema && (this.simbolos[i] instanceof SimboloVar)) return true
         }
         return false
     }
 
-    pesquisaDeclaracaoFuncTabela(lexema)
-    {
-        for(let i = this.simbolos.length - 1; i >= 0; i--){
-            if(this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloFuncao) return true
+    pesquisaDeclaracaoVarFuncTabela(lexema) {
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i].lexema == lexema && (this.simbolos[i] instanceof SimboloVar || this.simbolos[i] instanceof SimboloFuncao)) return true
+        }
+        return false
+    }
+
+    pesquisaDeclaracaoProcTabela(lexema) {
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloProcedimentoPrograma) return true
+        }
+        return false
+    }
+
+    pesquisaDeclaracaoFuncTabela(lexema) {
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloFuncao) return true
         }
         return false
     }
@@ -117,7 +119,7 @@ class SimboloFuncao extends Simbolo {
     }
 }
 
-class SimboloProcedimentoPrograma extends Simbolo{
+class SimboloProcedimentoPrograma extends Simbolo {
     constructor(lexema, escopo) {
         super(lexema, escopo);
     }
