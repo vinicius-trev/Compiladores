@@ -7,6 +7,7 @@
 let codigo /* Variavel onde em cada posicao representa uma linha do codigo */
 let arquivo
 let noLinhas
+const dev = true
 
 // Event bindings
 document.onkeydown = KeyPress
@@ -15,8 +16,8 @@ document.onkeydown = KeyPress
 let s1 = document.getElementById('codigo')
 let s2 = document.getElementById('numero')
 
-console.log(s1)
-console.log(s2)
+if(dev) console.log(s1)
+if(dev) console.log(s2)
 
 function select_scroll_1(e) { s2.scrollTop = s1.scrollTop }
 function select_scroll_2(e) { s1.scrollTop = s2.scrollTop }
@@ -41,8 +42,8 @@ textAreaScrollers.forEach((ele, ind, arr) => {
 })
 
 function KeyPress(e) {
-    var evtobj = window.event ? event : e
-
+    // var evtobj = window.event ? event : e
+    const caixaTexto = document.querySelector('#numero')
     /* Atalho para buildar o codigo (CTRL+B)  */
     if ((event.ctrlKey || event.metaKey) && event.which == 66) {
         build()
@@ -62,6 +63,14 @@ function KeyPress(e) {
     if ((event.ctrlKey || event.metaKey) && event.which == 82) {
         reset()
         event.preventDefault()
+    }
+    /* Subistitur Tab por 2 espaços */
+    if(event.which == 9 && e.target == caixaTexto){
+        e.preventDefault()
+        var s = caixaTexto.selectionStart;
+        caixaTexto.value = caixaTexto.value.substring(0,caixaTexto.selectionStart) + "\t" + caixaTexto.value.substring(caixaTexto.selectionEnd);
+        caixaTexto.selectionEnd = s+1;
+
     }
 }
 
@@ -113,7 +122,7 @@ function build() {
         consolebox.innerHTML = `<p style="color:green;">SUCESSO</p>`
     }
     catch (e) {
-        console.log(e)
+        if(dev) console.log(e)
         const consolebox = document.querySelector('#consoleTerminal')
         consolebox.innerHTML = `<p>${e.msg}</p>`
         const lineError = document.getElementById(`numero-${e.numLinha}`)
