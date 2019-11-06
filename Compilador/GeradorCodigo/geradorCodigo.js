@@ -1,131 +1,130 @@
 class GeradorCodigo {
     constructor() {
-        this.simbolos = [];
-        this.contadorLabel=1;
-        this.codigoObjeto="";
+        this.contadorLabel = 1;
+        this.codigoObjeto = "#Codigo Objeto Produzido Pelo Compilador\n";
     }
 
-    LDC(constante){
-
+    LDC(constante) {
+        this.codigoObjeto += "LDC " + constante + "\n"
     }
 
-    LDV(identificador){
-
+    LDV(identificador) {
+        this.codigoObjeto += "LDV " + identificador + "\n"
     }
 
-    ADD(){
-
+    ADD() {
+        this.codigoObjeto += "ADD\n"
     }
 
-    SYB(){
-
-    }
-    
-    MULT(){
-
+    SUB() {
+        this.codigoObjeto += "SUB\n"
     }
 
-    DIVI(){
-
-    }
-    
-    INV(){
-
+    MULT() {
+        this.codigoObjeto += "MULT\n"
     }
 
-    AND(){
-
+    DIVI() {
+        this.codigoObjeto += "DIVI\n"
     }
 
-    OR(){
-
+    INV() {
+        this.codigoObjeto += "INV\n"
     }
 
-    NEG(){
-
+    AND() {
+        this.codigoObjeto += "AND\n"
     }
 
-    CME(){
-
+    OR() {
+        this.codigoObjeto += "OR\n"
     }
 
-    CMA(){
-
+    NEG() {
+        this.codigoObjeto += "NEG\n"
     }
 
-    CEQ(){
-
+    CME() {
+        this.codigoObjeto += "CME\n"
     }
 
-    CDIF(){
-
+    CMA() {
+        this.codigoObjeto += "CMA\n"
     }
 
-    CMEQ(){
-
+    CEQ() {
+        this.codigoObjeto += "CEQ\n"
     }
 
-    CMAQ(){
-
+    CDIF() {
+        this.codigoObjeto += "CDIF\n"
     }
 
-    START(){
-
+    CMEQ() {
+        this.codigoObjeto += "CMEQ\n"
     }
 
-    HLT(){
-
+    CMAQ() {
+        this.codigoObjeto += "CMAQ\n"
     }
 
-    STR(memoria){
-
+    START() {
+        this.codigoObjeto += "START\n"
     }
 
-    JMP(label){
-
+    HLT() {
+        this.codigoObjeto += "HLT\n"
     }
 
-    JUMPF(label){
-
+    STR(memoria) {
+        this.codigoObjeto += "STR " + memoria + "\n"
     }
 
-    NULL(){
+    JMP(label) {
+        this.codigoObjeto += "JMP " + label + "\n"
+    }
+
+    JUMPF(label) {
 
     }
 
-    RD(){
+    NULL() {
+        /* Toda vez que criar um label, deve-se incrementar o contador de labels */
+    }
+
+    RD() {
 
     }
 
-    PRN(){
+    PRN() {
 
     }
 
-    ALLOC(start,size){
+    ALLOC(start, size) {
 
     }
 
-    DALLOC(start,size){
+    DALLOC(start, size) {
 
     }
 
-    CALL(){
+    CALL() {
 
     }
 
-    RETURN(){
+    RETURN() {
 
     }
 
-    incrementarContador(){
+    incrementarContador() {
 
     }
 
-    retornarContador(){
+    retornarContador() {
 
     }
 
-    gerarExpressão(){
+    gerarExpressão() {
 
     }
 }
