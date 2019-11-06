@@ -82,7 +82,7 @@ class Sintatico {
         if (dev) console.log("Sintatico: analisaVariaveis")
         do {
             if (this.token.simbolo == 'sidentificador') {
-                if (!this.tabela.pesquisaTabelaVar(this.token.lexema)) {   /* Verifica se a variável não está duplicada no mesmo escopo */
+                if (!this.tabela.pesquisaTabelaCriaVar(this.token.lexema)) {   /* Verifica se a variável não está duplicada no mesmo escopo */
                     this.tabela.insereTabela(this.token.lexema, false, 0, 0)    /* Se não existir nada duplicado insere na tabela */
                     this.token = this.lexico.analisador()
                     if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
@@ -227,7 +227,6 @@ class Sintatico {
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sidentificador') {
                 if (this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)) {
-                    // --> {DUVIDA} O QUE É PESQUISA EM TODA TABELA (QUA) <-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     this.token = this.lexico.analisador()
                     if (this.token.simbolo == 'sfecha_parenteses') {
                         this.token = this.lexico.analisador()
@@ -425,7 +424,7 @@ class Sintatico {
         if (dev) console.log("Sintatico: analisaFator")
         if (this.token.simbolo == 'sidentificador') {
             if (dev) console.table(this.tabela.simbolos)
-            if (this.tabela.pesquisaTabela(this.token.lexema)) {
+            if (this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)) {
                 if (this.tabela.pesquisaDeclaracaoFuncTabela(this.token.lexema)) {
                     this.analisaChamadaFuncao()
                 }

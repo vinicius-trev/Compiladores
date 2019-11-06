@@ -3,6 +3,9 @@ class TabelaSimbolos {
         this.simbolos = [];
     }
 
+    /**
+     * Insere na tabela o simbolo
+     */
     insereTabela(lexema, escopo, memoria, tipo) {
         if (memoria != null && tipo != null) {
             let sym = new SimboloVar(lexema, escopo, memoria, tipo);
@@ -17,22 +20,10 @@ class TabelaSimbolos {
         }
     }
 
-
-    consultaTabela(lexema) {
-        let i, j = this.simbolos.length - 1;
-        while (this.simbolos[j].escopo == false) {
-
-            i = this.simbolos[j]
-            if (i.lexema == lexema) {
-                return true;
-            }
-            j--;
-        }
-        return false;
-    }
-
+    /**
+     * Insere na tabela o tipo das variaves declaradas
+     */
     insereTipoVariaveis(tipo) {
-
         for (let i = this.simbolos.length - 1; i >= 0; i--) {
             if (this.simbolos[i] instanceof SimboloVar && this.simbolos[i].tipo == 0) {
                 this.simbolos[i].tipo = tipo;
@@ -46,6 +37,9 @@ class TabelaSimbolos {
 
     }
 
+    /**
+     * Remove da tabela todos os elementos dentro do escopo atual, que se fechou.
+     */
     atualizarEscopo() {
         let i = this.simbolos.length - 1;
         while (this.simbolos[i].escopo == false && i >= 0) {
@@ -56,8 +50,21 @@ class TabelaSimbolos {
         this.simbolos[i].escopo = false;
     }
 
-    // Pesquisas de Declaração
-    pesquisaTabelaVar(lexema) {
+    /**
+     * Pesquisa na tabela toda para ver se variável existe
+     * @param {String} lexema 
+     */
+    pesquisaTabelaExisteVar(lexema) {
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloVar) return true
+        }
+        return false
+    }
+
+    /**
+     * Pesquisa na tabela se dentro do escopo a variavel existe ou se existe uma funcao com esse nome
+     */
+    pesquisaTabelaCriaVar(lexema) {
         let escopo = false
         for (let i = this.simbolos.length - 1; i >= 0; i--) {
             if (!escopo) {
@@ -68,6 +75,14 @@ class TabelaSimbolos {
         }
         return false
     }
+
+    /**
+     * Pesquisa na tabela necessário para a criação de variaveis dentro do copilador
+     * que criamos jusntos com a professora Daniele no Curso de Eng. da Computação
+     * na PUC Campinas ( Pontifícia Universidade Católica de Campinas) - 30 de novembro de 2019 
+     * 09:31 - João Porta
+     * @param {string} lexema 
+     */
     pesquisaDeclaracaoVarTabela(lexema) {
         for (let i = this.simbolos.length - 1; i >= 0; i--) {
             if (this.simbolos[i].lexema == lexema && (this.simbolos[i] instanceof SimboloVar)) return true
@@ -75,6 +90,9 @@ class TabelaSimbolos {
         return false
     }
 
+    /**
+     * Pesquisa na tabela na criacao de variaves se existe funcao com o mesmo nome  
+     */
     pesquisaDeclaracaoVarFuncTabela(lexema) {
         for (let i = this.simbolos.length - 1; i >= 0; i--) {
             if (this.simbolos[i].lexema == lexema && (this.simbolos[i] instanceof SimboloVar || this.simbolos[i] instanceof SimboloFuncao)) return true
@@ -82,6 +100,9 @@ class TabelaSimbolos {
         return false
     }
 
+    /**
+     * Pesquisa na tabela se o procedimento ja foi declarado
+     */
     pesquisaDeclaracaoProcTabela(lexema) {
         for (let i = this.simbolos.length - 1; i >= 0; i--) {
             if (this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloProcedimentoPrograma) return true
@@ -89,6 +110,9 @@ class TabelaSimbolos {
         return false
     }
 
+    /**
+     * Pesquisa na tabela se a funcao ja foi declarada
+     */
     pesquisaDeclaracaoFuncTabela(lexema) {
         for (let i = this.simbolos.length - 1; i >= 0; i--) {
             if (this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloFuncao) return true
@@ -96,7 +120,9 @@ class TabelaSimbolos {
         return false
     }
 }
-
+/**
+ * Classe de Simbolo que compõe a tabela de simbolos
+ */
 class Simbolo {
     constructor(lexema, escopo) {
         this.lexema = lexema;
@@ -104,6 +130,9 @@ class Simbolo {
     }
 }
 
+/**
+ * Extensão do Simbolo, específico para Variáveis
+ */
 class SimboloVar extends Simbolo {
     constructor(lexema, escopo, memoria, tipo) {
         super(lexema, escopo);
@@ -111,14 +140,18 @@ class SimboloVar extends Simbolo {
         this.tipo = tipo;
     }
 }
-
+/**
+ * Extensão do Simbolo, específico para Funções
+ */
 class SimboloFuncao extends Simbolo {
     constructor(lexema, escopo, tipo) {
         super(lexema, escopo);
         this.tipo = tipo;
     }
 }
-
+/**
+ * Extensão do Simbolo, específico para Procedimentos ou Programas
+ */
 class SimboloProcedimentoPrograma extends Simbolo {
     constructor(lexema, escopo) {
         super(lexema, escopo);
