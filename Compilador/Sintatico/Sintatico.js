@@ -2,6 +2,7 @@ class Sintatico {
     constructor(codigo) {
         this.lexico = new Lexico(codigo)
         this.tabela = new TabelaSimbolos();
+        this.geradorCodigo = new GeradorCodigo();
         this.token = null
         this.escopoAtual = 0
         this.semantico = new Semantico()

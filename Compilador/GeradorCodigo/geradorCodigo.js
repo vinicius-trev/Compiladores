@@ -1,3 +1,4 @@
+
 class GeradorCodigo {
     constructor() {
         this.contadorLabel = 1;

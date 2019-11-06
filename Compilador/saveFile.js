@@ -17,3 +17,7 @@ function download(data) {
         }, 0);
     }
 }
+
+function saveFile() {
+    download(GeradorCodigo().codigoObjeto)
+}
