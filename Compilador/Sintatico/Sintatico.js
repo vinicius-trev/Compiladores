@@ -486,4 +486,8 @@ class Sintatico {
             msg: error
         }
     }
+
+    saveFile() {
+        download(this.geradorCodigo.codigoObjeto)
+    }
 }

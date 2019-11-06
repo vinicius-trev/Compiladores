@@ -110,25 +110,40 @@ function reset() {
 }
 
 function build() {
-    const consolebox = document.querySelector('#consoleTerminal')
-    consolebox.innerHTML = ''
-    sintatico = new Sintatico(codigo)
-    try {
-        sintatico.analisador()
+    if (typeof codigo !== "undefined") {
         const consolebox = document.querySelector('#consoleTerminal')
-        consolebox.innerHTML = `<p style="color:green;">SUCESSO</p>`
-        buildStatus = 1;
-    }
-    catch (e) {
-        if (dev) console.log(e)
-        const consolebox = document.querySelector('#consoleTerminal')
-        consolebox.innerHTML = `<p>${e.msg}</p>`
-        const lineError = document.getElementById(`numero-${e.numLinha}`)
-        lineError.style.backgroundColor = 'red'
-    }
+        consolebox.innerHTML = ''
 
-    if (dev) console.log("Build Status: " + buildStatus)
+        sintatico = new Sintatico(codigo)
+        try {
+            sintatico.analisador()
+            const consolebox = document.querySelector('#consoleTerminal')
+            consolebox.innerHTML = `<p style="color:green;">SUCESSO</p>`
+            buildStatus = 1;
+        }
+        catch (e) {
+            if (dev) console.log(e)
+            const consolebox = document.querySelector('#consoleTerminal')
+            consolebox.innerHTML = `<p>${e.msg}</p>`
+            const lineError = document.getElementById(`numero-${e.numLinha}`)
+            lineError.style.backgroundColor = 'red'
+            buildStatus = 0;
+        }
 
+        if (dev) console.log("Build Status: " + buildStatus);
+    }
+    else
+        alert("Abra um arquivo ou digite o código antes de compilar")
+}
+
+function save() {
+    build()
+    if (!buildStatus && typeof codigo !== "undefined") {
+        /* POP UP Código compilado com erros, não será salvo */
+        alert("Código compilado com erros, o arquivo não será salvo")
+    }
+    else if (typeof codigo !== "undefined")
+        sintatico.saveFile()
 }
 function atualizaNoLinha() {
     codigo = document.querySelector(".caixa-codigo").value
