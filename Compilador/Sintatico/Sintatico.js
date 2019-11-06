@@ -4,6 +4,7 @@ class Sintatico {
         this.tabela = new TabelaSimbolos();
         this.token = null
         this.escopoAtual = 0
+        this.semantico = new Semantico()
     }
 
     analisador() { // Main Sintatico
@@ -177,10 +178,19 @@ class Sintatico {
 
     analisaAtribChprocedimento() {
         if (dev) console.log("Sintatico: analisaAtribChprocedimento")
+        // Semantico
+        this.semantico.pushExpressao(this.token)
+
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'satribuicao') {
+            // Semantico
+            this.semantico.pushExpressao(this.token)
+
             this.lexico.analisador()
             this.analisaExpressao()
+
+            // Semantico
+            this.semantico.analisaAtribuicao()
         }
         else {
             this.analisaChamadaProcedimento()
@@ -256,6 +266,9 @@ class Sintatico {
         if (dev) console.log("Sintatico: analisaEnquanto")
         this.token = this.lexico.analisador()
         this.analisaExpressao()
+
+        // Semantico
+        this.semantico.analisaExpressao()
         if (this.token.simbolo == 'sfaca') {
             this.token = this.lexico.analisador()
             this.analisaComandoSimples()
@@ -270,6 +283,9 @@ class Sintatico {
         if (dev) console.log("Sintatico: analisaSe")
         this.token = this.lexico.analisador()
         this.analisaExpressao()
+        // Semantico
+        this.semantico.analisaExpressao()
+
         if (this.token.simbolo == 'sentao') {
             this.token = this.lexico.analisador()
             this.analisaComandoSimples()
@@ -394,6 +410,9 @@ class Sintatico {
         if (dev) console.log("Sintatico: analisaExpressao")
         this.analisaExpressaoSimples()
         if (this.token.simbolo == 'smaior' || this.token.simbolo == 'smaiorig' || this.token.simbolo == 'smenor' || this.token.simbolo == 'smenorig' || this.token.simbolo == 'sdif' || this.token.simbolo == 'sig') {
+            // Semnatico
+            this.semantico.pushExpressao(this.token)
+
             this.token = this.lexico.analisador()
             this.analisaExpressaoSimples()
         }
@@ -401,10 +420,17 @@ class Sintatico {
 
     analisaExpressaoSimples() {
         if (dev) console.log("Sintatico: analisaExpressaoSimples")
-        if (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos')
+        if (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos') {
+            // Semantico
+            this.semantico.pushExpressao(this.token, true)
+
             this.token = this.lexico.analisador()
+        }
         this.analisaTermo()
         while (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos' || this.token.simbolo == 'sou') {
+            // Semnatico
+            this.semantico.pushExpressao(this.token)
+
             this.token == this.lexico.analisador()
             this.analisaTermo()
         }
@@ -415,6 +441,9 @@ class Sintatico {
         if (dev) console.log("Sintatico: analisaTermo")
         this.analisaFator()
         while (this.token.simbolo == 'smult' || this.token.simbolo == 'sdiv' || this.token.simbolo == 'se') {
+            // Semnatico
+            this.semantico.pushExpressao(this.token)
+
             this.token = this.lexico.analisador()
             this.analisaFator()
         }
@@ -426,9 +455,15 @@ class Sintatico {
             if (dev) console.table(this.tabela.simbolos)
             if (this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)) {
                 if (this.tabela.pesquisaDeclaracaoFuncTabela(this.token.lexema)) {
+                    // Semantico
+                    this.semantico.pushExpressao(this.token)
+
                     this.analisaChamadaFuncao()
                 }
                 else {
+                    // Semantico
+                    this.semantico.pushExpressao(this.token)
+
                     this.token = this.lexico.analisador()
                 }
             }
@@ -438,17 +473,29 @@ class Sintatico {
             }
         } else {
             if (this.token.simbolo == 'snumero') {
+                // Semnatico
+                this.semantico.pushExpressao(this.token)
+
                 this.token = this.lexico.analisador()
             }
             else {
                 if (this.token.simbolo == 'snao') {
+                    // Semnatico
+                    this.semantico.pushExpressao(this.token)
+
                     this.token = this.lexico.analisador()
                     this.analisaFator()
                 } else {
                     if (this.token.simbolo == 'sabre_parenteses') {
+                        // Semnatico
+                        this.semantico.pushExpressao(this.token)
+
                         this.token = this.lexico.analisador()
                         this.analisaExpressao()
                         if (this.token.simbolo == 'sfecha_parenteses') {
+                            // Semnatico
+                            this.semantico.pushExpressao(this.token)
+
                             this.token = this.lexico.analisador()
                         }
                         else {
@@ -458,6 +505,9 @@ class Sintatico {
                         }
                     } else {
                         if (this.token.lexema == 'verdadeiro' || this.token.lexema == 'falso') {
+                            // Semnatico
+                            this.semantico.pushExpressao(this.token)
+
                             this.token = this.lexico.analisador()
                         }
                         else {
