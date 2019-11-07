@@ -5,15 +5,17 @@ class Sintatico {
         this.geradorCodigo = new GeradorCodigo();
         this.token = null
         this.escopoAtual = 0
+        this.posicaoMemoria = 0
         this.semantico = new Semantico()
     }
 
     analisador() { // Main Sintatico
         this.token = this.lexico.analisador()
+        this.geradorCodigo.START();
         if (this.token.simbolo == 'sprograma') {
             this.token = this.lexico.analisador()
             if (this.token.simbolo == 'sidentificador') {
-                this.tabela.insereTabela(this.token.lexema, true, null, null) /* Insere Tabela Simbolos */
+                this.tabela.insereTabela(this.token.lexema, true, null, null, this.geradorCodigo.retornarContador()) /* Insere Tabela Simbolos */
                 this.token = this.lexico.analisador()
                 if (this.token.simbolo == 'sponto_virgula') {
                     this.analisaBloco()
@@ -24,6 +26,7 @@ class Sintatico {
 
                         // Se acabou arquivo ou comentario
                         if (this.token.simbolo === 'SEOF') {
+                            this.geradorCodigo.HLT()
                             if (dev) console.log("SUCESSO")
                         }
                         // Se nao
@@ -81,11 +84,13 @@ class Sintatico {
     }
 
     analisaVariaveis() {
+        let quantidadeVariaveis;
+        quantidadeVariaveis = 0;
         if (dev) console.log("Sintatico: analisaVariaveis")
         do {
             if (this.token.simbolo == 'sidentificador') {
                 if (!this.tabela.pesquisaTabelaCriaVar(this.token.lexema)) {   /* Verifica se a variável não está duplicada no mesmo escopo */
-                    this.tabela.insereTabela(this.token.lexema, false, 0, 0)    /* Se não existir nada duplicado insere na tabela */
+                    this.tabela.insereTabela(this.token.lexema, false, this.posicaoMemoria, 0, null)    /* Se não existir nada duplicado insere na tabela */
                     this.token = this.lexico.analisador()
                     if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') {
                         if (this.token.simbolo == 'svirgula') {
@@ -110,8 +115,11 @@ class Sintatico {
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Sintático: Identificador incorreto para variável '" + this.token.lexema + "'")
             }
-
+            quantidadeVariaveis++;
+            this.posicaoMemoria++;
         } while (this.token.simbolo != 'sdoispontos')
+
+        this.geradorCodigo.ALLOC(this.posicaoMemoria - quantidadeVariaveis, quantidadeVariaveis);
         this.token = this.lexico.analisador()
         this.analisaTipo()
     }
@@ -199,6 +207,7 @@ class Sintatico {
     }
 
     analisaLeia() {
+        console.table(this.tabela.simbolos)
         if (dev) console.log("Sintatico: analisaLeia")
         this.token = this.lexico.analisador()
         if (this.token.simbolo == 'sabre_parenteses') {
@@ -306,6 +315,8 @@ class Sintatico {
         let flag = 0
         if (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {
             // Geracao de codigo
+            this.geradorCodigo.JMP(this.geradorCodigo.retornarContador())
+            flag = 1;
         }
         while (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {
             if (this.token.simbolo == 'sprocedimento') {
@@ -323,6 +334,7 @@ class Sintatico {
         }
         if (flag == 1) {
             // Geracao de codigo
+            this.geradorCodigo.NULL(1) /* Exceção - Inicio do programa principal */
         }
     }
 
@@ -334,7 +346,7 @@ class Sintatico {
             // if pesquisa semantico - Falta Fazer - pesquisa_declproc_tabela(token.lexema)
             // se nao encontrou insere na tabela
             if (!this.tabela.pesquisaDeclaracaoProcTabela(this.token.lexema)) {
-                this.tabela.insereTabela(this.token.lexema, true)
+                this.tabela.insereTabela(this.token.lexema, true, null, null, null)
                 this.token = this.lexico.analisador()
 
                 if (this.token.simbolo == 'sponto_virgula') {
@@ -365,7 +377,7 @@ class Sintatico {
             if (!this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)) {
                 // if pesquisa semantico - Falta Fazer - pesquisa_declfunc_tabela(token.lexema)
                 // se nao encontrou insere na tabela
-                this.tabela.insereTabela(this.token.lexema, true, null, 0)
+                this.tabela.insereTabela(this.token.lexema, true, null, 0, null)
                 this.token = this.lexico.analisador()
 
                 if (this.token.simbolo == 'sdoispontos') {

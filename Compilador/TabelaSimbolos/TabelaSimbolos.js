@@ -6,17 +6,17 @@ class TabelaSimbolos {
     /**
      * Insere na tabela o simbolo
      */
-    insereTabela(lexema, escopo, memoria, tipo) {
-        if (memoria != null && tipo != null) {
+    insereTabela(lexema, escopo, memoria, tipo, rotulo) {
+        if (memoria != null && tipo != null && rotulo == null) {
             let sym = new SimboloVar(lexema, escopo, memoria, tipo);
             this.simbolos.push(sym)
         }
         else if (memoria == null && tipo != null) {
-            let sym = new SimboloFuncao(lexema, escopo, tipo);
+            let sym = new SimboloFuncao(lexema, escopo, tipo, rotulo);
             this.simbolos.push(sym)
         }
         else if (memoria == null && tipo == null) {
-            this.simbolos.push(new SimboloProcedimentoPrograma(lexema, escopo))
+            this.simbolos.push(new SimboloProcedimentoPrograma(lexema, escopo, rotulo))
         }
     }
 
@@ -144,16 +144,18 @@ class SimboloVar extends Simbolo {
  * Extensão do Simbolo, específico para Funções
  */
 class SimboloFuncao extends Simbolo {
-    constructor(lexema, escopo, tipo) {
+    constructor(lexema, escopo, tipo, rotulo) {
         super(lexema, escopo);
         this.tipo = tipo;
+        this.rotulo = rotulo;
     }
 }
 /**
  * Extensão do Simbolo, específico para Procedimentos ou Programas
  */
 class SimboloProcedimentoPrograma extends Simbolo {
-    constructor(lexema, escopo) {
+    constructor(lexema, escopo, rotulo) {
         super(lexema, escopo);
+        this.rotulo = rotulo;
     }
 }

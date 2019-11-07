@@ -2,7 +2,7 @@
 class GeradorCodigo {
     constructor() {
         this.contadorLabel = 1;
-        this.codigoObjeto = "#Codigo Objeto Produzido Pelo Compilador\n";
+        this.codigoObjeto = "";
     }
 
     LDC(constante) {
@@ -81,48 +81,50 @@ class GeradorCodigo {
         this.codigoObjeto += "STR " + memoria + "\n"
     }
 
-    JMP(label) {
-        this.codigoObjeto += "JMP " + label + "\n"
+    JMP(inteiro) {
+        this.codigoObjeto += "JMP L" + inteiro + "\n"
     }
 
-    JUMPF(label) {
-
+    JUMPF(inteiro) {
+        this.codigoObjeto += "JMPF L" + inteiro + "\n"
     }
 
-    NULL() {
+    NULL(inteiro) {
         /* Toda vez que criar um label, deve-se incrementar o contador de labels */
+        this.codigoObjeto += "L" + inteiro + " NULL\n"
+        this.incrementarContador()
     }
 
     RD() {
-
+        this.codigoObjeto += "RD\n"
     }
 
     PRN() {
-
+        this.codigoObjeto += "PRN\n"
     }
 
     ALLOC(start, size) {
-
+        this.codigoObjeto += "ALLOC " + start + " " + size + "\n"
     }
 
     DALLOC(start, size) {
-
+        this.codigoObjeto += "DALLOC " + start + " " + size + "\n"
     }
 
-    CALL() {
-
+    CALL(inteiro) {
+        this.codigoObjeto += "CALL L" + inteiro + "\n"
     }
 
     RETURN() {
-
+        this.codigoObjeto += "RETURN\n"
     }
 
     incrementarContador() {
-
+        this.contadorLabel++
     }
 
     retornarContador() {
-
+        return this.contadorLabel
     }
 
     gerarExpressão() {
