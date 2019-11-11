@@ -11,7 +11,7 @@
  * e o valor do STACKPOINTER (HIGHLIGHTED).
  */
 
- let instrucoes = {
+let instrucoes = {
   "LDC": (k) => {   /* Load Constant */
     stackPointer = stackPointer + 1                                               /* Incrementa o ponteiro de pilha (proxima posição de memoria) */
     memoria[stackPointer] = k                                                     /* Insere a constante na pilha recebida como parametro (k) */
@@ -151,15 +151,13 @@
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
   },
   "ALLOC": (m, n) => {  /* Alocar Memória de tamanho 'n' */
-    for (let k = 0; k < n; k++) 
-    {                                                                            /* Realiza o processo de ALLOC "n" VEZES */
+    for (let k = 0; k < n; k++) {                                                                            /* Realiza o processo de ALLOC "n" VEZES */
       stackPointer = stackPointer + 1                                            /* Incrementa o stackPointer */
       memoria[stackPointer] = memoria[m + k]
     }
   },
   "DALLOC": (m, n) => { /* Desalocar Memória de tamanho 'n' */
-    for (let k = n - 1; k >= 0; k--) 
-    {                                                                            /* Realiza o processo de DESALOCAR "n" VEZES */
+    for (let k = n - 1; k >= 0; k--) {                                                                            /* Realiza o processo de DESALOCAR "n" VEZES */
       memoria[m + k] = memoria[stackPointer]
       stackPointer = stackPointer - 1                                            /* Decrementa o stackPointer */
     }
@@ -172,5 +170,24 @@
   "RETURN": () => { /* Retornar de uma Rotina */
     pc = memoria[stackPointer]                                                    /* Recupera o valor de PC a partir do stackPointer */
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
+  },
+  "RETURNF": (m, n) => { /* Retornar de uma Rotina */
+    /* Salva o topo da pilha (retorno de função) */
+    topoPilha = memoria[stackPointer]
+    stackPointer = stackPointer - 1
+
+    /* DALLOC */
+    for (let k = n - 1; k >= 0; k--) {                                                                            /* Realiza o processo de DESALOCAR "n" VEZES */
+      memoria[m + k] = memoria[stackPointer]
+      stackPointer = stackPointer - 1                                            /* Decrementa o stackPointer */
+    }
+
+    /* RETURN */
+    pc = memoria[stackPointer]                                                    /* Recupera o valor de PC a partir do stackPointer */
+    stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
+
+    /* Restaura o topo na pilha */
+    stackPointer = stackPointer + 1
+    memoria[stackPointer] = topoPilha
   },
 };
