@@ -119,6 +119,16 @@ class TabelaSimbolos {
         }
         return false
     }
+
+    /**
+     * Retorna Endereço de memória para variável
+     */
+    retornaEnderecoMemoriaVar(lexema) {
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloVar) return this.simbolos[i].memoria
+        }
+        return false
+    }
 }
 /**
  * Classe de Simbolo que compõe a tabela de simbolos
