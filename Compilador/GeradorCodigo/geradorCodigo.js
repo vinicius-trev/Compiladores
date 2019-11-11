@@ -2,6 +2,7 @@
 class GeradorCodigo {
     constructor() {
         this.contadorLabel = 1;
+        this.posicaoMemoria = 0;
         this.codigoObjeto = "";
     }
 
@@ -117,6 +118,10 @@ class GeradorCodigo {
 
     RETURN() {
         this.codigoObjeto += "RETURN\n"
+    }
+
+    RETURNF(start, size) {
+        this.codigoObjeto += "RETURNF " + start + " " + size + "\n"
     }
 
     incrementarContador() {
