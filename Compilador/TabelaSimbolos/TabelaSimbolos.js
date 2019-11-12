@@ -129,6 +129,12 @@ class TabelaSimbolos {
         }
         return false
     }
+
+    pesquisaParaPosfixa(lexema) {
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i].lexema == lexema && this.simbolos[i] instanceof SimboloVar) return this.simbolos[i]
+        }
+    }
 }
 /**
  * Classe de Simbolo que compõe a tabela de simbolos

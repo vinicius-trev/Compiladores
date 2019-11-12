@@ -86,7 +86,7 @@ class GeradorCodigo {
         this.codigoObjeto += "JMP L" + inteiro + "\n"
     }
 
-    JUMPF(inteiro) {
+    JMPF(inteiro) {
         this.codigoObjeto += "JMPF L" + inteiro + "\n"
     }
 

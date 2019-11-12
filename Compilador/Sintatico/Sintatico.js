@@ -18,6 +18,9 @@ class Sintatico {
                 this.token = this.lexico.analisador()   /* Lê o proximo Token */
                 if (this.token.simbolo == 'sponto_virgula') {   /* Se ler um ponto e virgula, terminou a declaracao do programa */
                     this.analisaBloco() /* Analisa Variaveis, Procedimentos, Funcoes e Comandos -> Todo o Programa */
+
+                    /* GERAR DALLOC AQUI e SABER QNTS VARIAVEIS FORAM ALOCADAS */
+
                     if (this.token.simbolo == 'sponto') {   /* Ao fim, quando ler ponto, indica o fim do progama principal */
                         this.token = this.lexico.analisador()   /* Então lê o proximo Token, que deve ser EOF */
 
@@ -189,18 +192,21 @@ class Sintatico {
 
     analisaAtribChprocedimento() {  /* Analisa a atribuição de variáveis ou a chamada de um procedimento */
         let lexemaAuxiliar;
+        let simboloExp;
 
         if (dev) console.log("Sintatico: analisaAtribChprocedimento")
         // Semantico
-        this.semantico.pushExpressao(this.token)
+        simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+        this.semantico.pushExpressao(simboloExp)
 
+        lexemaAuxiliar = this.token.lexema; /* Armazena o lexema da variavel/procedimento que será usado para obter o end. de memória ou respectivo label */
         this.token = this.lexico.analisador()   /* Lê o proximo Token */
         if (this.token.simbolo == 'satribuicao') {  /* Se o proximo token for um := */
             /* Então quer dizer que estamos tratando uma atribuição */
             // Semantico
-            this.semantico.pushExpressao(this.token)
+            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+            this.semantico.pushExpressao(simboloExp)
 
-            lexemaAuxiliar = this.token.lexema; /* Armazena o lexema da variavel/procedimento que será usado para obter o end. de memória ou respectivo label */
             this.lexico.analisador()    /* Então Lê o proximo Token */
             this.analisaExpressao()     /* Analisa a expressão sintaticamente após := */
 
@@ -208,7 +214,7 @@ class Sintatico {
             this.semantico.analisaAtribuicao()   /* Analisa a expressão semânticamente após := */
 
             /* Geração de código para a atribuição */
-            this.geradorCodigo.STR(this.tabela.retornaEnderecoMemoriaVar())
+            this.geradorCodigo.STR(this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar))
         }
         else {
             this.analisaChamadaProcedimento(lexemaAuxiliar)   /* Se não for := então é chamada de procedimento */
@@ -274,7 +280,7 @@ class Sintatico {
                     /* retornaEnderecoMemoriaVar() retorna o valor de memória para a variável, se ela não existir retorna false */
                     ehVariavel = this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar);
 
-                    if (!ehVariavel) /* Se o identificador for uma variável */ {
+                    if (ehVariavel !== false) /* Se o identificador for uma variável */ {
                         /* Então LDV e PRN */
                         this.geradorCodigo.LDV(ehVariavel);
                         this.geradorCodigo.PRN();
@@ -310,102 +316,163 @@ class Sintatico {
     }
 
     analisaEnquanto() { /* Analisa o comando enquando - faça */
+        let rotuloAuxiliar1, rotuloAuxiliar2;
+
         if (dev) console.log("Sintatico: analisaEnquanto")
-        this.token = this.lexico.analisador()
-        this.analisaExpressao()
+        /* O Token lido até aqui é o enquanto, portanto gera a Label Inicial */
+        rotuloAuxiliar1 = this.geradorCodigo.retornarContador();
+        this.geradorCodigo.NULL(rotuloAuxiliar1)
+        this.geradorCodigo.incrementarContador()
+
+        this.token = this.lexico.analisador()   /* Lê o proximo token */
+        this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
 
         // Semantico
-        this.semantico.analisaExpressao()
-        if (this.token.simbolo == 'sfaca') {
-            this.token = this.lexico.analisador()
-            this.analisaComandoSimples()
+        this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
+        /* O código da expressão será gerado na analise da expressão */
+
+        if (this.token.simbolo == 'sfaca') { /* Quando ler o simbolo faça */
+            /* Gera o JMPF para saltar se falso */
+            rotuloAuxiliar2 = this.geradorCodigo.retornarContador();
+            this.geradorCodigo.JMPF(rotuloAuxiliar2)
+            this.geradorCodigo.incrementarContador()
+
+            this.token = this.lexico.analisador()   /* Lê o proximo token */
+            this.analisaComandoSimples()    /* Analisa os comandos do enquanto */
+
+            /* Gera JMP para voltar ao inicio do loop */
+            this.geradorCodigo.JMP(rotuloAuxiliar1)
+
+            /* Gera Label Fim do Enquanto */
+            this.geradorCodigo.NULL(rotuloAuxiliar2)
         }
-        else {
+        else { /* Gera erro quando não encontra o comando faça na declaração do enquanto */
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Esperado 'faca' -> Encontrado '" + this.token.lexema + "'")
         }
     }
 
-    analisaSe() {
-        if (dev) console.log("Sintatico: analisaSe")
-        this.token = this.lexico.analisador()
-        this.analisaExpressao()
-        // Semantico
-        this.semantico.analisaExpressao()
+    analisaSe() {   /* Comando condicional se */
+        let rotuloAuxiliar1, rotuloAuxiliar2;
 
-        if (this.token.simbolo == 'sentao') {
-            this.token = this.lexico.analisador()
-            this.analisaComandoSimples()
+        if (dev) console.log("Sintatico: analisaSe")
+        this.token = this.lexico.analisador()   /* Lê o proximo Token após o se */
+        this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
+
+        // Semantico
+        this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
+
+        /* Gera JMPF do para pular caso a condição for falsa */
+        rotuloAuxiliar1 = this.geradorCodigo.retornarContador();
+        this.geradorCodigo.JMPF(rotuloAuxiliar1);
+        this.geradorCodigo.incrementarContador();
+
+        if (this.token.simbolo == 'sentao') {   /* Se ler o token então */
+            this.token = this.lexico.analisador()   /* Então lê o proximo token */
+            this.analisaComandoSimples()    /* Analisa os comandos do então */
+
             if (this.token.simbolo == 'ssenao') {
+                /* Gera JMP L2 para pular para o final do comando se caso executar o então */
+                /* Gera L1 NULL para definir o inicio do senão */
+                rotuloAuxiliar2 = this.geradorCodigo.retornarContador();
+                this.geradorCodigo.JMP(rotuloAuxiliar2);
+                this.geradorCodigo.incrementarContador();
+                this.geradorCodigo.NULL(rotuloAuxiliar1);
+
                 this.token = this.lexico.analisador()
                 this.analisaComandoSimples()
+
+                /* Gera L2 NULL para sair do comando condicional se */
+                this.geradorCodigo.NULL(rotuloAuxiliar2);
+            }
+            else {
+                /* Se nao houver senão, gera L1 NULL */
+                this.geradorCodigo.NULL(rotuloAuxiliar1);
             }
         }
-        else {
+        else {  /* Gera erro caso não encontre então apos availiar a expressão */
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Esperado 'entao' -> Encontrado '" + this.token.lexema + "'")
         }
     }
 
-    analisaSubrotinas() {
+    analisaSubrotinas() {   /* Etapa de declaração de subrotinas */
+        let flag = 0;
+        let auxiliarRotulo;
+
         if (dev) console.log("Sintatico: analisaSubrotinas")
-        let flag = 0
-        let auxRot
-        if (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {
-            // Geracao de codigo
-            auxRot = this.geradorCodigo.retornarContador()
-            this.geradorCodigo.JMP(auxRot)
+        if (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') { /* Se existir uma subrotina */
+
+            /* Então Gera JMP para saltar subrotinas, quando existirem */
+            auxiliarRotulo = this.geradorCodigo.retornarContador()
+            this.geradorCodigo.JMP(auxiliarRotulo)
             this.geradorCodigo.incrementarContador()
             flag = 1;
         }
-        while (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {
-            if (this.token.simbolo == 'sprocedimento') {
-                this.analisaDeclaracaoProcedimento()
-            } else {
-                this.analisaDeclaracaoFuncao()
-            }
-            if (this.token.simbolo == 'sponto_virgula') {
-                this.token = this.lexico.analisador()
+
+        while (this.token.simbolo == 'sprocedimento' || this.token.simbolo == 'sfuncao') {  /* Se existirem subrotinas */
+            if (this.token.simbolo == 'sprocedimento') {    /* Se a subrotina for um procedimento */
+                this.analisaDeclaracaoProcedimento()    /* Então analisa a declaração do procedimento */
             }
             else {
+                this.analisaDeclaracaoFuncao()  /* Senão analisa a declaração de função */
+            }
+            if (this.token.simbolo == 'sponto_virgula') {   /* Ao final da declaração da subrotina deve existir um ponto_virgula*/
+                this.token = this.lexico.analisador()   /* Lê o proximo Token */
+            }
+            else {  /* Gera erro caso não encontre o ponto e virgula ao final da subrotina (i.e. ... inicio ... fim;) */
                 this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Sintático: Caracter ';' não encontrado após subrotina")
             }
         }
         if (flag == 1) {
-            // Geracao de codigo
-            this.geradorCodigo.NULL(auxRot)
+            /* Ao sair do while acima já foram declaradas todas as subrotinas, então deve-se criar o label informando o inicio do programa principal */
+            this.geradorCodigo.NULL(auxiliarRotulo)
         }
     }
 
-    analisaDeclaracaoProcedimento() {
+    analisaDeclaracaoProcedimento() {   /* Declaração de procedimento */
+        let rotuloAuxiliar;
+
         if (dev) console.log("Sintatico: analisaDeclaracaoProcedimento")
-        this.token = this.lexico.analisador()
-        if (this.token.simbolo == 'sidentificador') {
+        this.token = this.lexico.analisador()   /* Lê proximo token */
+        if (this.token.simbolo == 'sidentificador') {   /* Após o token sprocedimento, deve ser lido um identificador */
 
-            // if pesquisa semantico - Falta Fazer - pesquisa_declproc_tabela(token.lexema)
-            // se nao encontrou insere na tabela
+            /* Caso o identificador ainda não exista como um procedimento na tabela de simbolos, permite a inserção do mesmo */
             if (!this.tabela.pesquisaDeclaracaoProcTabela(this.token.lexema)) {
-                this.tabela.insereTabela(this.token.lexema, true, null, null, null)
-                this.token = this.lexico.analisador()
 
-                if (this.token.simbolo == 'sponto_virgula') {
-                    this.analisaBloco()
+                /* Gera o rótulo e Label para a subrotina */
+                rotuloAuxiliar = this.geradorCodigo.retornarContador();
+                this.geradorCodigo.NULL(rotuloAuxiliar)
+                this.geradorCodigo.incrementarContador()
+
+                /* Cria a entrada na tabela de simbolos para o identificador do procedimento */
+                this.tabela.insereTabela(this.token.lexema, true, null, null, rotuloAuxiliar)
+                this.token = this.lexico.analisador()   /* Lê o próximo Token */
+
+                if (this.token.simbolo == 'sponto_virgula') {   /* Se o proximo token for ponto e virgula */
+                    this.analisaBloco() /* Analisa o bloco do procedimento (Variaveis, subrotinas e comandos) */
+
+                    /* Atualizar escopo vai ser AQUI DENTRO e vai retornar quantas VARIAVEIS foram REMOVIDAS */
+                    /* DALLOC */
+                    /* RETURN do Procedimento */
                 }
-                else {
+                else {  /* Se não encontrar um ponto e vírgula após o nome do procedimento, Gera Erro */
                     this.token.linha = this.token.numLinhaAnterior
                     this.raiseError("Erro Sintático: Caracter ';' não encontrado após identificador do procedimento")
                 }
             }
-            else {
+            else {  /* Gera erro caso o identificador do procedimento já exista na tabela de símbolos */
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Tabela de Simbolos: Procedimento '" + this.token.lexema + "' já declarado")
             }
         }
-        else {
+        else {  /* Gera erro caso não for encontrado um identificador como nome do procedimento */
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Identificador '" + this.token.lexema + "' incorreto para a declaração de procedimento")
         }
+
+        /* Remove da tabela todos os elementos dentro do escopo atual, já que ele terminou */
         this.tabela.atualizarEscopo()
     }
 
@@ -430,6 +497,8 @@ class Sintatico {
                         this.token = this.lexico.analisador()
                         if (this.token.simbolo == 'sponto_virgula') {
                             this.analisaBloco()
+
+                            /* ATUALIZA ESCOPO E RETURNF aqui dentro */
                         }
                         else {
                             this.token.linha = this.token.numLinhaAnterior
@@ -460,11 +529,13 @@ class Sintatico {
     }
 
     analisaExpressao() {
+        let simboloExp;
         if (dev) console.log("Sintatico: analisaExpressao")
         this.analisaExpressaoSimples()
         if (this.token.simbolo == 'smaior' || this.token.simbolo == 'smaiorig' || this.token.simbolo == 'smenor' || this.token.simbolo == 'smenorig' || this.token.simbolo == 'sdif' || this.token.simbolo == 'sig') {
-            // Semnatico
-            this.semantico.pushExpressao(this.token)
+            // Semantico
+            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+            this.semantico.pushExpressao(simboloExp)
 
             this.token = this.lexico.analisador()
             this.analisaExpressaoSimples()
@@ -472,17 +543,20 @@ class Sintatico {
     }
 
     analisaExpressaoSimples() {
+        let simboloExp;
         if (dev) console.log("Sintatico: analisaExpressaoSimples")
         if (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos') {
             // Semantico
-            this.semantico.pushExpressao(this.token, true)
+            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+            this.semantico.pushExpressao(simboloExp, true)
 
             this.token = this.lexico.analisador()
         }
         this.analisaTermo()
         while (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos' || this.token.simbolo == 'sou') {
             // Semnatico
-            this.semantico.pushExpressao(this.token)
+            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+            this.semantico.pushExpressao(simboloExp)
 
             this.token == this.lexico.analisador()
             this.analisaTermo()
@@ -491,11 +565,13 @@ class Sintatico {
     }
 
     analisaTermo() {
+        let simboloExp;
         if (dev) console.log("Sintatico: analisaTermo")
         this.analisaFator()
         while (this.token.simbolo == 'smult' || this.token.simbolo == 'sdiv' || this.token.simbolo == 'se') {
             // Semnatico
-            this.semantico.pushExpressao(this.token)
+            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+            this.semantico.pushExpressao(simboloExp)
 
             this.token = this.lexico.analisador()
             this.analisaFator()
@@ -503,19 +579,22 @@ class Sintatico {
     }
 
     analisaFator() {
+        let simboloExp;
         if (dev) console.log("Sintatico: analisaFator")
         if (this.token.simbolo == 'sidentificador') {
             if (dev) console.table(this.tabela.simbolos)
             if (this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)) {
                 if (this.tabela.pesquisaDeclaracaoFuncTabela(this.token.lexema)) {
                     // Semantico
-                    this.semantico.pushExpressao(this.token)
+                    simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+                    this.semantico.pushExpressao(simboloExp)
 
                     this.analisaChamadaFuncao()
                 }
                 else {
                     // Semantico
-                    this.semantico.pushExpressao(this.token)
+                    simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+                    this.semantico.pushExpressao(simboloExp)
 
                     this.token = this.lexico.analisador()
                 }
@@ -527,21 +606,24 @@ class Sintatico {
         } else {
             if (this.token.simbolo == 'snumero') {
                 // Semnatico
-                this.semantico.pushExpressao(this.token)
+                simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+                this.semantico.pushExpressao(simboloExp)
 
                 this.token = this.lexico.analisador()
             }
             else {
                 if (this.token.simbolo == 'snao') {
                     // Semnatico
-                    this.semantico.pushExpressao(this.token)
+                    simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+                    this.semantico.pushExpressao(simboloExp)
 
                     this.token = this.lexico.analisador()
                     this.analisaFator()
                 } else {
                     if (this.token.simbolo == 'sabre_parenteses') {
                         // Semnatico
-                        this.semantico.pushExpressao(this.token)
+                        simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
+                        this.semantico.pushExpressao(simboloExp)
 
                         this.token = this.lexico.analisador()
                         this.analisaExpressao()

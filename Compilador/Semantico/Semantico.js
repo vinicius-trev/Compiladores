@@ -23,13 +23,33 @@ class Semantico {
     }
 
     analisaExpressao() {
+        const posfix = this.posfix(this.expressao);
+
+        let ultimoToken, penultimoToken;
+        let tipoUltimoGrupo;
+
+        for (let elemento in posfix) {
+            if (/^\d+$/.test(elemento)) { // é digito ou variavel
+                penultimoToken = elemento;
+                ultimoToken = elemento;
+            }
+            else { // é operando
+                if (ultimoToken != null && penultimoToken != null) {
+                    if (ultimoToken.tipo)
+                }
+            }
+        }
 
         this.expressao = []
     }
     analisaAtribuicao() {
+        const posfix = this.posfix(this.expressao);
+
+
 
         this.expressao = []
     }
+
     pushExpressao(token, unario = false) {
         if (unario) {
             if (token.lexema === '+') token.lexema = '$+'
