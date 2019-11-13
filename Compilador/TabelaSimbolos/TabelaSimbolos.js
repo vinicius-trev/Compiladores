@@ -144,12 +144,10 @@ class TabelaSimbolos {
         {
             if(this.simbolos[i] instanceof SimboloVar)
                 count = count + 1;
-                
+
             i = i-1;
         }
-        alert(count)
         return count;
-
     }
 }
 /**
