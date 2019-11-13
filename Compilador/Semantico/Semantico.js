@@ -23,7 +23,7 @@ class Semantico {
     }
 
     analisaExpressao() {
-        const posfix = this.posfix(this.expressao);
+        //const posfix = this.posfix(this.expressao);
 
         let ultimoToken, penultimoToken;
         let tipoUltimoGrupo;
@@ -35,7 +35,9 @@ class Semantico {
             }
             else { // é operando
                 if (ultimoToken != null && penultimoToken != null) {
-                    if (ultimoToken.tipo)
+                    if (ultimoToken.tipo != penultimoToken.tipo){
+                        return 0;                        
+                    }
                 }
             }
         }
@@ -43,7 +45,7 @@ class Semantico {
         this.expressao = []
     }
     analisaAtribuicao() {
-        const posfix = this.posfix(this.expressao);
+        //const posfix = this.posfix(this.expressao);
 
 
 

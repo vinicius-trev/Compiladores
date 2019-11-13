@@ -20,6 +20,7 @@ class Sintatico {
                     this.analisaBloco() /* Analisa Variaveis, Procedimentos, Funcoes e Comandos -> Todo o Programa */
 
                     /* GERAR DALLOC AQUI e SABER QNTS VARIAVEIS FORAM ALOCADAS */
+                    this.tabela.quantidadeVariaveis()                    
 
                     if (this.token.simbolo == 'sponto') {   /* Ao fim, quando ler ponto, indica o fim do progama principal */
                         this.token = this.lexico.analisador()   /* Então lê o proximo Token, que deve ser EOF */
@@ -204,8 +205,7 @@ class Sintatico {
         if (this.token.simbolo == 'satribuicao') {  /* Se o proximo token for um := */
             /* Então quer dizer que estamos tratando uma atribuição */
             // Semantico
-            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-            this.semantico.pushExpressao(simboloExp)
+            this.semantico.pushExpressao(this.token.lexema)
 
             this.lexico.analisador()    /* Então Lê o proximo Token */
             this.analisaExpressao()     /* Analisa a expressão sintaticamente após := */
@@ -328,7 +328,7 @@ class Sintatico {
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
 
         // Semantico
-        this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
+        //this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
         /* O código da expressão será gerado na analise da expressão */
 
         if (this.token.simbolo == 'sfaca') { /* Quando ler o simbolo faça */
@@ -360,7 +360,7 @@ class Sintatico {
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
 
         // Semantico
-        this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
+        //this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
 
         /* Gera JMPF do para pular caso a condição for falsa */
         rotuloAuxiliar1 = this.geradorCodigo.retornarContador();
@@ -454,6 +454,7 @@ class Sintatico {
                     this.analisaBloco() /* Analisa o bloco do procedimento (Variaveis, subrotinas e comandos) */
 
                     /* Atualizar escopo vai ser AQUI DENTRO e vai retornar quantas VARIAVEIS foram REMOVIDAS */
+                    this.tabela.quantidadeVariaveis()
                     /* DALLOC */
                     /* RETURN do Procedimento */
                 }
@@ -499,6 +500,8 @@ class Sintatico {
                             this.analisaBloco()
 
                             /* ATUALIZA ESCOPO E RETURNF aqui dentro */
+                            this.tabela.quantidadeVariaveis()
+
                         }
                         else {
                             this.token.linha = this.token.numLinhaAnterior
@@ -529,13 +532,11 @@ class Sintatico {
     }
 
     analisaExpressao() {
-        let simboloExp;
         if (dev) console.log("Sintatico: analisaExpressao")
         this.analisaExpressaoSimples()
         if (this.token.simbolo == 'smaior' || this.token.simbolo == 'smaiorig' || this.token.simbolo == 'smenor' || this.token.simbolo == 'smenorig' || this.token.simbolo == 'sdif' || this.token.simbolo == 'sig') {
             // Semantico
-            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-            this.semantico.pushExpressao(simboloExp)
+            this.semantico.pushExpressao(this.token.lexema)
 
             this.token = this.lexico.analisador()
             this.analisaExpressaoSimples()
@@ -543,20 +544,17 @@ class Sintatico {
     }
 
     analisaExpressaoSimples() {
-        let simboloExp;
         if (dev) console.log("Sintatico: analisaExpressaoSimples")
         if (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos') {
             // Semantico
-            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-            this.semantico.pushExpressao(simboloExp, true)
+            this.semantico.pushExpressao(this.token.lexema, true)
 
             this.token = this.lexico.analisador()
         }
         this.analisaTermo()
         while (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos' || this.token.simbolo == 'sou') {
-            // Semnatico
-            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-            this.semantico.pushExpressao(simboloExp)
+            // Semantico
+            this.semantico.pushExpressao(this.token.lexema)
 
             this.token == this.lexico.analisador()
             this.analisaTermo()
@@ -565,13 +563,11 @@ class Sintatico {
     }
 
     analisaTermo() {
-        let simboloExp;
         if (dev) console.log("Sintatico: analisaTermo")
         this.analisaFator()
         while (this.token.simbolo == 'smult' || this.token.simbolo == 'sdiv' || this.token.simbolo == 'se') {
-            // Semnatico
-            simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-            this.semantico.pushExpressao(simboloExp)
+            // Semantico
+            this.semantico.pushExpressao(this.token.lexema)
 
             this.token = this.lexico.analisador()
             this.analisaFator()
@@ -606,24 +602,21 @@ class Sintatico {
         } else {
             if (this.token.simbolo == 'snumero') {
                 // Semnatico
-                simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-                this.semantico.pushExpressao(simboloExp)
+                this.semantico.pushExpressao(this.token.lexema)
 
                 this.token = this.lexico.analisador()
             }
             else {
                 if (this.token.simbolo == 'snao') {
                     // Semnatico
-                    simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-                    this.semantico.pushExpressao(simboloExp)
+                    this.semantico.pushExpressao(this.token.lexema)
 
                     this.token = this.lexico.analisador()
                     this.analisaFator()
                 } else {
                     if (this.token.simbolo == 'sabre_parenteses') {
                         // Semnatico
-                        simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-                        this.semantico.pushExpressao(simboloExp)
+                        this.semantico.pushExpressao(this.token.lexema)
 
                         this.token = this.lexico.analisador()
                         this.analisaExpressao()
