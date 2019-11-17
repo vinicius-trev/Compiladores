@@ -132,7 +132,7 @@ class GeradorCodigo {
         return this.contadorLabel
     }
 
-    gerarExpressão() {
+    gerarExpressão(posfixa) {
 
     }
 }

@@ -7,13 +7,15 @@ class Semantico {
             '$-': 0,
             'nao': 0,
             '*': 1,
-            '/': 1,
+            'div': 1,
             '+': 2,
-            'div': 2,
+            '-': 2,
             '>': 3,
             '<': 3,
             '>=': 3,
             '<=': 3,
+            '!=':3,
+            '=':3,
             'e': 4,
             'ou': 5,
             ':=': 6
@@ -22,89 +24,87 @@ class Semantico {
         this.expressao = []
     }
 
-    analisaExpressao() {
-        //const posfix = this.posfix(this.expressao);
+    // analisaExpressao() {
+    //     //const posfix = this.posfix(this.expressao);
 
-        let ultimoToken, penultimoToken;
-        let tipoUltimoGrupo;
+    //     let ultimoToken, penultimoToken;
+    //     let tipoUltimoGrupo;
 
-        for (let elemento in posfix) {
-            if (/^\d+$/.test(elemento)) { // é digito ou variavel
-                penultimoToken = elemento;
-                ultimoToken = elemento;
+    //     for (let elemento of posfix) {
+    //         if (/^\d+$/.test(elemento)) { // é digito ou variavel
+    //             penultimoToken = elemento;
+    //             ultimoToken = elemento;
+    //         }
+    //         else { // é operando
+    //             if (ultimoToken != null && penultimoToken != null) {
+    //                 if (ultimoToken.tipo != penultimoToken.tipo){
+    //                     return 0;                        
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     this.expressao = []
+    // }
+    // analisaAtribuicao() {
+    //     //const posfix = this.posfix(this.expressao);
+
+
+
+    //     this.expressao = []
+    // }
+
+    analisaExpressao(){
+        let resultadoPosfix = []
+
+        // a+b*c+d
+        console.log("Infixa: ")
+        console.log(this.expressao)
+        while(this.expressao.length !== 0){
+            const element = this.expressao.shift()
+            if(element.lexema === '('){
+                this.pilhaOperandos.push(element)
+                continue
             }
-            else { // é operando
-                if (ultimoToken != null && penultimoToken != null) {
-                    if (ultimoToken.tipo != penultimoToken.tipo){
-                        return 0;                        
-                    }
+            if(element.lexema === ')'){
+                while(this.pilhaOperandos.length !== 0){
+                    const operando = this.pilhaOperandos.pop()
+                    if(operando.lexema === '(') break
+                    resultadoPosfix.push(operando)
                 }
+                continue
             }
+
+            // Operando
+            if(!element.lexema in this.prioridades){ 
+                resultadoPosfix.push(element)
+                continue
+            }
+
+            // Operador
+            // Se a prioridade do operado encontrado for maior que a prioridade do ultimo elemento da pilha de operandos, insere na pilha
+            if(this.prioridades[element.lexema] > this.prioridades[this.pilhaOperandos[this.pilhaOperandos.length - 1]]){
+                this.pilhaOperandos.push(element)
+                continue
+            }
+            // Se a prioridade do elemento for menor ou igual, remover tudo da pilha
+            else{
+                while(this.pilhaOperandos.length !== 0){
+                    const operando = this.pilhaOperandos.pop()
+                    if(operando.lexema === '(') break
+                    resultadoPosfix.push(operando)
+                }
+                this.pilhaOperandos.push(element)
+            }     
         }
-
-        this.expressao = []
-    }
-    analisaAtribuicao() {
-        //const posfix = this.posfix(this.expressao);
-
-
-
-        this.expressao = []
+        return resultadoPosfix
     }
 
     pushExpressao(token, unario = false) {
         if (unario) {
-            if (token.lexema === '+') token.lexema = '$+'
-            else token.lexema = '$-'
+            token.lexema = token.lexema === '+' ? '$+' : '$-'
         }
         this.expressao.push(token)
     }
 
-    posfix(expressao) {
-        const expressaoArrray = expressao.split(' ')
-        let resultadoPosfix = ''
-        for (let elemento in expressaoArrray) {
-            if (/^\d+$/.test(elemento)) {
-                resultadoPosfix = `${resultadoPosfix} ${elemento} `
-            }
-            else {
-                const retornoPilha = this.insereLista(elemento)
-                for (let i in retornoPilha) {
-                    resultadoPosfix = `${resultadoPosfix} ${i} `
-                }
-            }
-        }
-        resultadoPosfix.pop()
-        return resultadoPosfix
-    }
-
-    insereLista(ele) {
-        let retorno = []
-        if (ele === '(') {
-            this.pilhaOperandos.push(ele)
-            return []
-        }
-        if (ele === ')') {
-            let current = this.pilhaOperandos.pop()
-            while (current !== '(') {
-                retorno.push(current)
-                current = this.pilhaOperandos.pop()
-            }
-            return retorno
-        }
-        // Se a prioridade da entrada for maior que o topo da pilha
-        if (prioridades[ele] > prioridade[this.pilhaOperandos.slice(-1)[0]]) {
-            this.pilhaOperandos.push(ele)
-            return retorno
-        }
-        let current = this.pilhaOperandos.pop()
-        while (current) {
-            if (current === '(') {
-                this.pilhaOperandos.push('(')
-                return retorno
-            }
-            retorno.push(current)
-            current = this.pilhaOperandos.pop()
-        }
-    }
 }

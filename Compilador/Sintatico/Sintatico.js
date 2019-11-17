@@ -9,6 +9,8 @@ class Sintatico {
     }
 
     analisador() { /* Main do compilador */
+        let qtdVariaveis;
+
         this.token = this.lexico.analisador()   /* Le um token */
         this.geradorCodigo.START(); /* Gerador Codigo: START */
         if (this.token.simbolo == 'sprograma') {    /* Se token for sprograma */
@@ -20,7 +22,9 @@ class Sintatico {
                     this.analisaBloco() /* Analisa Variaveis, Procedimentos, Funcoes e Comandos -> Todo o Programa */
 
                     /* GERAR DALLOC AQUI e SABER QNTS VARIAVEIS FORAM ALOCADAS */
-                    this.tabela.quantidadeVariaveis()                    
+                    qtdVariaveis = this.tabela.quantidadeVariaveis()
+                    this.geradorCodigo.posicaoMemoria -= qtdVariaveis
+                    this.geradorCodigo.DALLOC(this.geradorCodigo.posicaoMemoria, qtdVariaveis)
 
                     if (this.token.simbolo == 'sponto') {   /* Ao fim, quando ler ponto, indica o fim do progama principal */
                         this.token = this.lexico.analisador()   /* Então lê o proximo Token, que deve ser EOF */
@@ -85,8 +89,8 @@ class Sintatico {
     }
 
     analisaVariaveis() {    /* Analisa Variáveis do mesmo Tipo */
-        let quantidadeVariaveis;
-        quantidadeVariaveis = 0;    /* Armazena quantas variaveis foram declaradas do mesmo tipo */
+        let qtdVariaveis;
+        qtdVariaveis = 0;    /* Armazena quantas variaveis foram declaradas do mesmo tipo */
         if (dev) console.log("Sintatico: analisaVariaveis")
         do {
             if (this.token.simbolo == 'sidentificador') {   /* Quando encontrar um identificador */
@@ -119,14 +123,15 @@ class Sintatico {
             }
 
             /* Após declarar uma variável com sucesso, incrementar o contador de variáveis LOCAL para o comando VAR (Linha) */
-            quantidadeVariaveis++;
+            qtdVariaveis++;
+
             /* Incrementar a variável auxiliar que armazena a posição de memória que serão alocadas as variáveis */
             this.geradorCodigo.posicaoMemoria++;
 
         } while (this.token.simbolo != 'sdoispontos')   /* Repete todo o bloco de declaração de variáveis enquanto não encontrar um dois pontos */
 
         /* Gera um ALLOC para as variáveis declaradas nesse escopo */
-        this.geradorCodigo.ALLOC(this.geradorCodigo.posicaoMemoria - quantidadeVariaveis, quantidadeVariaveis);
+        this.geradorCodigo.ALLOC(this.geradorCodigo.posicaoMemoria - qtdVariaveis, qtdVariaveis);
         this.token = this.lexico.analisador() /* Lê o próximo Token */
         this.analisaTipo()  /* Chama a subrotina para analisar o tipo das variáveis declaradas */
     }
@@ -197,21 +202,20 @@ class Sintatico {
 
         if (dev) console.log("Sintatico: analisaAtribChprocedimento")
         // Semantico
-        simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-        this.semantico.pushExpressao(simboloExp)
+        this.semantico.pushExpressao(this.token)
 
         lexemaAuxiliar = this.token.lexema; /* Armazena o lexema da variavel/procedimento que será usado para obter o end. de memória ou respectivo label */
         this.token = this.lexico.analisador()   /* Lê o proximo Token */
         if (this.token.simbolo == 'satribuicao') {  /* Se o proximo token for um := */
             /* Então quer dizer que estamos tratando uma atribuição */
             // Semantico
-            this.semantico.pushExpressao(this.token.lexema)
+            this.semantico.pushExpressao(this.token)
 
             this.lexico.analisador()    /* Então Lê o proximo Token */
             this.analisaExpressao()     /* Analisa a expressão sintaticamente após := */
 
             // Semantico
-            this.semantico.analisaAtribuicao()   /* Analisa a expressão semânticamente após := */
+            //this.semantico.analisaAtribuicao()   /* Analisa a expressão semânticamente após := */
 
             /* Geração de código para a atribuição */
             this.geradorCodigo.STR(this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar))
@@ -433,18 +437,18 @@ class Sintatico {
 
     analisaDeclaracaoProcedimento() {   /* Declaração de procedimento */
         let rotuloAuxiliar;
+        let qtdVariaveis;
 
         if (dev) console.log("Sintatico: analisaDeclaracaoProcedimento")
         this.token = this.lexico.analisador()   /* Lê proximo token */
         if (this.token.simbolo == 'sidentificador') {   /* Após o token sprocedimento, deve ser lido um identificador */
 
             /* Caso o identificador ainda não exista como um procedimento na tabela de simbolos, permite a inserção do mesmo */
-            if (!this.tabela.pesquisaDeclaracaoProcTabela(this.token.lexema)) {
+            if (!this.tabela.pesquisaDeclaracaoProcTabela(this.token.lexema) && !this.tabela.pesquisaTabelaCriaVar(this.token.lexema)) {
 
                 /* Gera o rótulo e Label para a subrotina */
                 rotuloAuxiliar = this.geradorCodigo.retornarContador();
                 this.geradorCodigo.NULL(rotuloAuxiliar)
-                this.geradorCodigo.incrementarContador()
 
                 /* Cria a entrada na tabela de simbolos para o identificador do procedimento */
                 this.tabela.insereTabela(this.token.lexema, true, null, null, rotuloAuxiliar)
@@ -453,10 +457,13 @@ class Sintatico {
                 if (this.token.simbolo == 'sponto_virgula') {   /* Se o proximo token for ponto e virgula */
                     this.analisaBloco() /* Analisa o bloco do procedimento (Variaveis, subrotinas e comandos) */
 
-                    /* Atualizar escopo vai ser AQUI DENTRO e vai retornar quantas VARIAVEIS foram REMOVIDAS */
-                    this.tabela.quantidadeVariaveis()
+                    /* Retornar quantas VARIAVEIS Existem na subrotina */
+                    qtdVariaveis = this.tabela.quantidadeVariaveis()
                     /* DALLOC */
+                    this.geradorCodigo.posicaoMemoria -= qtdVariaveis
+                    this.geradorCodigo.DALLOC(this.geradorCodigo.posicaoMemoria,qtdVariaveis)
                     /* RETURN do Procedimento */
+                    this.geradorCodigo.RETURN()
                 }
                 else {  /* Se não encontrar um ponto e vírgula após o nome do procedimento, Gera Erro */
                     this.token.linha = this.token.numLinhaAnterior
@@ -477,57 +484,69 @@ class Sintatico {
         this.tabela.atualizarEscopo()
     }
 
-    analisaDeclaracaoFuncao() {
+    analisaDeclaracaoFuncao() {   /* Declaração de função */
+        let rotuloAuxiliar;
+        let qtdVariaveis;
+
         if (dev) console.log("Sintatico: analisaDeclaracaoFuncao")
-        this.token = this.lexico.analisador()
-        if (this.token.simbolo == 'sidentificador') {
+        this.token = this.lexico.analisador()   /* Lê o próximo token */
+        if (this.token.simbolo == 'sidentificador') {   /* Se o token lido após o simbolo sfuncao for um identificador */
 
+             /* Caso o identificador ainda não exista como uma função na tabela de simbolos, permite a inserção do mesmo */
             if (!this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)) {
-                // if pesquisa semantico - Falta Fazer - pesquisa_declfunc_tabela(token.lexema)
-                // se nao encontrou insere na tabela
-                this.tabela.insereTabela(this.token.lexema, true, null, 0, null)
-                this.token = this.lexico.analisador()
+                
+                /* Gera o rótulo e Label para a subrotina */
+                rotuloAuxiliar = this.geradorCodigo.retornarContador();
+                this.geradorCodigo.NULL(rotuloAuxiliar)
 
-                if (this.token.simbolo == 'sdoispontos') {
-                    this.token = this.lexico.analisador()
+                /* Cria a entrada na tabela de simbolos para o identificador da função */
+                this.tabela.insereTabela(this.token.lexema, true, null, 0, rotuloAuxiliar)
+                this.token = this.lexico.analisador()   /* Lê o próximo token */
 
-                    if (this.token.simbolo == 'sinteiro' || this.token.simbolo == 'sbooleano') {
+                if (this.token.simbolo == 'sdoispontos') {  /* Se Ler o token sdoispontos */
+                    this.token = this.lexico.analisador()   /* Lê o proximo token */
+
+                    if (this.token.simbolo == 'sinteiro' || this.token.simbolo == 'sbooleano') {    /* Identifica o tipo da função, booleano ou inteiro */
                         this.tabela.simbolos[this.tabela.simbolos.length - 1].tipo = this.token.lexema
                         if (dev) console.table(this.tabela.simbolos)
 
-                        this.token = this.lexico.analisador()
-                        if (this.token.simbolo == 'sponto_virgula') {
-                            this.analisaBloco()
+                        this.token = this.lexico.analisador()   /* Lê o próximo Token */
+                        if (this.token.simbolo == 'sponto_virgula') {   /* Se o próximo Token for ; */
+                            this.analisaBloco() /* Analisa o bloco (subrotinas, variaveis e comandos) */
 
-                            /* ATUALIZA ESCOPO E RETURNF aqui dentro */
-                            this.tabela.quantidadeVariaveis()
+                            /* Retornar quantas VARIAVEIS Existem na função E RETURNF aqui dentro */
+                            qtdVariaveis = this.tabela.quantidadeVariaveis()
+                            this.geradorCodigo.posicaoMemoria -= qtdVariaveis
+                            this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria,qtdVariaveis)
 
                         }
-                        else {
+                        else {  /* Gera erro caso não encontre ; após a declaração de tipo da função */
                             this.token.linha = this.token.numLinhaAnterior
                             this.raiseError("Erro Sintático: Caracter ';' não encontrado após identificador da função")
                         }
                     }
-                    else {
+                    else {  /* Gera erro caso o tipo da função não for inteiro ou booleano */
                         if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                         this.raiseError("Erro Sintático: Tipo de retorno da função inválido, esperado 'inteiro' ou 'booleano' -> Encontrado '" + this.token.lexema + "'")
                     }
                 }
-                else {
+                else {  /* Gera erro caso não encontre os dois pontos após o identificador da função */
                     this.token.linha = this.token.numLinhaAnterior
                     this.raiseError("Erro Sintático: Caracter ':' não encontrado na declaração de tipo da função")
                 }
             }
-            else {
+            else {  /* Gera erro caso o identificador da função já exista na tabela de simbolos */
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Tabela de Simbolos: Identificador '" + this.token.lexema + "' já utilizado")
             }
 
         }
-        else {
+        else {  /* Gera erro caso o nome da função não for um identificador */
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Identificador '" + this.token.lexema + "' incorreto para a declaração de função")
         }
+
+        /* Remove da tabela todos os elementos dentro do escopo atual, já que ele terminou */
         this.tabela.atualizarEscopo()
     }
 
@@ -536,25 +555,26 @@ class Sintatico {
         this.analisaExpressaoSimples()
         if (this.token.simbolo == 'smaior' || this.token.simbolo == 'smaiorig' || this.token.simbolo == 'smenor' || this.token.simbolo == 'smenorig' || this.token.simbolo == 'sdif' || this.token.simbolo == 'sig') {
             // Semantico
-            this.semantico.pushExpressao(this.token.lexema)
+            this.semantico.pushExpressao(this.token)
 
             this.token = this.lexico.analisador()
             this.analisaExpressaoSimples()
         }
+        console.log(this.semantico.analisaExpressao())
     }
 
     analisaExpressaoSimples() {
         if (dev) console.log("Sintatico: analisaExpressaoSimples")
         if (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos') {
             // Semantico
-            this.semantico.pushExpressao(this.token.lexema, true)
+            this.semantico.pushExpressao(this.token, true)
 
             this.token = this.lexico.analisador()
         }
         this.analisaTermo()
         while (this.token.simbolo == 'smais' || this.token.simbolo == 'smenos' || this.token.simbolo == 'sou') {
             // Semantico
-            this.semantico.pushExpressao(this.token.lexema)
+            this.semantico.pushExpressao(this.token)
 
             this.token == this.lexico.analisador()
             this.analisaTermo()
@@ -567,7 +587,7 @@ class Sintatico {
         this.analisaFator()
         while (this.token.simbolo == 'smult' || this.token.simbolo == 'sdiv' || this.token.simbolo == 'se') {
             // Semantico
-            this.semantico.pushExpressao(this.token.lexema)
+            this.semantico.pushExpressao(this.token)
 
             this.token = this.lexico.analisador()
             this.analisaFator()
@@ -582,15 +602,13 @@ class Sintatico {
             if (this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)) {
                 if (this.tabela.pesquisaDeclaracaoFuncTabela(this.token.lexema)) {
                     // Semantico
-                    simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-                    this.semantico.pushExpressao(simboloExp)
+                    this.semantico.pushExpressao(this.token)
 
                     this.analisaChamadaFuncao()
                 }
                 else {
                     // Semantico
-                    simboloExp = this.tabela.pesquisaParaPosfixa(this.token.lexema)
-                    this.semantico.pushExpressao(simboloExp)
+                    this.semantico.pushExpressao(this.token)
 
                     this.token = this.lexico.analisador()
                 }
@@ -602,21 +620,21 @@ class Sintatico {
         } else {
             if (this.token.simbolo == 'snumero') {
                 // Semnatico
-                this.semantico.pushExpressao(this.token.lexema)
+                this.semantico.pushExpressao(this.token)
 
                 this.token = this.lexico.analisador()
             }
             else {
                 if (this.token.simbolo == 'snao') {
                     // Semnatico
-                    this.semantico.pushExpressao(this.token.lexema)
+                    this.semantico.pushExpressao(this.token)
 
                     this.token = this.lexico.analisador()
                     this.analisaFator()
                 } else {
                     if (this.token.simbolo == 'sabre_parenteses') {
                         // Semnatico
-                        this.semantico.pushExpressao(this.token.lexema)
+                        this.semantico.pushExpressao(this.token)
 
                         this.token = this.lexico.analisador()
                         this.analisaExpressao()
@@ -648,13 +666,20 @@ class Sintatico {
         }
     }
     analisaChamadaFuncao() {
+        let rotulo = this.token.lexema;
+
         if (dev) console.log("Sintatico: analisaChamadaFuncao")
         this.lexico.analisador()
+
+        /* Gerador de Codigo -> CALL */
+        this.geradorCodigo.CALL(this.tabela.retornaLabelSubrotina(rotulo))
     }
 
     analisaChamadaProcedimento(lexemaAuxiliar) {
         if (dev) console.log("Sintatico: analisaChamadaProcedimento")
+        
         /* Gerador de Codigo -> CALL */
+        this.geradorCodigo.CALL(this.tabela.retornaLabelSubrotina(lexemaAuxiliar))
     }
 
     raiseError(error) {

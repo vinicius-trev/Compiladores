@@ -132,7 +132,7 @@ class TabelaSimbolos {
 
     pesquisaParaPosfixa(lexema) {
         for (let i = this.simbolos.length - 1; i >= 0; i--) {
-            if (this.simbolos[i].lexema == lexema && (this.simbolos[i] instanceof SimboloVar || this.simbolos[i] instanceof SimboloFuncao)) return this.simbolos[i]
+            if (this.simbolos[i].lexema == lexema) return this.simbolos[i]
         }
     }
 
@@ -148,6 +148,13 @@ class TabelaSimbolos {
             i = i-1;
         }
         return count;
+    }
+
+    retornaLabelSubrotina(lexema) {
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i].lexema == lexema && (this.simbolos[i] instanceof SimboloFuncao || this.simbolos[i] instanceof SimboloProcedimentoPrograma)) return this.simbolos[i].rotulo
+        }
+        return false
     }
 }
 /**
