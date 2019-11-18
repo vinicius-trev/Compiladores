@@ -94,7 +94,7 @@ class Sintatico {
         if (dev) console.log("Sintatico: analisaVariaveis")
         do {
             if (this.token.simbolo == 'sidentificador') {   /* Quando encontrar um identificador */
-                if (!this.tabela.pesquisaTabelaCriaVar(this.token.lexema)) {   /* Verifica se a variável não está duplicada no mesmo escopo */
+                if (!this.tabela.pesquisaTabelaCriaVar(this.token.lexema) && !this.tabela.programaPrincipal(this.token.lexema) && !this.tabela.pesquisaDeclaracaoFuncTabela(this.token.lexema) && !this.tabela.pesquisaDeclaracaoProcTabela(this.token.lexema)) {   /* Verifica se a variável não está duplicada no mesmo escopo */
                     this.tabela.insereTabela(this.token.lexema, false, this.geradorCodigo.posicaoMemoria, 0, null)    /* Se não existir nada duplicado insere na tabela de Simbolos */
                     this.token = this.lexico.analisador()   /* Lê o proximo Token */
                     if (this.token.simbolo == 'svirgula' || this.token.simbolo == 'sdoispontos') { /* Se o proximo Token for Svirgula ou Sdois_pontos */
@@ -221,8 +221,18 @@ class Sintatico {
             this.geradorCodigo.STR(this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar))
         }
         else {
-            this.analisaChamadaProcedimento(lexemaAuxiliar)   /* Se não for := então é chamada de procedimento */
-            /* O codigo será gerado dentro da função analisaChamadaProcedimento */
+            if (this.tabela.programaPrincipal(lexemaAuxiliar)) {
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Semântico: Tentativa de chamada do nome do programa")
+            }
+            else if (!this.tabela.pesquisaDeclaracaoProcTabela(lexemaAuxiliar)) {
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Semântico: Tentativa de chamada de procedimento que não existe")
+            }
+            else { /* Não é o programa principal, então pode realizar a chamada de procedimento */
+                this.analisaChamadaProcedimento(lexemaAuxiliar)   /* Se não for := então é chamada de procedimento */
+                /* O codigo será gerado dentro da função analisaChamadaProcedimento */
+            }
         }
     }
 
@@ -291,6 +301,7 @@ class Sintatico {
                     }
                     else {
                         /* Senão PRN, pois o valor já está na pilha */
+                        this.geradorCodigo.CALL(this.tabela.retornaLabelSubrotina(lexemaAuxiliar))  /* Gera o código para o CALL */
                         this.geradorCodigo.PRN();
                     }
 
@@ -444,7 +455,7 @@ class Sintatico {
         if (this.token.simbolo == 'sidentificador') {   /* Após o token sprocedimento, deve ser lido um identificador */
 
             /* Caso o identificador ainda não exista como um procedimento na tabela de simbolos, permite a inserção do mesmo */
-            if (!this.tabela.pesquisaDeclaracaoProcTabela(this.token.lexema) && !this.tabela.pesquisaTabelaCriaVar(this.token.lexema)) {
+            if (!this.tabela.pesquisaDeclaracaoProcTabela(this.token.lexema) && !this.tabela.pesquisaTabelaCriaVar(this.token.lexema) && !this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)) {
 
                 /* Gera o rótulo e Label para a subrotina */
                 rotuloAuxiliar = this.geradorCodigo.retornarContador();
@@ -461,7 +472,7 @@ class Sintatico {
                     qtdVariaveis = this.tabela.quantidadeVariaveis()
                     /* DALLOC */
                     this.geradorCodigo.posicaoMemoria -= qtdVariaveis
-                    this.geradorCodigo.DALLOC(this.geradorCodigo.posicaoMemoria,qtdVariaveis)
+                    this.geradorCodigo.DALLOC(this.geradorCodigo.posicaoMemoria, qtdVariaveis)
                     /* RETURN do Procedimento */
                     this.geradorCodigo.RETURN()
                 }
@@ -472,7 +483,7 @@ class Sintatico {
             }
             else {  /* Gera erro caso o identificador do procedimento já exista na tabela de símbolos */
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                this.raiseError("Erro Tabela de Simbolos: Procedimento '" + this.token.lexema + "' já declarado")
+                this.raiseError("Erro Tabela de Simbolos: Identificador '" + this.token.lexema + "' definido na declaração de procedimento já está sendo utilizado")
             }
         }
         else {  /* Gera erro caso não for encontrado um identificador como nome do procedimento */
@@ -492,9 +503,9 @@ class Sintatico {
         this.token = this.lexico.analisador()   /* Lê o próximo token */
         if (this.token.simbolo == 'sidentificador') {   /* Se o token lido após o simbolo sfuncao for um identificador */
 
-             /* Caso o identificador ainda não exista como uma função na tabela de simbolos, permite a inserção do mesmo */
-            if (!this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema)) {
-                
+            /* Caso o identificador ainda não exista como uma função na tabela de simbolos, permite a inserção do mesmo */
+            if (!this.tabela.pesquisaDeclaracaoVarFuncTabela(this.token.lexema) && !this.tabela.programaPrincipal(this.token.lexema) && !this.tabela.pesquisaDeclaracaoProcTabela(this.token.lexema)) {
+
                 /* Gera o rótulo e Label para a subrotina */
                 rotuloAuxiliar = this.geradorCodigo.retornarContador();
                 this.geradorCodigo.NULL(rotuloAuxiliar)
@@ -517,7 +528,7 @@ class Sintatico {
                             /* Retornar quantas VARIAVEIS Existem na função E RETURNF aqui dentro */
                             qtdVariaveis = this.tabela.quantidadeVariaveis()
                             this.geradorCodigo.posicaoMemoria -= qtdVariaveis
-                            this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria,qtdVariaveis)
+                            this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria, qtdVariaveis)
 
                         }
                         else {  /* Gera erro caso não encontre ; após a declaração de tipo da função */
@@ -537,7 +548,7 @@ class Sintatico {
             }
             else {  /* Gera erro caso o identificador da função já exista na tabela de simbolos */
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                this.raiseError("Erro Tabela de Simbolos: Identificador '" + this.token.lexema + "' já utilizado")
+                this.raiseError("Erro Tabela de Simbolos: Identificador '" + this.token.lexema + "' definido na declaração de função já está sendo utilizado")
             }
 
         }
@@ -603,13 +614,11 @@ class Sintatico {
                 if (this.tabela.pesquisaDeclaracaoFuncTabela(this.token.lexema)) {
                     // Semantico
                     this.semantico.pushExpressao(this.token)
-
                     this.analisaChamadaFuncao()
                 }
                 else {
                     // Semantico
                     this.semantico.pushExpressao(this.token)
-
                     this.token = this.lexico.analisador()
                 }
             }
@@ -665,24 +674,24 @@ class Sintatico {
             }
         }
     }
-    analisaChamadaFuncao() {
-        let rotulo = this.token.lexema;
+    analisaChamadaFuncao() {    /* Analisa Chamada de funções */
+        let rotulo = this.token.lexema; /* Armazena o identificador da função a ser buscado na tabela de simbolos */
 
         if (dev) console.log("Sintatico: analisaChamadaFuncao")
-        this.lexico.analisador()
+        this.lexico.analisador()    /* Lê o próximo token */
 
         /* Gerador de Codigo -> CALL */
-        this.geradorCodigo.CALL(this.tabela.retornaLabelSubrotina(rotulo))
+        this.geradorCodigo.CALL(this.tabela.retornaLabelSubrotina(rotulo))  /* Gera o código para o CALL */
     }
 
-    analisaChamadaProcedimento(lexemaAuxiliar) {
+    analisaChamadaProcedimento(lexemaAuxiliar) {    /* Analisa a chamada de procedimento */
         if (dev) console.log("Sintatico: analisaChamadaProcedimento")
-        
+
         /* Gerador de Codigo -> CALL */
-        this.geradorCodigo.CALL(this.tabela.retornaLabelSubrotina(lexemaAuxiliar))
+        this.geradorCodigo.CALL(this.tabela.retornaLabelSubrotina(lexemaAuxiliar))  /* Utiliza o lexema auxiliar, passado como parâmetro, para gerar o código para a chamada CALL */
     }
 
-    raiseError(error) {
+    raiseError(error) { /* Método responsável por gerar exceção na ocorrência de erros */
         throw {
             arquivo: "Sintatico",
             numLinha: this.token.linha,
@@ -690,7 +699,7 @@ class Sintatico {
         }
     }
 
-    saveFile() {
+    saveFile() {    /* Método que chama o procedimento que salva o código gerado em um arquivo .txt */
         download(this.geradorCodigo.codigoObjeto)
     }
 }
