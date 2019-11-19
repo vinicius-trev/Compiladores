@@ -25,7 +25,9 @@ class Semantico {
     }
 
     analisaTipos() {
+        console.log(this.expressao)
         const posfix = this.posfix(this.expressao);
+        console.log(posfix)
         let arrayTipos = [];
         let arrayAuxiliar = [];
 
@@ -66,18 +68,9 @@ class Semantico {
         this.expressao = []
     }
 
-    // analisaAtribuicao() {
-    //     //const posfix = this.posfix(this.expressao);
-
-
-
-    //     this.expressao = []
-    // }
-
     analisaExpressao() {
         let resultadoPosfix = []
 
-        // a+b*c+d
         console.log("Infixa: ")
         console.log(this.expressao)
         while (this.expressao.length !== 0) {
@@ -122,10 +115,11 @@ class Semantico {
     }
 
     pushExpressao(token, unario = false) {
+        let newToken = new Token(token)
         if (unario) {
-            token.lexema = token.lexema === '+' ? '$+' : '$-'
+            newToken.lexema = newToken.lexema === '+' ? '$+' : '$-'
         }
-        this.expressao.push(token)
+        this.expressao.push(newToken)
     }
 
 }

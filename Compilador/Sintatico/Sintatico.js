@@ -628,7 +628,7 @@ class Sintatico {
             }
         } else {
             if (this.token.simbolo == 'snumero') {
-                // Semnatico
+                // Semantico
                 this.semantico.pushExpressao(this.token)
 
                 this.token = this.lexico.analisador()
