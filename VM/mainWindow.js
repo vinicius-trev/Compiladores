@@ -66,10 +66,18 @@ function rodarCodigo() {
       if (funcao === "RD")                               /* Se a função lida for READ */ {
         /* Garante que o popup só pegara numeros inteiros */
         do {
-          var answer = parseInt(prompt("Digite o valor de INPUT: "))  /* Abre um pop up para inserir o dado */
+          var answer = prompt("Digite o valor de INPUT (Numeros - true/false): ")
+
+          if (answer === "true")
+            answer = parseInt("1")
+          else if (answer === "false")
+            answer = parseInt("0")
+          else
+            answer = parseInt(answer)  /* Abre um pop up para inserir o dado */
+
         } while (isNaN(answer));                                        /* Garante que o dado sempre será um numero inteiro */
 
-        if (answer != "")                                /* Se o dado inserido não for vazio (ou seja, inseriu algo valido *****TRATAR NUMEROS*****) */ {
+        if (!isNaN(answer))                                /* Se o dado inserido não for vazio (ou seja, inseriu algo valido *****TRATAR NUMEROS*****) */ {
           instrucoes["RD"](+answer)                     /* Executa a função de READ */
         }
       }
