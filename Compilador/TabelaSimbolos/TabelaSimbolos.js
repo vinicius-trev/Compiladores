@@ -145,6 +145,12 @@ class TabelaSimbolos {
 
         return false;
     }
+    pesquisaTipo(lexema) {
+        for (let sim of this.simbolos) {
+            if (sim.lexema === lexema) return sim.tipo
+        }
+        return null
+    }
 }
 
 /* Classe SIMBOLO que compõe a base da tabela de simbolos */

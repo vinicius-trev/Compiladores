@@ -5,7 +5,7 @@ class Sintatico {
         this.geradorCodigo = new GeradorCodigo();
         this.token = null
         this.escopoAtual = 0
-        this.semantico = new Semantico()
+        this.semantico = new Semantico(this.tabela)
     }
 
     analisador() { /* Main do compilador */
@@ -213,6 +213,13 @@ class Sintatico {
 
             this.lexico.analisador()    /* Então Lê o proximo Token */
             this.analisaExpressao()     /* Analisa a expressão sintaticamente após := */
+            try {
+                this.semantico.analisaExpressao()
+            }
+            catch (e) {
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                this.raiseError(e)
+            }
 
             // Semantico
             //this.semantico.analisaAtribuicao()   /* Analisa a expressão semânticamente após := */
@@ -341,6 +348,13 @@ class Sintatico {
 
         this.token = this.lexico.analisador()   /* Lê o proximo token */
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
+        try {
+            this.semantico.analisaExpressao()
+        }
+        catch (e) {
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+            this.raiseError(e)
+        }
 
         // Semantico
         //this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
@@ -373,6 +387,13 @@ class Sintatico {
         if (dev) console.log("Sintatico: analisaSe")
         this.token = this.lexico.analisador()   /* Lê o proximo Token após o se */
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
+        try {
+            this.semantico.analisaExpressao()
+        }
+        catch (e) {
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+            this.raiseError(e)
+        }
 
         // Semantico
         //this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
@@ -571,7 +592,6 @@ class Sintatico {
             this.token = this.lexico.analisador()
             this.analisaExpressaoSimples()
         }
-        console.log(this.semantico.analisaExpressao())
     }
 
     analisaExpressaoSimples() {
