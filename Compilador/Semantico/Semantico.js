@@ -29,6 +29,7 @@ class Semantico {
         let pilhaTipos = []
         let tipo = 'inteiro'
         let ultimo, penultimo, tipoPenultimo, tipoUltimo, tokenRetorno
+        if (posfix.length === 1) return (posfix[0].simbolo == 'sfalso' || posfix[0].simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(posfix[0].lexema)
         for (let ele of posfix) {
             if (!this.prioridades.hasOwnProperty(ele.lexema)) pilhaTipos.push(ele)
             else {
@@ -124,14 +125,23 @@ class Semantico {
                         pilhaTipos.push(tokenRetorno)
                         tipo = 'booleano'
                         break
-                    default:
+                    case ':=':
                         // Caso atribuicao, verificar se os dois ultimos elementos, possuem o mesmo tipo
                         ultimo = pilhaTipos.pop()
                         penultimo = pilhaTipos.pop()
+                        console.log(ultimo, penultimo)
                         tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
                         tipoPenultimo = (penultimo.simbolo == 'sfalso' || penultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(penultimo.lexema)
+                        console.log(tipoUltimo, tipoPenultimo)
                         if (tipoUltimo != tipoPenultimo) throw ("Erro Semantico: Variavel de atribuição tipo incompativel com a expressão")
                         tipo = tipoUltimo
+                        break
+
+                    default:
+                        ultimo = pilhaTipos.pop()
+                        tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
+                        tipo = tipoUltimo
+                        break
                 }
             }
         }
