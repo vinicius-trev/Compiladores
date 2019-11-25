@@ -349,7 +349,11 @@ class Sintatico {
         this.token = this.lexico.analisador()   /* Lê o proximo token */
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
         try {
-            this.semantico.analisaExpressao()
+            if (this.semantico.analisaExpressao().tipo !== 'booleano') {
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Expressao deve resultar em tipo booleano")
+            }
+
         }
         catch (e) {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
@@ -388,7 +392,10 @@ class Sintatico {
         this.token = this.lexico.analisador()   /* Lê o proximo Token após o se */
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
         try {
-            this.semantico.analisaExpressao()
+            if (this.semantico.analisaExpressao().tipo !== 'booleano') {
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Expressao deve resultar em tipo booleano")
+            }
         }
         catch (e) {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
