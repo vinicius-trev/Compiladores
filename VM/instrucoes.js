@@ -191,7 +191,7 @@ let instrucoes = {
   },
   "RETURNF": (m, n) => { /* Retornar de uma Rotina */
     /* Salva o topo da pilha (retorno de função) */
-    topoPilha = memoria[stackPointer] - 1
+    topoPilha = memoria[stackPointer]
     junk = memoria.pop()
     stackPointer = stackPointer - 1
 
@@ -203,7 +203,7 @@ let instrucoes = {
     }
 
     /* RETURN */
-    pc = memoria[stackPointer]                                                    /* Recupera o valor de PC a partir do stackPointer */
+    pc = memoria[stackPointer] - 1                                                    /* Recupera o valor de PC a partir do stackPointer */
     junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
 

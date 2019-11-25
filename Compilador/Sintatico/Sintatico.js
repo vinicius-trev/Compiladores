@@ -198,7 +198,6 @@ class Sintatico {
 
     analisaAtribChprocedimento() {  /* Analisa a atribuição de variáveis ou a chamada de um procedimento */
         let lexemaAuxiliar;
-        let simboloExp;
 
         if (dev) console.log("Sintatico: analisaAtribChprocedimento")
         // Semantico
@@ -217,6 +216,7 @@ class Sintatico {
                 let retornoExpressao = this.semantico.analisaExpressao();
                 retornoExpressao.result.shift();    /* Remove o identificador do := */
                 retornoExpressao.result.pop();      /* Remove o := */
+                console.log(retornoExpressao.result)
                 this.geradorCodigo.gerarExpressão(retornoExpressao.result)
             }
             catch (e) {
@@ -228,9 +228,18 @@ class Sintatico {
             //this.semantico.analisaAtribuicao()   /* Analisa a expressão semânticamente após := */
 
             /* Geração de código para a atribuição */
-            this.geradorCodigo.STR(this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar))
+            let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar)
+            if (memoriaVar)
+                this.geradorCodigo.STR(memoriaVar)
+            else {
+                /* Retornar quantas VARIAVEIS Existem na função E RETURNF aqui dentro */
+                let qtdVariaveis = this.tabela.quantidadeVariaveis()
+                this.geradorCodigo.posicaoMemoria -= qtdVariaveis
+                this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria, qtdVariaveis)
+            }
         }
         else {
+            this.semantico.expressao = []
             if (this.tabela.programaPrincipal(lexemaAuxiliar)) {
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
                 this.raiseError("Erro Semântico: Tentativa de chamada do nome do programa")
@@ -378,7 +387,8 @@ class Sintatico {
             this.geradorCodigo.incrementarContador()
 
             this.token = this.lexico.analisador()   /* Lê o proximo token */
-            this.analisaComandoSimples()    /* Analisa os comandos do enquanto */
+            this.analisaComandoSimples()    /* 
+             os comandos do enquanto */
 
             /* Gera JMP para voltar ao inicio do loop */
             this.geradorCodigo.JMP(rotuloAuxiliar1)
@@ -536,7 +546,7 @@ class Sintatico {
 
     analisaDeclaracaoFuncao() {   /* Declaração de função */
         let rotuloAuxiliar;
-        let qtdVariaveis;
+        // let qtdVariaveis;
 
         if (dev) console.log("Sintatico: analisaDeclaracaoFuncao")
         this.token = this.lexico.analisador()   /* Lê o próximo token */
@@ -564,10 +574,10 @@ class Sintatico {
                         if (this.token.simbolo == 'sponto_virgula') {   /* Se o próximo Token for ; */
                             this.analisaBloco() /* Analisa o bloco (subrotinas, variaveis e comandos) */
 
-                            /* Retornar quantas VARIAVEIS Existem na função E RETURNF aqui dentro */
-                            qtdVariaveis = this.tabela.quantidadeVariaveis()
-                            this.geradorCodigo.posicaoMemoria -= qtdVariaveis
-                            this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria, qtdVariaveis)
+                            // /* Retornar quantas VARIAVEIS Existem na função E RETURNF aqui dentro */
+                            // let qtdVariaveis = this.tabela.quantidadeVariaveis()
+                            // this.geradorCodigo.posicaoMemoria -= qtdVariaveis
+                            // this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria, qtdVariaveis)
 
                         }
                         else {  /* Gera erro caso não encontre ; após a declaração de tipo da função */
