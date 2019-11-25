@@ -2,7 +2,7 @@ class Sintatico {
     constructor(codigo) {
         this.lexico = new Lexico(codigo)
         this.tabela = new TabelaSimbolos();
-        this.geradorCodigo = new GeradorCodigo();
+        this.geradorCodigo = new GeradorCodigo(this.tabela);
         this.token = null
         this.escopoAtual = 0
         this.semantico = new Semantico(this.tabela)
@@ -214,7 +214,10 @@ class Sintatico {
             this.lexico.analisador()    /* Então Lê o proximo Token */
             this.analisaExpressao()     /* Analisa a expressão sintaticamente após := */
             try {
-                this.semantico.analisaExpressao()
+                let retornoExpressao = this.semantico.analisaExpressao();
+                retornoExpressao.result.shift();    /* Remove o identificador do := */
+                retornoExpressao.result.pop();      /* Remove o := */
+                this.geradorCodigo.gerarExpressão(retornoExpressao.result)
             }
             catch (e) {
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
@@ -349,9 +352,14 @@ class Sintatico {
         this.token = this.lexico.analisador()   /* Lê o proximo token */
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
         try {
-            if (this.semantico.analisaExpressao().tipo !== 'booleano') {
+            let retornoExpressao = this.semantico.analisaExpressao()
+
+            if (retornoExpressao.tipo !== 'booleano') {
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                this.raiseError("Expressao deve resultar em tipo booleano")
+                this.raiseError("Erro Semântico: Expressão deve resultar em tipo booleano")
+            }
+            else {
+                this.geradorCodigo.gerarExpressão(retornoExpressao.result)
             }
 
         }
@@ -359,10 +367,6 @@ class Sintatico {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError(e)
         }
-
-        // Semantico
-        //this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
-        /* O código da expressão será gerado na analise da expressão */
 
         if (this.token.simbolo == 'sfaca') { /* Quando ler o simbolo faça */
             /* Gera o JMPF para saltar se falso */
@@ -392,18 +396,19 @@ class Sintatico {
         this.token = this.lexico.analisador()   /* Lê o proximo Token após o se */
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
         try {
-            if (this.semantico.analisaExpressao().tipo !== 'booleano') {
+            let retornoExpressao = this.semantico.analisaExpressao()
+            if (retornoExpressao.tipo !== 'booleano') {
                 if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                this.raiseError("Expressao deve resultar em tipo booleano")
+                this.raiseError("Erro Semântico: Expressão deve resultar em tipo booleano")
+            }
+            else {
+                this.geradorCodigo.gerarExpressão(retornoExpressao.result)
             }
         }
         catch (e) {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError(e)
         }
-
-        // Semantico
-        //this.semantico.analisaExpressao()   /* Analisa a expressão SEMANTICAMENTE */
 
         /* Gera JMPF do para pular caso a condição for falsa */
         rotuloAuxiliar1 = this.geradorCodigo.retornarContador();

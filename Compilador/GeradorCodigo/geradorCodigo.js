@@ -1,9 +1,10 @@
 
 class GeradorCodigo {
-    constructor() {
+    constructor(tabela) {
         this.contadorLabel = 1;
         this.posicaoMemoria = 0;
         this.codigoObjeto = "";
+        this.tabela = tabela;
     }
 
     LDC(constante) {
@@ -113,7 +114,7 @@ class GeradorCodigo {
     }
 
     CALL(inteiro) {
-        this.codigoObjeto += "CALL L" + inteiro + "\n"
+        this.codigoObjeto += "CALL  sL" + inteiro + "\n"
     }
 
     RETURN() {
@@ -133,6 +134,54 @@ class GeradorCodigo {
     }
 
     gerarExpressão(posfixa) {
+        let token;
 
+        for (token of posfixa) {
+            if (token.simbolo === "snumero") {  /* Gera LDV */
+                this.LDC(+token.lexema);
+            }
+            else if (token.simbolo === "sidentificador") {  /* Gera LDC */
+                this.LDV(this.tabela.retornaEnderecoMemoriaVar(token.lexema));
+            }
+            else if (token.simbolo === "smaior") {
+                this.CMA();
+            }
+            else if (token.simbolo === "smaiorig") {
+                this.CMAQ();
+            }
+            else if (token.simbolo === "sig") {
+                this.CEQ();
+            }
+            else if (token.simbolo === "smenor") {
+                this.CME();
+            }
+            else if (token.simbolo === "smenorig") {
+                this.CMEQ();
+            }
+            else if (token.simbolo === "sdif") {
+                this.CDIF();
+            }
+            else if (token.simbolo === "smais") {
+                this.ADD();
+            }
+            else if (token.simbolo === "smenos") {
+                this.SUB();
+            }
+            else if (token.simbolo === "smult") {
+                this.MULT();
+            }
+            else if (token.simbolo === "sdiv") {
+                this.DIVI();
+            }
+            else if (token.simbolo === "se") {
+                this.AND();
+            }
+            else if (token.simbolo === "sou") {
+                this.OR();
+            }
+            else if (token.simbolo === "snao") {
+                this.NEG();
+            }
+        }
     }
 }
