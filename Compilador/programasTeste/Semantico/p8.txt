@@ -41,3 +41,6 @@ inicio
          escreva(y)
        fim
 fim.  
+
+
+

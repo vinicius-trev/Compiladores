@@ -93,6 +93,7 @@ function openFile() {
         // here we tell the reader what to do when it's done reading...
         reader.onload = readerEvent => {
             var content = readerEvent.target.result; // this is the content!
+            content += '\n\n\n\n'
             montarTexto(content);
             atualizaNoLinha()
         }

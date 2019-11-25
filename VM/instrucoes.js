@@ -179,19 +179,19 @@ let instrucoes = {
       stackPointer = stackPointer - 1                                            /* Decrementa o stackPointer */
     }
   },
-  "CALL": (t) => {  /* Chamar uma Rotina */
+  "CALL": (t, l) => {  /* Chamar uma Rotina */
     stackPointer = stackPointer + 1                                              /* Incrementa o stackPointer */
-    memoria[stackPointer] = pc + 1                                               /* Salva o PC na pilha de memoria */
-    pc = t                                                                       /* Define o procedimento como proxima instrução a ser executada */
+    memoria[stackPointer] = pc + 1                                              /* Salva o PC na pilha de memoria */
+    pc = l                                                                     /* Define o procedimento como proxima instrução a ser executada */
   },
   "RETURN": () => { /* Retornar de uma Rotina */
-    pc = memoria[stackPointer]                                                    /* Recupera o valor de PC a partir do stackPointer */
+    pc = memoria[stackPointer] - 1                                                     /* Recupera o valor de PC a partir do stackPointer */
     junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
   },
   "RETURNF": (m, n) => { /* Retornar de uma Rotina */
     /* Salva o topo da pilha (retorno de função) */
-    topoPilha = memoria[stackPointer]
+    topoPilha = memoria[stackPointer] - 1
     junk = memoria.pop()
     stackPointer = stackPointer - 1
 

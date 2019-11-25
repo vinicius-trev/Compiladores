@@ -39,4 +39,4 @@ inicio
          p;
          escreva(y)
        fim
-fim.  
+fim.
