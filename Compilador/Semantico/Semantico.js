@@ -26,29 +26,116 @@ class Semantico {
     }
 
     analizarTipoExpressao(posfix) {
-        const atribuicao = (posfix[posfix.length - 1].lexema === ':=')
+        let pilhaTipos = []
         let tipo = 'inteiro'
-        // Verificar se expressao gera boleano
-        for (let sim of posfix) {
-            switch (sim.lexema) {
-                case '>':
-                case '<':
-                case '>=':
-                case '<=':
-                case '!=':
-                case '=':
-                case 'e':
-                case 'ou':
-                    tipo = 'booleano'
-                    break;
+        let ultimo, penultimo, tipoPenultimo, tipoUltimo, tokenRetorno
+        for (let ele of posfix) {
+            if (!this.prioridades.hasOwnProperty(ele.lexema)) pilhaTipos.push(ele)
+            else {
+                switch (ele.lexema) {
+                    case '*':
+                    case 'div':
+                    case '+':
+                    case '-':
+
+                        // Caso operação de inteiros com dois elementos, resultando inteiro
+                        ultimo = pilhaTipos.pop()
+                        penultimo = pilhaTipos.pop()
+                        tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
+                        tipoPenultimo = (penultimo.simbolo == 'sfalso' || penultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(penultimo.lexema)
+                        if (tipoPenultimo != 'inteiro' || tipoUltimo != 'inteiro') throw ("Erro Semantico: Tipo invalido na expressao, encontrado variável booleana em operação inteira")
+                        // Criar token exclusivamente inteiro
+                        tokenRetorno = new Token()
+                        tokenRetorno.simbolo = 'snumero'
+                        tokenRetorno.lexema = '-1'
+                        pilhaTipos.push(tokenRetorno)
+                        tipo = 'inteiro'
+                        break
+                    case '$+':
+                    case '$-':
+                        // Caso operação de inteiros com um elemento, resultando inteiro
+                        ultimo = pilhaTipos.pop()
+                        tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
+                        if (tipoUltimo != 'inteiro') throw ("Erro Semantico: Tipo invalido na expressao, encontrado variável booleana em operação inteira")
+                        // Criar token exclusivamente inteiro
+                        tokenRetorno = new Token()
+                        tokenRetorno.simbolo = 'snumero'
+                        tokenRetorno.lexema = '-1'
+                        pilhaTipos.push(tokenRetorno)
+                        tipo = 'inteiro'
+                        break
+                    case '!=':
+                    case '=':
+                        // Caso operação de booleanos ou inteiros com dois elementos, resultado booleano
+                        ultimo = pilhaTipos.pop()
+                        penultimo = pilhaTipos.pop()
+                        tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
+                        tipoPenultimo = (penultimo.simbolo == 'sfalso' || penultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(penultimo.lexema)
+                        if (tipoPenultimo != tipoUltimo) throw ("Erro Semantico: Tipo invalido na expressao, encontrado variáveis com tipos conflitantes")
+                        // Criar token exclusivamente booleano
+                        tokenRetorno = new Token()
+                        tokenRetorno.simbolo = 'sfalso'
+                        tokenRetorno.lexema = 'falso'
+                        pilhaTipos.push(tokenRetorno)
+                        tipo = 'booleano'
+                        break
+
+                    case '>':
+                    case '<':
+                    case '>=':
+                    case '<=':
+                        // Caso operação de inteiros com dois elementos, resultando booleano
+                        ultimo = pilhaTipos.pop()
+                        penultimo = pilhaTipos.pop()
+                        tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
+                        tipoPenultimo = (penultimo.simbolo == 'sfalso' || penultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(penultimo.lexema)
+                        if (tipoPenultimo != 'inteiro' || tipoUltimo != 'inteiro') throw ("Erro Semantico: Tipo invalido na expressao, encontrado variável booleana em operação inteira")
+                        // Criar token exclusivamente booleano
+                        tokenRetorno = new Token()
+                        tokenRetorno.simbolo = 'sfalso'
+                        tokenRetorno.lexema = 'falso'
+                        pilhaTipos.push(tokenRetorno)
+                        tipo = 'booleano'
+                        break
+                    case 'nao':
+                        // Caso operação de booleanos com um elemento, resultando booleano
+                        ultimo = pilhaTipos.pop()
+                        tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
+                        if (tipoUltimo != 'booleano') throw ("Erro Semantico: Tipo invalido na expressao, encontrado variável inteira em operação booleana")
+                        // Criar token exclusivamente booleano
+                        tokenRetorno = new Token()
+                        tokenRetorno.simbolo = 'sfalso'
+                        tokenRetorno.lexema = 'falso'
+                        pilhaTipos.push(tokenRetorno)
+                        tipo = 'booleano'
+                        break
+                    case 'e':
+                    case 'ou':
+                        // Caso operação de booleanos com dois elementos, resultando booleano
+                        ultimo = pilhaTipos.pop()
+                        penultimo = pilhaTipos.pop()
+                        tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
+                        tipoPenultimo = (penultimo.simbolo == 'sfalso' || penultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(penultimo.lexema)
+                        if (tipoPenultimo != 'booleano' || tipoUltimo != 'booleano') throw ("Erro Semantico: Tipo invalido na expressao, encontrado variável inteira em operação booleana")
+                        // Criar token exclusivamente booleano
+                        tokenRetorno = new Token()
+                        tokenRetorno.simbolo = 'sfalso'
+                        tokenRetorno.lexema = 'falso'
+                        pilhaTipos.push(tokenRetorno)
+                        tipo = 'booleano'
+                        break
+                    default:
+                        // Caso atribuicao, verificar se os dois ultimos elementos, possuem o mesmo tipo
+                        ultimo = pilhaTipos.pop()
+                        penultimo = pilhaTipos.pop()
+                        tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
+                        tipoPenultimo = (penultimo.simbolo == 'sfalso' || penultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(penultimo.lexema)
+                        if (tipoUltimo != tipoPenultimo) throw ("Erro Semantico: Variavel de atribuição tipo incompativel com a expressão")
+                        tipo = tipoUltimo
+                }
             }
         }
-        if (atribuicao) {
-            let tipoAttr = this.tabela.pesquisaTipo(posfix[0].lexema)
-            if (tipoAttr != tipo) {
-                throw ("Resultado da expressão não compativel com a variável atribuida")
-            }
-        }
+
         return tipo
     }
 
@@ -56,13 +143,7 @@ class Semantico {
         let resultadoPosfix = []
 
         while (this.expressao.length !== 0) {
-            // console.log("_________________________________________________________________________________________________________________________________________________________")
-            // console.log("POSFIXA: ")
-            // console.table(resultadoPosfix)
-            // console.log("Pilha Operandos: ")
-            // console.table(this.pilhaOperandos)
             const element = this.expressao.shift()
-            // console.log("ELEMENTO ANALIZADO: " + element.lexema)
             if (element.lexema === '(') {
                 this.pilhaOperandos.push(element)
                 continue

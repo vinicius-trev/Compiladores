@@ -149,7 +149,7 @@ class TabelaSimbolos {
         for (let sim of this.simbolos) {
             if (sim.lexema === lexema) return sim.tipo
         }
-        return null
+        return 'inteiro'
     }
 }
 
