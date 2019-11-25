@@ -192,6 +192,12 @@ class GeradorCodigo {
             else if (token.simbolo === "snao") {
                 this.NEG();
             }
+            else if (token.simbolo === "sverdadeiro") {
+                this.LDC(1);
+            }
+            else if (token.simbolo === "sfalso") {
+                this.LDC(0);
+            }
         }
     }
 }
