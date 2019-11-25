@@ -351,22 +351,25 @@ class Sintatico {
 
         this.token = this.lexico.analisador()   /* Lê o proximo token */
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
+
+        let retornoExpressao
         try {
-            let retornoExpressao = this.semantico.analisaExpressao()
-
-            if (retornoExpressao.tipo !== 'booleano') {
-                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                this.raiseError("Erro Semântico: Expressão deve resultar em tipo booleano")
-            }
-            else {
-                this.geradorCodigo.gerarExpressão(retornoExpressao.result)
-            }
-
+            retornoExpressao = this.semantico.analisaExpressao()
         }
         catch (e) {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError(e)
         }
+        if (retornoExpressao.tipo !== 'booleano') {
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Semântico: Expressão deve resultar em tipo booleano")
+        }
+        else {
+            this.geradorCodigo.gerarExpressão(retornoExpressao.result)
+        }
+
+
+
 
         if (this.token.simbolo == 'sfaca') { /* Quando ler o simbolo faça */
             /* Gera o JMPF para saltar se falso */
@@ -395,20 +398,23 @@ class Sintatico {
         if (dev) console.log("Sintatico: analisaSe")
         this.token = this.lexico.analisador()   /* Lê o proximo Token após o se */
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
+        let retornoExpressao
         try {
-            let retornoExpressao = this.semantico.analisaExpressao()
-            if (retornoExpressao.tipo !== 'booleano') {
-                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
-                this.raiseError("Erro Semântico: Expressão deve resultar em tipo booleano")
-            }
-            else {
-                this.geradorCodigo.gerarExpressão(retornoExpressao.result)
-            }
+            retornoExpressao = this.semantico.analisaExpressao()
         }
         catch (e) {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError(e)
         }
+        if (retornoExpressao.tipo !== 'booleano') {
+            if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+            this.raiseError("Erro Semântico: Expressão deve resultar em tipo booleano")
+        }
+        else {
+            this.geradorCodigo.gerarExpressão(retornoExpressao.result)
+        }
+
+
 
         /* Gera JMPF do para pular caso a condição for falsa */
         rotuloAuxiliar1 = this.geradorCodigo.retornarContador();
