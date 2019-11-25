@@ -135,7 +135,7 @@ class GeradorCodigo {
 
     gerarExpressão(posfixa) {
         let token;
-
+        console.log(posfixa)
         for (token of posfixa) {
             if (token.simbolo === "snumero") {  /* Gera LDV */
                 this.LDC(+token.lexema);
@@ -162,10 +162,20 @@ class GeradorCodigo {
                 this.CDIF();
             }
             else if (token.simbolo === "smais") {
-                this.ADD();
+                if (token.lexema === "$+") {
+                    this.INV();
+                }
+                else {
+                    this.ADD();
+                }
             }
             else if (token.simbolo === "smenos") {
-                this.SUB();
+                if (token.lexema === "$-") {
+                    this.INV();
+                }
+                else {
+                    this.SUB();
+                }
             }
             else if (token.simbolo === "smult") {
                 this.MULT();
