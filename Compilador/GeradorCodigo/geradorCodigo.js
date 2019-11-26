@@ -166,7 +166,7 @@ class GeradorCodigo {
             }
             else if (token.simbolo === "smais") {
                 if (token.lexema === "$+") {
-                    this.INV();
+                    // this.INV();
                 }
                 else {
                     this.ADD();
