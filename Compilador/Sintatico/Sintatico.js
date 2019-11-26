@@ -257,7 +257,7 @@ class Sintatico {
             /* Geração de código para a atribuição */
             let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar)
 
-            if (memoriaVar || memoriaVar === 0)
+            if (!isNaN(memoriaVar))
                 this.geradorCodigo.STR(memoriaVar)
 
             // RETORNO de FUNÇÃO
@@ -388,7 +388,7 @@ class Sintatico {
         /* O Token lido até aqui é o enquanto, portanto gera a Label Inicial */
         rotuloAuxiliar1 = this.geradorCodigo.retornarContador();
         this.geradorCodigo.NULL(rotuloAuxiliar1)
-        this.geradorCodigo.incrementarContador()
+        //this.geradorCodigo.incrementarContador()
 
         this.token = this.lexico.analisador()   /* Lê o proximo token */
         this.analisaExpressao() /* Analisa a expressão SINTATICAMENTE */
@@ -618,7 +618,6 @@ class Sintatico {
                             // /* Retornar quantas VARIAVEIS Existem na função E RETURNF aqui dentro */
                             let qtdVariaveis = this.tabela.quantidadeVariaveis()
                             this.geradorCodigo.posicaoMemoria -= qtdVariaveis
-                            // this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria, qtdVariaveis)
 
                         }
                         else {  /* Gera erro caso não encontre ; após a declaração de tipo da função */
