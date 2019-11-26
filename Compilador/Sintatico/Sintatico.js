@@ -257,7 +257,7 @@ class Sintatico {
             /* Geração de código para a atribuição */
             let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar)
 
-            if (!isNaN(memoriaVar))
+            if ((memoriaVar || memoriaVar === 0))
                 this.geradorCodigo.STR(memoriaVar)
 
             // RETORNO de FUNÇÃO
