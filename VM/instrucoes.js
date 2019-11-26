@@ -11,7 +11,8 @@
  * e o valor do STACKPOINTER (HIGHLIGHTED).
  */
 
- let instrucoes = {
+let junk;
+let instrucoes = {
   "LDC": (k) => {   /* Load Constant */
     stackPointer = stackPointer + 1                                               /* Incrementa o ponteiro de pilha (proxima posição de memoria) */
     memoria[stackPointer] = k                                                     /* Insere a constante na pilha recebida como parametro (k) */
@@ -22,18 +23,22 @@
   },
   "ADD": () => {    /* Somar */
     memoria[stackPointer - 1] = memoria[stackPointer - 1] + memoria[stackPointer] /* Soma os dois valores superiores apontados pelo stackPointer e armazena na posicao stackPointer-1 */
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementra o ponteiro de pilha */
   },
   "SUB": () => {    /* Subtrair */
     memoria[stackPointer - 1] = memoria[stackPointer - 1] - memoria[stackPointer] /* Subtrai (PILHA[stackPointer-1] - PILHA[stackPointer]) os dois valores superiores apontados pelo stackPointer e armazena na posicao stackPointer-1 */
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementra o ponteiro de pilha */
   },
   "MULT": () => {   /* Multiplicar */
     memoria[stackPointer - 1] = memoria[stackPointer - 1] * memoria[stackPointer] /* Multiplica os dois valores superiores apontados pelo stackPointer e armazena na posicao stackPointer-1 */
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementra o ponteiro de pilha */
   },
   "DIVI": () => {   /* Dividir */
-    memoria[stackPointer - 1] = memoria[stackPointer - 1] / memoria[stackPointer] /* Divide (PILHA[stackPointer-1] / PILHA[stackPointer]) os dois valores superiores apontados pelo stackPointer e armazena na posicao stackPointer-1 */
+    memoria[stackPointer - 1] = Math.floor(memoria[stackPointer - 1] / memoria[stackPointer]) /* Divide (PILHA[stackPointer-1] / PILHA[stackPointer]) os dois valores superiores apontados pelo stackPointer e armazena na posicao stackPointer-1 */
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementra o ponteiro de pilha */
   },
   "INV": () => {  /* Inverter Sinal */
@@ -46,6 +51,7 @@
     else {                                                                        /* Armazena o valor 0 na posicao stackPointer-1 caso contrário */
       memoria[stackPointer - 1] = 0
     }
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
   },
   "OR": () => {  /* Operação Lógica OR - Disjunção */
@@ -55,6 +61,7 @@
     else {                                                                        /* Armazena o valor 0 na posição stackPointer-1 caso contrário */
       memoria[stackPointer - 1] = 0
     }
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
   },
   "NEG": () => {  /* Operação Lógica NOT - Negação */
@@ -67,6 +74,7 @@
     else {                                                                        /* Armazena o valor 0 na posição stackPointer-1 caso contrário */
       memoria[stackPointer - 1] = 0
     }
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
   },
   "CMA": () => {  /* Compara Maior */
@@ -76,6 +84,7 @@
     else {                                                                        /* Armazena o valor 0 na posição stackPointer-1 caso contrário */
       memoria[stackPointer - 1] = 0
     }
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
   },
   "CEQ": () => {  /* Compara Igual (EQ = Equivalente) */
@@ -85,6 +94,7 @@
     else {                                                                        /* Armazena o valor 0 na posição stackPointer-1 caso contrário */
       memoria[stackPointer - 1] = 0
     }
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
   },
   "CDIF": () => { /* Compara Desigual (DIF = Diferente) */
@@ -94,6 +104,7 @@
     else {                                                                        /* Armazena o valor 0 na posição stackPointer-1 caso contrário */
       memoria[stackPointer - 1] = 0
     }
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
   },
   "CMEQ": () => { /* Compara Menor ou Igual (ME = Menor || Q = Equivalente ) */
@@ -103,6 +114,7 @@
     else {                                                                        /* Armazena o valor 0 na posição stackPointer-1 caso contrário */
       memoria[stackPointer - 1] = 0
     }
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
   },
   "CMAQ": () => { /* Compara Maior ou Igual (MA = Maior || Q = Equivalente ) */
@@ -112,6 +124,7 @@
     else {                                                                        /* Armazena o valor 0 na posição stackPointer-1 caso contrário */
       memoria[stackPointer - 1] = 0
     }
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
   },
   "START": () => {/* Iniciar programa Principal */
@@ -122,6 +135,7 @@
   },
   "STR": (n) => { /* Armazenar Valor região de memória de posição "n" (STR = Store) */
     memoria[n] = memoria[stackPointer]                                           /* Armazena o valor apontado por stackPointer na posição n da memoria de dados */
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
   },
   "JMP": (t) => { /* Desviar PC para "t" */
@@ -134,6 +148,7 @@
     else {
       pc = pc                                                                    /* Caso não atenda a condição aponta para proxima instrução e NAO DESVIA */
     }
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
   },
   "NULL": () => { /* Operação NULA */
@@ -148,29 +163,52 @@
     out.value += memoria[stackPointer];                                          /* Escreve o valor no elemento HTML */
     out.value += "\r\n";
     out.scrollTop = out.scrollHeight;                                            /* "Anda" automaticamente com o scroll */
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
   },
   "ALLOC": (m, n) => {  /* Alocar Memória de tamanho 'n' */
-    for (let k = 0; k < n; k++) 
-    {                                                                            /* Realiza o processo de ALLOC "n" VEZES */
+    for (let k = 0; k < n; k++) {                                                                            /* Realiza o processo de ALLOC "n" VEZES */
       stackPointer = stackPointer + 1                                            /* Incrementa o stackPointer */
       memoria[stackPointer] = memoria[m + k]
     }
   },
   "DALLOC": (m, n) => { /* Desalocar Memória de tamanho 'n' */
-    for (let k = n - 1; k >= 0; k--) 
-    {                                                                            /* Realiza o processo de DESALOCAR "n" VEZES */
+    for (let k = n - 1; k >= 0; k--) {                                                                            /* Realiza o processo de DESALOCAR "n" VEZES */
       memoria[m + k] = memoria[stackPointer]
+      junk = memoria.pop()
       stackPointer = stackPointer - 1                                            /* Decrementa o stackPointer */
     }
   },
-  "CALL": (t) => {  /* Chamar uma Rotina */
+  "CALL": (t, l) => {  /* Chamar uma Rotina */
     stackPointer = stackPointer + 1                                              /* Incrementa o stackPointer */
-    memoria[stackPointer] = pc + 1                                               /* Salva o PC na pilha de memoria */
-    pc = t                                                                       /* Define o procedimento como proxima instrução a ser executada */
+    memoria[stackPointer] = pc + 1                                              /* Salva o PC na pilha de memoria */
+    pc = l                                                                     /* Define o procedimento como proxima instrução a ser executada */
   },
   "RETURN": () => { /* Retornar de uma Rotina */
-    pc = memoria[stackPointer]                                                    /* Recupera o valor de PC a partir do stackPointer */
+    pc = memoria[stackPointer] - 1                                                     /* Recupera o valor de PC a partir do stackPointer */
+    junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
+  },
+  "RETURNF": (m, n) => { /* Retornar de uma Rotina */
+    /* Salva o topo da pilha (retorno de função) */
+    topoPilha = memoria[stackPointer]
+    junk = memoria.pop()
+    stackPointer = stackPointer - 1
+
+    /* DALLOC */
+    for (let k = n - 1; k >= 0; k--) {                                                                            /* Realiza o processo de DESALOCAR "n" VEZES */
+      memoria[m + k] = memoria[stackPointer]
+      junk = memoria.pop()
+      stackPointer = stackPointer - 1                                            /* Decrementa o stackPointer */
+    }
+
+    /* RETURN */
+    pc = memoria[stackPointer] - 1                                                    /* Recupera o valor de PC a partir do stackPointer */
+    junk = memoria.pop()
+    stackPointer = stackPointer - 1                                               /* Decrementa o stackPointer */
+
+    /* Restaura o topo na pilha */
+    stackPointer = stackPointer + 1
+    memoria[stackPointer] = topoPilha
   },
 };

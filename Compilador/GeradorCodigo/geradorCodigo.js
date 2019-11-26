@@ -1,131 +1,203 @@
+
 class GeradorCodigo {
-    constructor() {
-        this.simbolos = [];
-        this.contadorLabel=1;
-        this.codigoObjeto="";
+    constructor(tabela) {
+        this.contadorLabel = 1;
+        this.posicaoMemoria = 0;
+        this.codigoObjeto = "";
+        this.tabela = tabela;
     }
 
-    LDC(constante){
-
+    LDC(constante) {
+        this.codigoObjeto += "LDC " + constante + "\n"
     }
 
-    LDV(identificador){
-
+    LDV(identificador) {
+        this.codigoObjeto += "LDV " + identificador + "\n"
     }
 
-    ADD(){
-
+    ADD() {
+        this.codigoObjeto += "ADD\n"
     }
 
-    SYB(){
-
-    }
-    
-    MULT(){
-
+    SUB() {
+        this.codigoObjeto += "SUB\n"
     }
 
-    DIVI(){
-
-    }
-    
-    INV(){
-
+    MULT() {
+        this.codigoObjeto += "MULT\n"
     }
 
-    AND(){
-
+    DIVI() {
+        this.codigoObjeto += "DIVI\n"
     }
 
-    OR(){
-
+    INV() {
+        this.codigoObjeto += "INV\n"
     }
 
-    NEG(){
-
+    AND() {
+        this.codigoObjeto += "AND\n"
     }
 
-    CME(){
-
+    OR() {
+        this.codigoObjeto += "OR\n"
     }
 
-    CMA(){
-
+    NEG() {
+        this.codigoObjeto += "NEG\n"
     }
 
-    CEQ(){
-
+    CME() {
+        this.codigoObjeto += "CME\n"
     }
 
-    CDIF(){
-
+    CMA() {
+        this.codigoObjeto += "CMA\n"
     }
 
-    CMEQ(){
-
+    CEQ() {
+        this.codigoObjeto += "CEQ\n"
     }
 
-    CMAQ(){
-
+    CDIF() {
+        this.codigoObjeto += "CDIF\n"
     }
 
-    START(){
-
+    CMEQ() {
+        this.codigoObjeto += "CMEQ\n"
     }
 
-    HLT(){
-
+    CMAQ() {
+        this.codigoObjeto += "CMAQ\n"
     }
 
-    STR(memoria){
-
+    START() {
+        this.codigoObjeto += "START\n"
     }
 
-    JMP(label){
-
+    HLT() {
+        this.codigoObjeto += "HLT\n"
     }
 
-    JUMPF(label){
-
+    STR(memoria) {
+        this.codigoObjeto += "STR " + memoria + "\n"
     }
 
-    NULL(){
-
+    JMP(inteiro) {
+        this.codigoObjeto += "JMP L" + inteiro + "\n"
     }
 
-    RD(){
-
+    JMPF(inteiro) {
+        this.codigoObjeto += "JMPF L" + inteiro + "\n"
     }
 
-    PRN(){
-
+    NULL(inteiro) {
+        /* Toda vez que criar um label, deve-se incrementar o contador de labels */
+        this.codigoObjeto += "L" + inteiro + " NULL\n"
+        this.incrementarContador()
     }
 
-    ALLOC(start,size){
-
+    RD() {
+        this.codigoObjeto += "RD\n"
     }
 
-    DALLOC(start,size){
-
+    PRN() {
+        this.codigoObjeto += "PRN\n"
     }
 
-    CALL(){
-
+    ALLOC(start, size) {
+        this.codigoObjeto += "ALLOC " + start + " " + size + "\n"
     }
 
-    RETURN(){
-
+    DALLOC(start, size) {
+        this.codigoObjeto += "DALLOC " + start + " " + size + "\n"
     }
 
-    incrementarContador(){
-
+    CALL(inteiro) {
+        this.codigoObjeto += "CALL  L" + inteiro + "\n"
     }
 
-    retornarContador(){
-
+    RETURN() {
+        this.codigoObjeto += "RETURN\n"
     }
 
-    gerarExpressão(){
+    RETURNF(start, size) {
+        this.codigoObjeto += "RETURNF " + start + " " + size + "\n"
+    }
 
+    incrementarContador() {
+        this.contadorLabel++
+    }
+
+    retornarContador() {
+        return this.contadorLabel
+    }
+
+    gerarExpressão(posfixa) {
+        let token;
+        console.log(posfixa)
+        for (token of posfixa) {
+            if (token.simbolo === "snumero") {  /* Gera LDV */
+                this.LDC(+token.lexema);
+            }
+            else if (token.simbolo === "sidentificador") {  /* Gera LDC */
+                this.LDV(this.tabela.retornaEnderecoMemoriaVar(token.lexema));
+            }
+            else if (token.simbolo === "smaior") {
+                this.CMA();
+            }
+            else if (token.simbolo === "smaiorig") {
+                this.CMAQ();
+            }
+            else if (token.simbolo === "sig") {
+                this.CEQ();
+            }
+            else if (token.simbolo === "smenor") {
+                this.CME();
+            }
+            else if (token.simbolo === "smenorig") {
+                this.CMEQ();
+            }
+            else if (token.simbolo === "sdif") {
+                this.CDIF();
+            }
+            else if (token.simbolo === "smais") {
+                if (token.lexema === "$+") {
+                    this.INV();
+                }
+                else {
+                    this.ADD();
+                }
+            }
+            else if (token.simbolo === "smenos") {
+                if (token.lexema === "$-") {
+                    this.INV();
+                }
+                else {
+                    this.SUB();
+                }
+            }
+            else if (token.simbolo === "smult") {
+                this.MULT();
+            }
+            else if (token.simbolo === "sdiv") {
+                this.DIVI();
+            }
+            else if (token.simbolo === "se") {
+                this.AND();
+            }
+            else if (token.simbolo === "sou") {
+                this.OR();
+            }
+            else if (token.simbolo === "snao") {
+                this.NEG();
+            }
+            else if (token.simbolo === "sverdadeiro") {
+                this.LDC(1);
+            }
+            else if (token.simbolo === "sfalso") {
+                this.LDC(0);
+            }
+        }
     }
 }

@@ -7,6 +7,8 @@
 let codigo /* Variavel onde em cada posicao representa uma linha do codigo */
 let arquivo
 let noLinhas
+let buildStatus = 0 /* 1 = sucesso, 0 = falha */
+let sintatico;
 const dev = true
 
 // Event bindings
@@ -16,8 +18,8 @@ document.onkeydown = KeyPress
 let s1 = document.getElementById('codigo')
 let s2 = document.getElementById('numero')
 
-if(dev) console.log(s1)
-if(dev) console.log(s2)
+if (dev) console.log(s1)
+if (dev) console.log(s2)
 
 function select_scroll_1(e) { s2.scrollTop = s1.scrollTop }
 function select_scroll_2(e) { s1.scrollTop = s2.scrollTop }
@@ -65,11 +67,11 @@ function KeyPress(e) {
         event.preventDefault()
     }
     /* Subistitur Tab por 2 espaços */
-    if(event.which == 9 && e.target == caixaTexto){
+    if (event.which == 9 && e.target == caixaTexto) {
         e.preventDefault()
         var s = caixaTexto.selectionStart;
-        caixaTexto.value = caixaTexto.value.substring(0,caixaTexto.selectionStart) + "\t" + caixaTexto.value.substring(caixaTexto.selectionEnd);
-        caixaTexto.selectionEnd = s+1;
+        caixaTexto.value = caixaTexto.value.substring(0, caixaTexto.selectionStart) + "\t" + caixaTexto.value.substring(caixaTexto.selectionEnd);
+        caixaTexto.selectionEnd = s + 1;
 
     }
 }
@@ -91,12 +93,8 @@ function openFile() {
         // here we tell the reader what to do when it's done reading...
         reader.onload = readerEvent => {
             var content = readerEvent.target.result; // this is the content!
+            content += '\n\n\n\n'
             montarTexto(content);
-            // noLinhas = (content.match(/\n/g) || []).length
-            // textAreaNoLinha = document.querySelector('.numbers-line')
-            // let numeros = ''
-            // for (let i = 1; i <= noLinhas + 1; i++) numeros += `<span id=${i}\n`
-            // textAreaNoLinha.value = numeros
             atualizaNoLinha()
         }
     }
@@ -113,21 +111,40 @@ function reset() {
 }
 
 function build() {
-    const consolebox = document.querySelector('#consoleTerminal')
-    consolebox.innerHTML = ''
-    sintatico = new Sintatico(codigo)
-    try {
-        sintatico.analisador()
+    if (typeof codigo !== "undefined") {
         const consolebox = document.querySelector('#consoleTerminal')
-        consolebox.innerHTML = `<p style="color:green;">SUCESSO</p>`
+        consolebox.innerHTML = ''
+
+        sintatico = new Sintatico(codigo)
+        try {
+            sintatico.analisador()
+            const consolebox = document.querySelector('#consoleTerminal')
+            consolebox.innerHTML = `<p style="color:green;">SUCESSO</p>`
+            buildStatus = 1;
+        }
+        catch (e) {
+            if (dev) console.log(e)
+            const consolebox = document.querySelector('#consoleTerminal')
+            consolebox.innerHTML = `<p>${e.msg}</p>`
+            const lineError = document.getElementById(`numero-${e.numLinha}`)
+            lineError.style.backgroundColor = 'red'
+            buildStatus = 0;
+        }
+
+        if (dev) console.log("Build Status: " + buildStatus);
     }
-    catch (e) {
-        if(dev) console.log(e)
-        const consolebox = document.querySelector('#consoleTerminal')
-        consolebox.innerHTML = `<p>${e.msg}</p>`
-        const lineError = document.getElementById(`numero-${e.numLinha}`)
-        lineError.style.backgroundColor = 'red'
+    else
+        alert("Abra um arquivo ou digite o código antes de compilar")
+}
+
+function save() {
+    build()
+    if (!buildStatus && typeof codigo !== "undefined") {
+        /* POP UP Código compilado com erros, não será salvo */
+        alert("Código compilado com erros, o arquivo não será salvo")
     }
+    else if (typeof codigo !== "undefined")
+        sintatico.saveFile()
 }
 function atualizaNoLinha() {
     codigo = document.querySelector(".caixa-codigo").value

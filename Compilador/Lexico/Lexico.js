@@ -36,8 +36,7 @@ class Lexico {
         }
         else {
             // Throw error
-            if(this.caracter === "_")
-            {
+            if (this.caracter === "_") {
                 this.raiseError("Erro Léxico: Caracter '" + this.caracter + "' não permitido no início de Identificadores")
             }
             else
@@ -49,7 +48,7 @@ class Lexico {
     analisador() {
         // Se final de arquivo
         if (this.caracter === 'EOF') {
-           // console.log("FINAL DO ARQUIVO")
+            // console.log("FINAL DO ARQUIVO")
             this.token.simbolo = 'SEOF'
             this.token.lexema = 'EOF'
             return this.token
@@ -57,16 +56,14 @@ class Lexico {
         // Se { comecou comentario
         if (this.caracter === '{') this.inComment = true
         this.token.numLinhaAnterior = this.numLinha;
-        while (/\s/.test(this.caracter) || this.inComment) 
-        {
-            
+        while (/\s/.test(this.caracter) || this.inComment) {
+
             if (/\n/.test(this.caracter)) this.numLinha++
 
             if (this.caracter === '}') this.inComment = false
             this.lerCaracter()
 
-            if (this.caracter === 'EOF' && this.inComment == true) 
-            {
+            if (this.caracter === 'EOF' && this.inComment == true) {
                 this.raiseError("Erro Léxico: Comentário não possuí fim '}'")
             }
 
@@ -74,8 +71,7 @@ class Lexico {
         }
         // Caracter nao whitespace e nao comentario encontrado
 
-        if(this.caracter === "EOF") 
-        {
+        if (this.caracter === "EOF") {
             this.token.simbolo = 'SEOF'
             this.token.lexema = 'EOF'
             return this.token
