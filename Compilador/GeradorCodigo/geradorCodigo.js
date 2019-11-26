@@ -142,7 +142,7 @@ class GeradorCodigo {
             }
             else if (token.simbolo === "sidentificador") {  /* Gera LDC */
                 let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(token.lexema)
-                if (memoriaVar || memoriaVar === 0)
+                if (!isNaN(memoriaVar))
                     this.LDV(memoriaVar)
 
             }
