@@ -37,7 +37,7 @@ let instrucoes = {
     stackPointer = stackPointer - 1                                               /* Decrementra o ponteiro de pilha */
   },
   "DIVI": () => {   /* Dividir */
-    memoria[stackPointer - 1] = memoria[stackPointer - 1] / memoria[stackPointer] /* Divide (PILHA[stackPointer-1] / PILHA[stackPointer]) os dois valores superiores apontados pelo stackPointer e armazena na posicao stackPointer-1 */
+    memoria[stackPointer - 1] = Math.floor(memoria[stackPointer - 1] / memoria[stackPointer]) /* Divide (PILHA[stackPointer-1] / PILHA[stackPointer]) os dois valores superiores apontados pelo stackPointer e armazena na posicao stackPointer-1 */
     junk = memoria.pop()
     stackPointer = stackPointer - 1                                               /* Decrementra o ponteiro de pilha */
   },

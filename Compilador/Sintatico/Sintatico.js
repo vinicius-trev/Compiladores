@@ -2,10 +2,11 @@ class Sintatico {
     constructor(codigo) {
         this.lexico = new Lexico(codigo)
         this.tabela = new TabelaSimbolos();
-        this.geradorCodigo = new GeradorCodigo(this.tabela);
+        this.geradorCodigo = new GeradorCodigo(this.tabela)
         this.token = null
         this.escopoAtual = 0
         this.semantico = new Semantico(this.tabela)
+        this.procurandoRetorno = false
     }
 
     analisador() { /* Main do compilador */
@@ -58,12 +59,23 @@ class Sintatico {
         }
     }
 
-    analisaBloco() {    /* Responsável pelas etapas de declaração de variáveis, subrotinas e comandos */
+    analisaBloco(funcao = false) {    /* Responsável pelas etapas de declaração de variáveis, subrotinas e comandos */
         if (dev) console.log("Sintatico: AnalisaBloco")
         this.token = this.lexico.analisador()
         this.analisaEtVariaveis()
         this.analisaSubrotinas()
-        this.analisaComandos()
+
+        console.log("ANALISADO BLOCO DE FUNCAO: " + funcao)
+        if (funcao) this.procurandoRetorno = true
+        if (!this.analisaComandos()) {
+            if (this.procurandoRetorno) {
+                this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Semântico: Possibilidade de retorno de função inatingível")
+            }
+        }
+        if (funcao) this.procurandoRetorno = false
+
+
     }
 
     analisaEtVariaveis() {  /* Etapa de declaração de variáveis () */
@@ -149,40 +161,53 @@ class Sintatico {
     }
 
     analisaComandos() {     /* Analisa o bloco de comandoSS (Plural =  mais de um comando) */
+        let retornoFuncao = false
         if (dev) console.log("Sintatico: analisaComandos")
         if (this.token.simbolo == 'sinicio') {  /* Se lêr o token sinicio */
             this.token = this.lexico.analisador()   /* Então lê o próximo Token */
-            this.analisaComandoSimples()            /* E analisa o proximo comando simples (Um único comando) */
+
+            if (this.analisaComandoSimples()) /* E analisa o proximo comando simples (Um único comando) */
+                retornoFuncao = true
+
             while (this.token.simbolo != 'sfim') {  /* Enquanto não encontrar o token de FIM */
                 if (this.token.simbolo == 'sponto_virgula') {   /* Necessita encontrar um ponto e virgula ao fim de cada comando, com exceção do último */
                     this.token = this.lexico.analisador()       /* Lê o proximo Token */
-                    if (this.token.simbolo != 'sfim')   /* Se o proximo Token for Diferente de FIM */
-                        this.analisaComandoSimples()    /* Continua analisando os comandos simples */
+                    if (this.token.simbolo != 'sfim') {   /* Se o proximo Token for Diferente de FIM */
+                        if (this.analisaComandoSimples())      /* Continua analisando os comandos simples */
+                            retornoFuncao = true
+                    }
                 }
                 else { /* Gerar ERRO se não encontrar um ; ao FINAL de cada comando simples */
                     this.token.linha = this.token.numLinhaAnterior
                     this.raiseError("Erro Sintático: Caracter ';' não encontrado ou COMANDO INVÁLIDO")
                 }
             }
+
             this.token = this.lexico.analisador()   /* Lê o proximo Token */
         }
         else {  /* Gerar Erro se não encontrar o token sinicio no começo do bloco de multiplos comandos simples */
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: 'inicio' não encontrado no bloco de comandos -> Encontrado '" + this.token.lexema + "'")
         }
+        return retornoFuncao
     }
 
     analisaComandoSimples() {   /* Analisa os comandos simples */
         if (dev) console.log("Sintatico: analisaComandoSimples")
+        console.log("Token analisaComandoSimples")
+        console.table(this.token)
         switch (this.token.simbolo) {
             case 'sidentificador':  /* Se encontrar um identificador */
+                if (this.procurandoRetorno) return this.analisaAtribChprocedimento()
                 this.analisaAtribChprocedimento()   /* Então Analisa atribuição ou chamada de procedimento */
                 break;
             case 'sse': /* Se encontrar um SE */
+                if (this.procurandoRetorno) return this.analisaSe()
                 this.analisaSe()    /* Então Analisa comando condicional SE */
                 break;
             case 'senquanto':   /* Se encontrar um enquanto */
-                this.analisaEnquanto()  /* Então analisa o comando iterativo ENQUANTO */
+                if (this.procurandoRetorno) return this.analisaEnquanto()  /* Então analisa o comando iterativo ENQUANTO */
+                this.analisaEnquanto()
                 break;
             case 'sleia':   /* Se encontrar o comando leia */
                 this.analisaLeia()  /* Então analisa o comando de entrada de dados LEIA */
@@ -191,9 +216,11 @@ class Sintatico {
                 this.analisaEscreva()   /* Então analisa o comando de saida de dados ESCREVA */
                 break;
             default:    /* Se não encontrar nenhum dos comandos acima */
-                this.analisaComandos()  /* Então voltar a analisar comandos pois pode ter encontrado um Token sfim */
+                if (this.procurandoRetorno) return this.analisaComandos()  /* Então voltar a analisar comandos pois pode ter encontrado um Token sfim */
+                this.analisaComandos()
                 break;
         }
+        return false
     }
 
     analisaAtribChprocedimento() {  /* Analisa a atribuição de variáveis ou a chamada de um procedimento */
@@ -205,6 +232,8 @@ class Sintatico {
 
         lexemaAuxiliar = this.token.lexema; /* Armazena o lexema da variavel/procedimento que será usado para obter o end. de memória ou respectivo label */
         this.token = this.lexico.analisador()   /* Lê o proximo Token */
+        console.log("Token analisaAtribChprocedimento")
+        console.table(this.token)
         if (this.token.simbolo == 'satribuicao') {  /* Se o proximo token for um := */
             /* Então quer dizer que estamos tratando uma atribuição */
             // Semantico
@@ -224,18 +253,19 @@ class Sintatico {
                 this.raiseError(e)
             }
 
-            // Semantico
-            //this.semantico.analisaAtribuicao()   /* Analisa a expressão semânticamente após := */
 
             /* Geração de código para a atribuição */
             let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar)
             if (memoriaVar)
                 this.geradorCodigo.STR(memoriaVar)
+
+            // RETORNO de FUNÇÃO
             else {
                 /* Retornar quantas VARIAVEIS Existem na função E RETURNF aqui dentro */
                 let qtdVariaveis = this.tabela.quantidadeVariaveis()
-                this.geradorCodigo.posicaoMemoria -= qtdVariaveis
-                this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria, qtdVariaveis)
+                // this.geradorCodigo.posicaoMemoria -= qtdVariaveis
+                this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria - qtdVariaveis, qtdVariaveis)
+                return true
             }
         }
         else {
@@ -351,6 +381,7 @@ class Sintatico {
 
     analisaEnquanto() { /* Analisa o comando enquando - faça */
         let rotuloAuxiliar1, rotuloAuxiliar2;
+        let retorno = false
 
         if (dev) console.log("Sintatico: analisaEnquanto")
         /* O Token lido até aqui é o enquanto, portanto gera a Label Inicial */
@@ -387,8 +418,8 @@ class Sintatico {
             this.geradorCodigo.incrementarContador()
 
             this.token = this.lexico.analisador()   /* Lê o proximo token */
-            this.analisaComandoSimples()    /* 
-             os comandos do enquanto */
+            if (this.analisaComandoSimples())    /* os comandos do enquanto */
+                retorno = true
 
             /* Gera JMP para voltar ao inicio do loop */
             this.geradorCodigo.JMP(rotuloAuxiliar1)
@@ -400,10 +431,12 @@ class Sintatico {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Esperado 'faca' -> Encontrado '" + this.token.lexema + "'")
         }
+        return retorno
     }
 
     analisaSe() {   /* Comando condicional se */
         let rotuloAuxiliar1, rotuloAuxiliar2;
+        let retornoEntao, retornoSenao
 
         if (dev) console.log("Sintatico: analisaSe")
         this.token = this.lexico.analisador()   /* Lê o proximo Token após o se */
@@ -433,8 +466,8 @@ class Sintatico {
 
         if (this.token.simbolo == 'sentao') {   /* Se ler o token então */
             this.token = this.lexico.analisador()   /* Então lê o proximo token */
-            this.analisaComandoSimples()    /* Analisa os comandos do então */
-
+            retornoEntao = this.analisaComandoSimples()    /* Analisa os comandos do então */
+            console.log("retornoEntao: " + retornoEntao)
             if (this.token.simbolo == 'ssenao') {
                 /* Gera JMP L2 para pular para o final do comando se caso executar o então */
                 /* Gera L1 NULL para definir o inicio do senão */
@@ -444,15 +477,22 @@ class Sintatico {
                 this.geradorCodigo.NULL(rotuloAuxiliar1);
 
                 this.token = this.lexico.analisador()
-                this.analisaComandoSimples()
-
+                retornoSenao = this.analisaComandoSimples()
+                console.log("retornoSenao: " + retornoSenao)
                 /* Gera L2 NULL para sair do comando condicional se */
                 this.geradorCodigo.NULL(rotuloAuxiliar2);
+
+                // Semantico, encontrado retorno no entao e senao, e estou procurando retorno
+                if (this.procurandoRetorno && retornoEntao && retornoSenao) {
+                    return true
+                }
+                else if (this.procurandoRetorno) return false
             }
             else {
                 /* Se nao houver senão, gera L1 NULL */
                 this.geradorCodigo.NULL(rotuloAuxiliar1);
             }
+
         }
         else {  /* Gera erro caso não encontre então apos availiar a expressão */
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
@@ -572,11 +612,11 @@ class Sintatico {
 
                         this.token = this.lexico.analisador()   /* Lê o próximo Token */
                         if (this.token.simbolo == 'sponto_virgula') {   /* Se o próximo Token for ; */
-                            this.analisaBloco() /* Analisa o bloco (subrotinas, variaveis e comandos) */
+                            this.analisaBloco(true) /* Analisa o bloco (subrotinas, variaveis e comandos) */
 
                             // /* Retornar quantas VARIAVEIS Existem na função E RETURNF aqui dentro */
-                            // let qtdVariaveis = this.tabela.quantidadeVariaveis()
-                            // this.geradorCodigo.posicaoMemoria -= qtdVariaveis
+                            let qtdVariaveis = this.tabela.quantidadeVariaveis()
+                            this.geradorCodigo.posicaoMemoria -= qtdVariaveis
                             // this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria, qtdVariaveis)
 
                         }
