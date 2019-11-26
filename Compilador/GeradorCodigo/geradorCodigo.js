@@ -114,7 +114,7 @@ class GeradorCodigo {
     }
 
     CALL(inteiro) {
-        this.codigoObjeto += "CALL L" + inteiro + "\n"
+        this.codigoObjeto += "CALL  L" + inteiro + "\n"
     }
 
     RETURN() {
