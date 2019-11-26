@@ -254,20 +254,21 @@ class Sintatico {
             }
 
 
-            /* Geração de código para a atribuição */
-            let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar)
-
-            if ((memoriaVar || memoriaVar === 0))
+            if (this.tabela.pesquisaTabelaExisteVar(lexemaAuxiliar)) {
+                let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar)
                 this.geradorCodigo.STR(memoriaVar)
-
-            // RETORNO de FUNÇÃO
-            else {
+            }
+            else if (this.tabela.pesquisaDeclaracaoFuncTabela(lexemaAuxiliar)) {
                 /* Retornar quantas VARIAVEIS Existem na função E RETURNF aqui dentro */
                 let qtdVariaveis = this.tabela.quantidadeVariaveis()
-                // this.geradorCodigo.posicaoMemoria -= qtdVariaveis
                 this.geradorCodigo.RETURNF(this.geradorCodigo.posicaoMemoria - qtdVariaveis, qtdVariaveis)
                 return true
             }
+            else {
+                if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
+                this.raiseError("Erro Semântico: Variavel para atribuição não declarada")
+            }
+
         }
         else {
             this.semantico.expressao = []
