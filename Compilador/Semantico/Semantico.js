@@ -129,10 +129,8 @@ class Semantico {
                         // Caso atribuicao, verificar se os dois ultimos elementos, possuem o mesmo tipo
                         ultimo = pilhaTipos.pop()
                         penultimo = pilhaTipos.pop()
-                        console.log(ultimo, penultimo)
                         tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
                         tipoPenultimo = (penultimo.simbolo == 'sfalso' || penultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(penultimo.lexema)
-                        console.log(tipoUltimo, tipoPenultimo)
                         if (tipoUltimo != tipoPenultimo) throw ("Erro Semantico: Variavel de atribuição tipo incompativel com a expressão")
                         tipo = tipoUltimo
                         break

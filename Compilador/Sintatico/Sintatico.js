@@ -65,7 +65,7 @@ class Sintatico {
         this.analisaEtVariaveis()
         this.analisaSubrotinas()
 
-        console.log("ANALISADO BLOCO DE FUNCAO: " + funcao)
+
         if (funcao) this.procurandoRetorno = true
         if (!this.analisaComandos()) {
             if (this.procurandoRetorno) {
@@ -194,7 +194,7 @@ class Sintatico {
 
     analisaComandoSimples() {   /* Analisa os comandos simples */
         if (dev) console.log("Sintatico: analisaComandoSimples")
-        console.log("Token analisaComandoSimples")
+
         console.table(this.token)
         switch (this.token.simbolo) {
             case 'sidentificador':  /* Se encontrar um identificador */
@@ -232,7 +232,7 @@ class Sintatico {
 
         lexemaAuxiliar = this.token.lexema; /* Armazena o lexema da variavel/procedimento que será usado para obter o end. de memória ou respectivo label */
         this.token = this.lexico.analisador()   /* Lê o proximo Token */
-        console.log("Token analisaAtribChprocedimento")
+
         console.table(this.token)
         if (this.token.simbolo == 'satribuicao') {  /* Se o proximo token for um := */
             /* Então quer dizer que estamos tratando uma atribuição */
@@ -245,7 +245,7 @@ class Sintatico {
                 let retornoExpressao = this.semantico.analisaExpressao();
                 retornoExpressao.result.shift();    /* Remove o identificador do := */
                 retornoExpressao.result.pop();      /* Remove o := */
-                console.log(retornoExpressao.result)
+
                 this.geradorCodigo.gerarExpressão(retornoExpressao.result)
             }
             catch (e) {
@@ -256,7 +256,8 @@ class Sintatico {
 
             /* Geração de código para a atribuição */
             let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(lexemaAuxiliar)
-            if (memoriaVar)
+
+            if (memoriaVar || memoriaVar === 0)
                 this.geradorCodigo.STR(memoriaVar)
 
             // RETORNO de FUNÇÃO
@@ -467,7 +468,7 @@ class Sintatico {
         if (this.token.simbolo == 'sentao') {   /* Se ler o token então */
             this.token = this.lexico.analisador()   /* Então lê o proximo token */
             retornoEntao = this.analisaComandoSimples()    /* Analisa os comandos do então */
-            console.log("retornoEntao: " + retornoEntao)
+
             if (this.token.simbolo == 'ssenao') {
                 /* Gera JMP L2 para pular para o final do comando se caso executar o então */
                 /* Gera L1 NULL para definir o inicio do senão */
@@ -478,7 +479,7 @@ class Sintatico {
 
                 this.token = this.lexico.analisador()
                 retornoSenao = this.analisaComandoSimples()
-                console.log("retornoSenao: " + retornoSenao)
+
                 /* Gera L2 NULL para sair do comando condicional se */
                 this.geradorCodigo.NULL(rotuloAuxiliar2);
 

@@ -135,13 +135,16 @@ class GeradorCodigo {
 
     gerarExpressão(posfixa) {
         let token;
-        console.log(posfixa)
+
         for (token of posfixa) {
             if (token.simbolo === "snumero") {  /* Gera LDV */
                 this.LDC(+token.lexema);
             }
             else if (token.simbolo === "sidentificador") {  /* Gera LDC */
-                this.LDV(this.tabela.retornaEnderecoMemoriaVar(token.lexema));
+                let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(token.lexema)
+                if (memoriaVar || memoriaVar === 0)
+                    this.LDV(memoriaVar)
+
             }
             else if (token.simbolo === "smaior") {
                 this.CMA();

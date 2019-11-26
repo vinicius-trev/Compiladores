@@ -9,7 +9,7 @@ let arquivo
 let noLinhas
 let buildStatus = 0 /* 1 = sucesso, 0 = falha */
 let sintatico;
-const dev = true
+const dev = false
 
 // Event bindings
 document.onkeydown = KeyPress

@@ -85,7 +85,7 @@ function rodarCodigo() {
         if (funcao === "HLT")                             /* Termina a execução do programa ao encontrar um HLT, saí do while */
           return
         else {
-          console.log(elementos)
+
           instrucoes[funcao](...elementos)
         }             /* Caso a função NÃO FOR READ, executa ela normal passando os argumentos */
       }
