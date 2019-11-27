@@ -146,8 +146,8 @@ class TabelaSimbolos {
         return false;
     }
     pesquisaTipo(lexema) {
-        for (let sim of this.simbolos) {
-            if (sim.lexema === lexema) return sim.tipo
+        for (let i = this.simbolos.length - 1; i >= 0; i--) {
+            if (this.simbolos[i].lexema === lexema) return this.simbolos[i].tipo
         }
         return 'inteiro'
     }
