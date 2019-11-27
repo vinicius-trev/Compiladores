@@ -11,6 +11,7 @@
  * e o valor do STACKPOINTER (HIGHLIGHTED).
  */
 
+
 let junk;
 let instrucoes = {
   "LDC": (k) => {   /* Load Constant */
@@ -159,10 +160,11 @@ let instrucoes = {
     memoria[stackPointer] = value                                                /* Salva o valor lido no INPUT do FRONT END */
   },
   "PRN": () => {  /* Operação PRINT */
-    let out = document.getElementById("output");                                 /* Recupera o elemeto que recebra o valor */
-    out.value += memoria[stackPointer];                                          /* Escreve o valor no elemento HTML */
-    out.value += "\r\n";
-    out.scrollTop = out.scrollHeight;                                            /* "Anda" automaticamente com o scroll */
+    let out = '';                                 /* Recupera o elemeto que recebra o valor */
+    out += memoria[stackPointer];                                          /* Escreve o valor no elemento HTML */
+    out += "\r\n";
+    document.getElementById("output").value += out
+    document.getElementById("output").scrollTop = out.scrollHeight;                                            /* "Anda" automaticamente com o scroll */
     junk = memoria.pop()
     stackPointer = stackPointer - 1                                              /* Decrementa o stackPointer */
   },

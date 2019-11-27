@@ -24,7 +24,7 @@ function reset() {
 /**
  * Função executada quando clicar no botão PLAY
  */
-function rodarCodigo() {
+async function rodarCodigo() {
   let stackWindow = document.getElementById("stack");  /* Obtem o objeto para escrever na GUI de stack */
   while (pc < codigo.length)                                   /* Para cada linha do codigo */ {
     let line = codigo[pc]
@@ -67,6 +67,11 @@ function rodarCodigo() {
         /* Garante que o popup só pegara numeros inteiros */
         do {
           var answer = prompt("Digite o valor de INPUT (Numeros - true/false): ")
+
+          sleep = (ms) => {
+            return new Promise(resolve => setTimeout(resolve, ms));
+          }
+          await sleep(0.5)
 
           if (answer === "true")
             answer = parseInt("1")
