@@ -434,7 +434,7 @@ class Sintatico {
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError("Erro Sintático: Esperado 'faca' -> Encontrado '" + this.token.lexema + "'")
         }
-        return retorno
+        return false
     }
 
     analisaSe() {   /* Comando condicional se */
