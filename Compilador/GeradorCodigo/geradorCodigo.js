@@ -144,6 +144,9 @@ class GeradorCodigo {
                 let memoriaVar = this.tabela.retornaEnderecoMemoriaVar(token.lexema)
                 if ((memoriaVar || memoriaVar === 0))
                     this.LDV(memoriaVar)
+                else if (this.tabela.pesquisaDeclaracaoFuncTabela(token.lexema))
+                    this.CALL(this.tabela.retornaLabelSubrotina(token.lexema))  /* Utiliza o lexema auxiliar, passado como parâmetro, para gerar o código para a chamada CALL */
+
 
             }
             else if (token.simbolo === "smaior") {

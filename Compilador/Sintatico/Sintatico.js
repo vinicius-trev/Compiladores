@@ -771,7 +771,7 @@ class Sintatico {
         this.lexico.analisador()    /* Lê o próximo token */
 
         /* Gerador de Codigo -> CALL */
-        this.geradorCodigo.CALL(this.tabela.retornaLabelSubrotina(rotulo))  /* Gera o código para o CALL */
+        // this.geradorCodigo.CALL(this.tabela.retornaLabelSubrotina(rotulo))  /* Gera o código para o CALL */
     }
 
     analisaChamadaProcedimento(lexemaAuxiliar) {    /* Analisa a chamada de procedimento */
