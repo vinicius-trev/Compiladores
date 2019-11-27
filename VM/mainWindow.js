@@ -12,6 +12,12 @@ let pcAnterior = 0;
 let debugFlag = 0;
 let step = false;
 let statusBreakpoint = 0
+let dev = false
+
+if (!dev) {
+  console.log = () => { }
+  console.table = () => { }
+}
 
 
 /**

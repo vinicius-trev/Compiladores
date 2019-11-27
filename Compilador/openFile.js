@@ -14,6 +14,11 @@ const dev = false
 // Event bindings
 document.onkeydown = KeyPress
 
+if (!dev) {
+    console.log = () => { }
+    console.table = () => { }
+}
+
 // Linking scrollbars
 let s1 = document.getElementById('codigo')
 let s2 = document.getElementById('numero')

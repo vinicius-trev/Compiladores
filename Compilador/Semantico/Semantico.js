@@ -182,25 +182,20 @@ class Semantico {
                 this.pilhaOperandos.push(element)
                 continue
             }
-            // Se a prioridade do operado encontrado for maior que a prioridade do ultimo elemento da pilha de operandos, insere na pilha
+            // Se a prioridade do operado encontrado for maior que a prioridade do ultimo elemento da pilha de operandos, ou se o ultimo elemento da pilha for '(', insere na pilha
             if (this.prioridades[element.lexema] > this.prioridades[this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema] || this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema === '(') {
                 this.pilhaOperandos.push(element)
                 continue
             }
-            // Se a prioridade do elemento for menor ou igual, remover tudo da pilha, até encontrar um com prioridade >
+            // Se a prioridade do elemento for menor ou igual, remover tudo da pilha, até encontrar um com prioridade >, porem não desempilhar se topo tem nao e elemento for nao (para casos nao nao x)
             else {
                 while (this.pilhaOperandos.length !== 0) {
-                    // if (this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema === '(') {
-                    //     this.pilhaOperandos.pop()
-                    //     break
-                    // }
-                    if (this.prioridades[element.lexema] > this.prioridades[this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema] || element.lexema === this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema && element.lexema === 'nao') break
+                    if (this.prioridades[element.lexema] > this.prioridades[this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema] || (element.lexema === this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema && element.lexema === 'nao')) break
                     if (element.lexema === this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema && element.lexema === 'nao') {
                         throw ("Erro Semantico: Operador 'nao' deve ter na sequencia um operando -> Ex: substitua 'nao nao x' por 'nao ( nao x )'")
                     }
                     const operando = this.pilhaOperandos.pop()
                     if (operando.lexema === '(') {
-                        //this.pilhaOperandos.push(operando)
                         break
                     }
                     resultadoPosfix.push(operando)
