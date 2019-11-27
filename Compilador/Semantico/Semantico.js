@@ -19,13 +19,15 @@ class Semantico {
             '=': 3,
             'e': 2,
             'ou': 1,
-            ':=': 0
+            '(': 0,
+            ':=': -1
         }
 
         this.expressao = []
     }
 
     analizarTipoExpressao(posfix) {
+        console.table(posfix)
         let pilhaTipos = []
         let tipo = 'inteiro'
         let ultimo, penultimo, tipoPenultimo, tipoUltimo, tokenRetorno
@@ -101,6 +103,7 @@ class Semantico {
                     case 'nao':
                         // Caso operação de booleanos com um elemento, resultando booleano
                         ultimo = pilhaTipos.pop()
+                        if (!ultimo) throw ("Erro Semantico: Operador 'nao' deve ter na sequencia um operando -> Ex: substitua 'nao nao x' por 'nao ( nao x )'")
                         tipoUltimo = (ultimo.simbolo == 'sfalso' || ultimo.simbolo == 'sverdadeiro') ? 'booleano' : this.tabela.pesquisaTipo(ultimo.lexema)
                         if (tipoUltimo != 'booleano') throw ("Erro Semantico: Tipo invalido na expressao, encontrado variável inteira em operação booleana")
                         // Criar token exclusivamente booleano
@@ -151,6 +154,8 @@ class Semantico {
         let resultadoPosfix = []
 
         while (this.expressao.length !== 0) {
+            console.log(this.pilhaOperandos.map(e => e.lexema))
+            console.log(resultadoPosfix.map(e => e.lexema))
             const element = this.expressao.shift()
             if (element.lexema === '(') {
                 this.pilhaOperandos.push(element)
@@ -185,9 +190,19 @@ class Semantico {
             // Se a prioridade do elemento for menor ou igual, remover tudo da pilha, até encontrar um com prioridade >
             else {
                 while (this.pilhaOperandos.length !== 0) {
-                    if (this.prioridades[element.lexema] > this.prioridades[this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema]) break
+                    // if (this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema === '(') {
+                    //     this.pilhaOperandos.pop()
+                    //     break
+                    // }
+                    if (this.prioridades[element.lexema] > this.prioridades[this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema] || element.lexema === this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema && element.lexema === 'nao') break
+                    if (element.lexema === this.pilhaOperandos[this.pilhaOperandos.length - 1].lexema && element.lexema === 'nao') {
+                        throw ("Erro Semantico: Operador 'nao' deve ter na sequencia um operando -> Ex: substitua 'nao nao x' por 'nao ( nao x )'")
+                    }
                     const operando = this.pilhaOperandos.pop()
-                    if (operando.lexema === '(') break
+                    if (operando.lexema === '(') {
+                        //this.pilhaOperandos.push(operando)
+                        break
+                    }
                     resultadoPosfix.push(operando)
                 }
                 this.pilhaOperandos.push(element)

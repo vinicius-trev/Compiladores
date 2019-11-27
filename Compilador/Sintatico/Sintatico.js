@@ -399,6 +399,7 @@ class Sintatico {
             retornoExpressao = this.semantico.analisaExpressao()
         }
         catch (e) {
+            console.log(e)
             if (this.token.linha == null) this.token.linha = this.token.numLinhaAnterior
             this.raiseError(e)
         }
